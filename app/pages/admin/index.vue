@@ -26,11 +26,11 @@ const pedidosRecentes = computed(() =>
 )
 
 const STATUS_LABEL: Record<string, { label: string; class: string }> = {
-  pendente:   { label: 'Pendente',   class: 'status-pending' },
-  preparando: { label: 'Preparando', class: 'status-preparing' },
-  pronto:     { label: 'Pronto',     class: 'status-ready' },
-  entregue:   { label: 'Entregue',   class: 'status-delivered' },
-  cancelado:  { label: 'Cancelado',  class: 'status-cancelled' },
+  PENDENTE:   { label: 'Pendente',   class: 'status-pending' },
+  PREPARACAO: { label: 'Preparando', class: 'status-preparing' },
+  PRONTO:     { label: 'Pronto',     class: 'status-ready' },
+  ENTREGUE:   { label: 'Entregue',   class: 'status-delivered' },
+  CANCELADO:  { label: 'Cancelado',  class: 'status-cancelled' },
 }
 
 function getStatus(s: string) {
@@ -38,7 +38,7 @@ function getStatus(s: string) {
 }
 
 async function avancarStatus(pedido: any) {
-  const fluxo = ['pendente', 'preparando', 'pronto', 'entregue']
+  const fluxo = ['PENDENTE', 'PREPARACAO', 'PRONTO', 'ENTREGUE']
   const idx = fluxo.indexOf(pedido.status)
   if (idx < 0 || idx >= fluxo.length - 1) return
   await atualizarStatus(pedido.id, fluxo[idx + 1])
@@ -154,7 +154,7 @@ useHead({ title: 'Dashboard — QuickPed Admin' })
               </td>
               <td>
                 <button
-                  v-if="p.status !== 'entregue' && p.status !== 'cancelado'"
+                  v-if="p.status !== 'ENTREGUE' && p.status !== 'CANCELADO'"
                   class="btn-avançar"
                   @click="avancarStatus(p)"
                 >

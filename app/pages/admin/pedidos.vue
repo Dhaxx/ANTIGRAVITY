@@ -7,14 +7,45 @@ const { pedidos, loading, error, buscarPedidos, atualizarStatus, deletarPedido }
 
 onMounted(buscarPedidos)
 
+const normalizarStatus = (s: string) => {
+  const m: Record<string, string> = {
+    'PENDENTE': 'Pendente',
+    'PREPARACAO': 'Em Preparação',
+    'PRONTO': 'Pronto',
+    'ENTREGUE': 'Entregue',
+    'CANCELADO': 'Cancelado',
+  }
+  return m[s?.toUpperCase() ?? ''] ?? s
+}
+
+const getStatusKey = (s: string) => {
+  const normalized = normalizarStatus(s)
+  const keyMap: Record<string, string> = {
+    'Pendente': 'PENDENTE',
+    'Em Preparação': 'PREPARACAO',
+    'Pronto': 'PRONTO',
+    'Entregue': 'ENTREGUE',
+    'Cancelado': 'CANCELADO',
+  }
+  return keyMap[normalized] ?? s?.toUpperCase()
+}
+
+const STATUS_MAP: Record<string, { label: string; class: string; icon: string; next: string | null; prev: string | null }> = {
+  PENDENTE:   { label: 'Pendente',   class: 'status-pending',   icon: '⏳', next: 'PREPARACAO',  prev: null },
+  PREPARACAO: { label: 'Preparando', class: 'status-preparing', icon: '👨‍🍳', next: 'PRONTO',      prev: 'PENDENTE' },
+  PRONTO:     { label: 'Pronto',     class: 'status-ready',     icon: '✅', next: 'ENTREGUE',    prev: 'PREPARACAO' },
+  ENTREGUE:   { label: 'Entregue',   class: 'status-delivered', icon: '📦', next: null,          prev: 'PRONTO' },
+  CANCELADO:  { label: 'Cancelado',  class: 'status-cancelled', icon: '❌', next: null,         prev: null },
+}
+
 const filtroStatus = ref('todos')
 const statusOptions = [
   { value: 'todos', label: 'Todos' },
-  { value: 'pendente', label: 'Pendente' },
-  { value: 'preparando', label: 'Preparando' },
-  { value: 'pronto', label: 'Pronto' },
-  { value: 'entregue', label: 'Entregue' },
-  { value: 'cancelado', label: 'Cancelado' },
+  { value: 'Pendente', label: 'Pendente' },
+  { value: 'Em Preparação', label: 'Preparando' },
+  { value: 'Pronto', label: 'Pronto' },
+  { value: 'Entregue', label: 'Entregue' },
+  { value: 'Cancelado', label: 'Cancelado' },
 ]
 
 const pedidosFiltrados = computed(() => {
@@ -22,35 +53,30 @@ const pedidosFiltrados = computed(() => {
     new Date(b.criado_em ?? 0).getTime() - new Date(a.criado_em ?? 0).getTime()
   )
   if (filtroStatus.value === 'todos') return lista
-  return lista.filter((p: any) => p.status === filtroStatus.value)
+  console.log('Filtro:', filtroStatus.value, '| Pedidos status:', lista.map((p: any) => p.status))
+  return lista.filter((p: any) => normalizarStatus(p.status) === filtroStatus.value)
 })
 
 const pedidoExpandido = ref<number | null>(null)
 
-const STATUS_MAP: Record<string, { label: string; class: string; next: string | null; prev: string | null }> = {
-  pendente:   { label: 'Pendente',   class: 'status-pending',   next: 'preparando',  prev: null },
-  preparando: { label: 'Preparando', class: 'status-preparing', next: 'pronto',     prev: 'pendente' },
-  pronto:     { label: 'Pronto',     class: 'status-ready',     next: 'entregue',   prev: 'preparando' },
-  entregue:   { label: 'Entregue',   class: 'status-delivered', next: null,         prev: 'pronto' },
-  cancelado:  { label: 'Cancelado',  class: 'status-cancelled', next: null,         prev: null },
-}
-
 async function avancar(p: any) {
-  const next = STATUS_MAP[p.status]?.next
+  const currentStatus = getStatusKey(p.status)
+  const next = STATUS_MAP[currentStatus]?.next
   if (!next) return
   await atualizarStatus(p.id, next)
   await buscarPedidos()
 }
 
 async function voltar(p: any) {
-  const prev = STATUS_MAP[p.status]?.prev
+  const currentStatus = getStatusKey(p.status)
+  const prev = STATUS_MAP[currentStatus]?.prev
   if (!prev) return
   await atualizarStatus(p.id, prev)
   await buscarPedidos()
 }
 
 async function cancelar(p: any) {
-  await atualizarStatus(p.id, 'cancelado')
+  await atualizarStatus(p.id, 'CANCELADO')
   await buscarPedidos()
 }
 
@@ -122,8 +148,8 @@ useHead({ title: 'Pedidos — QuickPed Admin' })
             <span class="pedido-card__mesa">Mesa {{ p.numero_mesa }}</span>
           </div>
           <div class="pedido-card__right">
-            <span class="status-badge" :class="STATUS_MAP[p.status]?.class ?? ''">
-              {{ STATUS_MAP[p.status]?.label ?? p.status }}
+            <span class="status-badge" :class="STATUS_MAP[getStatusKey(p.status)]?.class ?? ''">
+              <span v-if="STATUS_MAP[getStatusKey(p.status)]?.icon">{{ STATUS_MAP[getStatusKey(p.status)]?.icon }} </span>{{ STATUS_MAP[getStatusKey(p.status)]?.label ?? p.status }}
             </span>
             <span class="pedido-card__total">{{ formatarPreco(p.total) }}</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -141,32 +167,40 @@ useHead({ title: 'Pedidos — QuickPed Admin' })
 
             <ul class="pedido-itens">
               <li v-for="item in p.itens" :key="item.produto_id" class="pedido-item">
-                <span class="pedido-item__qty">{{ item.quantidade }}×</span>
-                <span class="pedido-item__nome">{{ item.nome_produto }}</span>
-                <span v-if="item.adicionais?.length" class="pedido-item__adicionais">
-                  + {{ item.adicionais.map((a: any) => a.nome).join(', ') }}
+                <div class="pedido-item__info">
+                  <span class="pedido-item__qty">{{ item.quantidade }}×</span>
+                  <span class="pedido-item__nome">{{ item.nome_produto }}</span>
+                  <span class="pedido-item__preco-unit">({{ formatarPreco(item.preco_unitario) }} cada)</span>
+                  <span v-if="item.adicionais?.length" class="pedido-item__adicionais">
+                    + {{ item.adicionais.map((a: any) => a.nome).join(', ') }}
+                    <span class="pedido-item__total-adicionais">
+                      (+{{ formatarPreco(item.adicionais.reduce((acc: number, a: any) => acc + Number(a.preco), 0)) }} em adicionais)
+                    </span>
+                  </span>
+                </div>
+                <span class="pedido-item__total">
+                  {{ formatarPreco(Number(item.preco_unitario) * item.quantidade + item.adicionais.reduce((acc: number, a: any) => acc + Number(a.preco) * item.quantidade, 0)) }}
                 </span>
-                <span class="pedido-item__preco">{{ formatarPreco(Number(item.preco_unitario) * item.quantidade) }}</span>
               </li>
             </ul>
 
             <div class="pedido-card__actions">
               <button
-                v-if="STATUS_MAP[p.status]?.prev"
+                v-if="STATUS_MAP[getStatusKey(p.status)]?.prev"
                 class="btn-acao btn-acao--secondary"
                 @click="voltar(p)"
               >
-                ← Voltar para: {{ STATUS_MAP[STATUS_MAP[p.status]?.prev!]?.label }}
+                ← Voltar para: {{ STATUS_MAP[STATUS_MAP[getStatusKey(p.status)]?.prev!]?.label }}
               </button>
               <button
-                v-if="STATUS_MAP[p.status]?.next"
+                v-if="STATUS_MAP[getStatusKey(p.status)]?.next"
                 class="btn-acao btn-acao--primary"
                 @click="avancar(p)"
               >
-                Avançar para: {{ STATUS_MAP[STATUS_MAP[p.status]?.next!]?.label }} →
+                Avançar para: {{ STATUS_MAP[STATUS_MAP[getStatusKey(p.status)]?.next!]?.label }} →
               </button>
               <button
-                v-if="p.status !== 'cancelado' && p.status !== 'entregue'"
+                v-if="p.status?.toUpperCase() !== 'CANCELADO' && p.status?.toUpperCase() !== 'ENTREGUE'"
                 class="btn-acao btn-acao--danger"
                 @click="cancelar(p)"
               >
@@ -239,13 +273,16 @@ useHead({ title: 'Pedidos — QuickPed Admin' })
 
 .pedido-itens { list-style: none; display: flex; flex-direction: column; gap: 6px; }
 .pedido-item {
-  display: flex; align-items: baseline; gap: 8px;
-  font-size: 13px;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  font-size: 13px; gap: 12px;
 }
+.pedido-item__info { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; flex: 1; }
 .pedido-item__qty { font-weight: 700; color: var(--color-primary); flex-shrink: 0; }
-.pedido-item__nome { font-weight: 600; flex: 1; }
-.pedido-item__adicionais { font-size: 12px; color: #9ba898; }
-.pedido-item__preco { font-weight: 700; color: #1a1f17; margin-left: auto; flex-shrink: 0; }
+.pedido-item__nome { font-weight: 600; }
+.pedido-item__preco-unit { font-size: 11px; color: #9ba898; }
+.pedido-item__adicionais { font-size: 12px; color: #6b7568; display: flex; flex-direction: column; gap: 2px; }
+.pedido-item__total-adicionais { font-size: 11px; color: #9ba898; }
+.pedido-item__total { font-weight: 700; color: #1a1f17; flex-shrink: 0; }
 
 .pedido-card__actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
 .btn-acao {

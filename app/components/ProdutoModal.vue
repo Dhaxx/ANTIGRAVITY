@@ -88,7 +88,7 @@ function formatarPreco(v: number) {
 
           <!-- Adicionais -->
           <div v-if="produto.adicionais && produto.adicionais.length > 0" class="produto-modal__adicionais">
-            <p class="produto-modal__adicionais-label">ACRESCENTAR</p>
+            <p class="produto-modal__adicionais-label">ADICIONAIS</p>
             <div class="produto-modal__adicionais-list">
               <button
                 v-for="ad in produto.adicionais"

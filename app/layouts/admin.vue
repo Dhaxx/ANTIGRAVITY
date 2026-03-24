@@ -20,6 +20,7 @@ onMounted(async () => {
 const navLinks = [
   { label: 'Dashboard', icon: 'grid', to: '/admin' },
   { label: 'Pedidos', icon: 'list', to: '/admin/pedidos' },
+  { label: 'Comandas', icon: 'receipt', to: '/admin/comandas' },
   { label: 'Produtos', icon: 'package', to: '/admin/produtos' },
   { label: 'Mesas', icon: 'layout', to: '/admin/mesas' },
   { label: 'Estabelecimento', icon: 'store', to: '/admin/estabelecimento' },
@@ -85,6 +86,12 @@ const activeRoute = computed(() => route.path)
           <svg v-if="link.icon === 'layout'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="3" width="18" height="18" rx="2"/>
             <line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
+          </svg>
+          <!-- receipt icon -->
+          <svg v-if="link.icon === 'receipt'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2"/>
+            <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/>
+            <path d="M12 17V7"/>
           </svg>
           <!-- store icon -->
           <svg v-if="link.icon === 'store'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

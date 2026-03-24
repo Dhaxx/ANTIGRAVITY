@@ -13,6 +13,8 @@ const form = reactive({
   logo_url: '',
 })
 
+const toggling = ref(false)
+
 onMounted(async () => {
   await buscar()
   if (estabelecimento.value) {
@@ -51,6 +53,15 @@ async function salvar() {
   } catch {}
 }
 
+async function toggleAberto() {
+  toggling.value = true
+  const novoStatus = estabelecimento.value?.esta_aberto ? false : true
+  try {
+    await atualizar({ esta_aberto: novoStatus })
+  } catch {}
+  toggling.value = false
+}
+
 useHead({ title: 'Estabelecimento — QuickPed Admin' })
 </script>
 
@@ -70,6 +81,18 @@ useHead({ title: 'Estabelecimento — QuickPed Admin' })
     <div v-else-if="error" class="admin-card admin-empty">{{ error }}</div>
 
     <div v-else class="admin-card">
+      <div class="status-toggle">
+        <div class="status-info">
+          <span class="status-label">Status do estabelecimento</span>
+          <span class="status-badge" :class="estabelecimento?.esta_aberto ? 'open' : 'closed'">
+            {{ estabelecimento?.esta_aberto ? 'Aberto' : 'Fechado' }}
+          </span>
+        </div>
+        <button class="toggle-btn" :class="estabelecimento?.esta_aberto ? 'on' : 'off'" :disabled="toggling" @click="toggleAberto">
+          <span class="toggle-thumb" />
+        </button>
+      </div>
+
       <div class="form-body">
         <div class="form-group">
           <label class="form-label">Nome</label>
@@ -119,6 +142,30 @@ useHead({ title: 'Estabelecimento — QuickPed Admin' })
 .admin-card { background: #fff; border-radius: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
 .admin-loading { padding: 24px; }
 .admin-empty { padding: 24px; color: #9ba898; font-size: 14px; text-align: center; }
+
+.status-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px; border-bottom: 1px solid #e8ede5;
+}
+.status-info { display: flex; flex-direction: column; gap: 4px; }
+.status-label { font-size: 13px; color: #6b7568; }
+.status-badge { font-size: 14px; font-weight: 600; }
+.status-badge.open { color: #16a34a; }
+.status-badge.closed { color: #dc2626; }
+
+.toggle-btn {
+  width: 52px; height: 28px; border-radius: 14px; border: none; cursor: pointer;
+  position: relative; transition: background 0.2s;
+}
+.toggle-btn.off { background: #e5e7eb; }
+.toggle-btn.on { background: #22c55e; }
+.toggle-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.toggle-thumb {
+  position: absolute; top: 2px; left: 2px;
+  width: 24px; height: 24px; border-radius: 12px; background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.15); transition: transform 0.2s;
+}
+.toggle-btn.on .toggle-thumb { transform: translateX(24px); }
 
 .form-body { padding: 24px; display: flex; flex-direction: column; gap: 18px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }

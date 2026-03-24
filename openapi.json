@@ -1,1 +1,2921 @@
-{"openapi":"3.1.0","info":{"title":"QuickPed","version":"0.1.0"},"paths":{"/api/v1/admin/autenticacao/login":{"post":{"tags":["Admin - Autenticacao"],"summary":"Login","operationId":"login_api_v1_admin_autenticacao_login_post","requestBody":{"content":{"application/x-www-form-urlencoded":{"schema":{"$ref":"#/components/schemas/Body_login_api_v1_admin_autenticacao_login_post"}}},"required":true},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/TokenResponse"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/admin/autenticacao/registrar":{"post":{"tags":["Admin - Autenticacao"],"summary":"Registrar","operationId":"registrar_api_v1_admin_autenticacao_registrar_post","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/UsuarioCreate"}}},"required":true},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/UsuarioRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}},"security":[{"OAuth2PasswordBearer":[]}]}},"/api/v1/admin/estabelecimento/":{"put":{"tags":["Admin - Estabelecimento"],"summary":"Update Estabelecimento","operationId":"update_estabelecimento_api_v1_admin_estabelecimento__put","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/EstabelecimentoUpdate"}}},"required":true},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/EstabelecimentoRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}},"security":[{"OAuth2PasswordBearer":[]}]},"post":{"tags":["Admin - Estabelecimento"],"summary":"Create Estabelecimento","operationId":"create_estabelecimento_api_v1_admin_estabelecimento__post","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/EstabelecimentoCreate"}}},"required":true},"responses":{"201":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/EstabelecimentoRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/admin/categoria-produto/":{"post":{"tags":["Admin - Categoria Produto"],"summary":"Create Categoria Produto","operationId":"create_categoria_produto_api_v1_admin_categoria_produto__post","security":[{"OAuth2PasswordBearer":[]}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CategoriaProdutoCreate"}}}},"responses":{"201":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CategoriaProdutoRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}},"get":{"tags":["Admin - Categoria Produto"],"summary":"Get Categoria Produtos","operationId":"get_categoria_produtos_api_v1_admin_categoria_produto__get","security":[{"OAuth2PasswordBearer":[]}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/CategoriaProdutoRead"},"title":"Response Get Categoria Produtos Api V1 Admin Categoria Produto  Get"}}}}}},"put":{"tags":["Admin - Categoria Produto"],"summary":"Update Categoria Produto","operationId":"update_categoria_produto_api_v1_admin_categoria_produto__put","security":[{"OAuth2PasswordBearer":[]}],"parameters":[{"name":"categoria_produto_id","in":"query","required":true,"schema":{"type":"integer","title":"Categoria Produto Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CategoriaProdutoUpdate"}}}},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CategoriaProdutoRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/admin/categoria-produto/{categoria_produto_id}":{"delete":{"tags":["Admin - Categoria Produto"],"summary":"Delete Categoria Produto","operationId":"delete_categoria_produto_api_v1_admin_categoria_produto__categoria_produto_id__delete","security":[{"OAuth2PasswordBearer":[]}],"parameters":[{"name":"categoria_produto_id","in":"path","required":true,"schema":{"type":"integer","title":"Categoria Produto Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CategoriaProdutoRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/admin/produto/":{"post":{"tags":["Admin - Produto"],"summary":"Create Produto","operationId":"create_produto_api_v1_admin_produto__post","security":[{"OAuth2PasswordBearer":[]}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ProdutoCreate-Input"}}}},"responses":{"201":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ProdutoCreate-Output"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}},"get":{"tags":["Admin - Produto"],"summary":"Get Produtos","operationId":"get_produtos_api_v1_admin_produto__get","security":[{"OAuth2PasswordBearer":[]}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/ProdutoRead"},"title":"Response Get Produtos Api V1 Admin Produto  Get"}}}}}},"put":{"tags":["Admin - Produto"],"summary":"Update Produto","operationId":"update_produto_api_v1_admin_produto__put","security":[{"OAuth2PasswordBearer":[]}],"parameters":[{"name":"produto_id","in":"query","required":true,"schema":{"type":"integer","title":"Produto Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ProdutoUpdate"}}}},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ProdutoRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}},"delete":{"tags":["Admin - Produto"],"summary":"Delete Produto","operationId":"delete_produto_api_v1_admin_produto__delete","security":[{"OAuth2PasswordBearer":[]}],"parameters":[{"name":"produto_id","in":"query","required":true,"schema":{"type":"integer","title":"Produto Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ProdutoRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/admin/produto/grupo-adicional/":{"post":{"tags":["Admin - Grupo Adicional"],"summary":"Create Grupo Adicional","operationId":"create_grupo_adicional_api_v1_admin_produto_grupo_adicional__post","security":[{"OAuth2PasswordBearer":[]}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/GrupoAdicionalCreate"}}}},"responses":{"201":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/GrupoAdicionalRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}},"get":{"tags":["Admin - Grupo Adicional"],"summary":"Get Grupos Adicionais","operationId":"get_grupos_adicionais_api_v1_admin_produto_grupo_adicional__get","security":[{"OAuth2PasswordBearer":[]}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/GrupoAdicionalRead"},"title":"Response Get Grupos Adicionais Api V1 Admin Produto Grupo Adicional  Get"}}}}}},"put":{"tags":["Admin - Grupo Adicional"],"summary":"Update Grupo Adicional","operationId":"update_grupo_adicional_api_v1_admin_produto_grupo_adicional__put","security":[{"OAuth2PasswordBearer":[]}],"parameters":[{"name":"grupo_id","in":"query","required":true,"schema":{"type":"integer","title":"Grupo Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/GrupoAdicionalUpdate"}}}},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/GrupoAdicionalRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}},"delete":{"tags":["Admin - Grupo Adicional"],"summary":"Delete Grupo Adicional","operationId":"delete_grupo_adicional_api_v1_admin_produto_grupo_adicional__delete","security":[{"OAuth2PasswordBearer":[]}],"parameters":[{"name":"grupo_id","in":"query","required":true,"schema":{"type":"integer","title":"Grupo Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/GrupoAdicionalRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/admin/produto/adicional/":{"post":{"tags":["Admin - Adicional"],"summary":"Create Adicional","operationId":"create_adicional_api_v1_admin_produto_adicional__post","security":[{"OAuth2PasswordBearer":[]}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/AdicionalCreate"}}}},"responses":{"201":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/AdicionalRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}},"get":{"tags":["Admin - Adicional"],"summary":"Get Adicionais","operationId":"get_adicionais_api_v1_admin_produto_adicional__get","security":[{"OAuth2PasswordBearer":[]}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/AdicionalRead"},"title":"Response Get Adicionais Api V1 Admin Produto Adicional  Get"}}}}}},"put":{"tags":["Admin - Adicional"],"summary":"Update Adicional","operationId":"update_adicional_api_v1_admin_produto_adicional__put","security":[{"OAuth2PasswordBearer":[]}],"parameters":[{"name":"adicional_id","in":"query","required":true,"schema":{"type":"integer","title":"Adicional Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/AdicionalUpdate"}}}},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/AdicionalRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}},"delete":{"tags":["Admin - Adicional"],"summary":"Delete Adicional","operationId":"delete_adicional_api_v1_admin_produto_adicional__delete","security":[{"OAuth2PasswordBearer":[]}],"parameters":[{"name":"adicional_id","in":"query","required":true,"schema":{"type":"integer","title":"Adicional Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/AdicionalRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/admin/pedido/":{"get":{"tags":["Admin - Pedido"],"summary":"Get Pedidos","operationId":"get_Pedidos_api_v1_admin_pedido__get","security":[{"OAuth2PasswordBearer":[]}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/PedidoRead"},"title":"Response Get Pedidos Api V1 Admin Pedido  Get"}}}}}},"put":{"tags":["Admin - Pedido"],"summary":"Update Pedido","operationId":"update_Pedido_api_v1_admin_pedido__put","security":[{"OAuth2PasswordBearer":[]}],"parameters":[{"name":"Pedido_id","in":"query","required":true,"schema":{"type":"integer","title":"Pedido Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/PedidoUpdate"}}}},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/PedidoRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}},"delete":{"tags":["Admin - Pedido"],"summary":"Update Pedido","operationId":"update_Pedido_api_v1_admin_pedido__delete","security":[{"OAuth2PasswordBearer":[]}],"parameters":[{"name":"Pedido_id","in":"query","required":true,"schema":{"type":"integer","title":"Pedido Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/PedidoRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/admin/comanda/":{"get":{"tags":["Admin - Comanda"],"summary":"Get Comanda","operationId":"get_comanda_api_v1_admin_comanda__get","responses":{"201":{"description":"Successful Response","content":{"application/json":{"schema":{"items":{"$ref":"#/components/schemas/ComandaRead"},"type":"array","title":"Response Get Comanda Api V1 Admin Comanda  Get"}}}}},"security":[{"OAuth2PasswordBearer":[]}]}},"/api/v1/admin/comanda/{numero_mesa}":{"get":{"tags":["Admin - Comanda"],"summary":"Get Mesa Comanda","operationId":"get_mesa_comanda_api_v1_admin_comanda__numero_mesa__get","security":[{"OAuth2PasswordBearer":[]}],"parameters":[{"name":"numero_mesa","in":"path","required":true,"schema":{"type":"integer","title":"Numero Mesa"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ComandaRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/admin/mesa/":{"post":{"tags":["Admin - Mesa"],"summary":"Create Mesa","operationId":"create_mesa_api_v1_admin_mesa__post","security":[{"OAuth2PasswordBearer":[]}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/MesaCreate"}}}},"responses":{"201":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/MesaCreate"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}},"get":{"tags":["Admin - Mesa"],"summary":"Get Mesas","operationId":"get_mesas_api_v1_admin_mesa__get","security":[{"OAuth2PasswordBearer":[]}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/MesaRead"},"title":"Response Get Mesas Api V1 Admin Mesa  Get"}}}}}},"put":{"tags":["Admin - Mesa"],"summary":"Update Mesa","operationId":"update_mesa_api_v1_admin_mesa__put","security":[{"OAuth2PasswordBearer":[]}],"parameters":[{"name":"mesa_id","in":"query","required":true,"schema":{"type":"integer","title":"Mesa Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/MesaUpdate"}}}},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/MesaRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}},"delete":{"tags":["Admin - Mesa"],"summary":"Delete Mesa","operationId":"delete_mesa_api_v1_admin_mesa__delete","security":[{"OAuth2PasswordBearer":[]}],"parameters":[{"name":"mesa_id","in":"query","required":true,"schema":{"type":"integer","title":"Mesa Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/MesaRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/{slug}/cardapio/":{"get":{"tags":["Public - Cardápio"],"summary":"Get Cardapio","operationId":"get_cardapio_api_v1__slug__cardapio__get","parameters":[{"name":"slug","in":"path","required":true,"schema":{"type":"string","title":"Slug"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CardapioPublicResponse"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/{slug}/pedido/":{"post":{"tags":["Public - Pedido"],"summary":"Create Pedido","operationId":"create_Pedido_api_v1__slug__pedido__post","parameters":[{"name":"slug","in":"path","required":true,"schema":{"type":"string","title":"Slug"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/PedidoCreate"}}}},"responses":{"201":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/PedidoRead"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/{slug}/pedido/{mesa_token}":{"get":{"tags":["Public - Pedido"],"summary":"Get Pedidos","operationId":"get_Pedidos_api_v1__slug__pedido__mesa_token__get","parameters":[{"name":"slug","in":"path","required":true,"schema":{"type":"string","title":"Slug"}},{"name":"mesa_token","in":"path","required":true,"schema":{"type":"string","title":"Mesa Token"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/PedidoRead"},"title":"Response Get Pedidos Api V1  Slug  Pedido  Mesa Token  Get"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}}},"components":{"schemas":{"AdicionalCreate":{"properties":{"nome":{"type":"string","title":"Nome"},"preco":{"anyOf":[{"type":"number"},{"type":"string","pattern":"^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"}],"title":"Preco"},"grupo_id":{"type":"integer","title":"Grupo Id"}},"type":"object","required":["nome","preco","grupo_id"],"title":"AdicionalCreate"},"AdicionalPublic":{"properties":{"id":{"type":"integer","title":"Id"},"nome":{"type":"string","title":"Nome"},"preco":{"type":"number","title":"Preco"}},"type":"object","required":["id","nome","preco"],"title":"AdicionalPublic"},"AdicionalRead":{"properties":{"nome":{"type":"string","title":"Nome"},"preco":{"type":"string","pattern":"^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$","title":"Preco"},"id":{"type":"integer","title":"Id"},"grupo_id":{"type":"integer","title":"Grupo Id"}},"type":"object","required":["nome","preco","id","grupo_id"],"title":"AdicionalRead"},"AdicionalUpdate":{"properties":{"nome":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Nome"},"preco":{"anyOf":[{"type":"number"},{"type":"string","pattern":"^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"},{"type":"null"}],"title":"Preco"},"grupo_id":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Grupo Id"}},"type":"object","title":"AdicionalUpdate"},"Body_login_api_v1_admin_autenticacao_login_post":{"properties":{"grant_type":{"anyOf":[{"type":"string","pattern":"^password$"},{"type":"null"}],"title":"Grant Type"},"username":{"type":"string","title":"Username"},"password":{"type":"string","format":"password","title":"Password"},"scope":{"type":"string","title":"Scope","default":""},"client_id":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Client Id"},"client_secret":{"anyOf":[{"type":"string"},{"type":"null"}],"format":"password","title":"Client Secret"}},"type":"object","required":["username","password"],"title":"Body_login_api_v1_admin_autenticacao_login_post"},"CardapioPublicResponse":{"properties":{"estabelecimento":{"$ref":"#/components/schemas/EstabelecimentoPublic"},"categorias":{"items":{"$ref":"#/components/schemas/CategoriaPublic"},"type":"array","title":"Categorias"}},"type":"object","required":["estabelecimento","categorias"],"title":"CardapioPublicResponse"},"CategoriaProdutoCreate":{"properties":{"nome":{"type":"string","title":"Nome"},"icone":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Icone"},"ordem":{"type":"integer","title":"Ordem","default":0},"estabelecimento_id":{"type":"integer","title":"Estabelecimento Id"}},"type":"object","required":["nome","estabelecimento_id"],"title":"CategoriaProdutoCreate"},"CategoriaProdutoRead":{"properties":{"nome":{"type":"string","title":"Nome"},"icone":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Icone"},"ordem":{"type":"integer","title":"Ordem","default":0},"estabelecimento_id":{"type":"integer","title":"Estabelecimento Id"},"id":{"type":"integer","title":"Id"}},"type":"object","required":["nome","estabelecimento_id","id"],"title":"CategoriaProdutoRead"},"CategoriaProdutoUpdate":{"properties":{"nome":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Nome"},"icone":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Icone"},"ordem":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Ordem"},"ativo":{"anyOf":[{"type":"boolean"},{"type":"null"}],"title":"Ativo"}},"type":"object","title":"CategoriaProdutoUpdate"},"CategoriaPublic":{"properties":{"id":{"type":"integer","title":"Id"},"nome":{"type":"string","title":"Nome"},"ordem":{"type":"integer","title":"Ordem"},"produtos":{"items":{"$ref":"#/components/schemas/ProdutoPublic"},"type":"array","title":"Produtos"}},"type":"object","required":["id","nome","ordem","produtos"],"title":"CategoriaPublic"},"ComandaRead":{"properties":{"numero_mesa":{"type":"integer","title":"Numero Mesa"},"status":{"$ref":"#/components/schemas/StatusComanda","default":"aberta"},"id":{"type":"integer","title":"Id"},"total":{"type":"string","pattern":"^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$","title":"Total"}},"type":"object","required":["numero_mesa","id","total"],"title":"ComandaRead"},"DiaFuncionamento":{"properties":{"dia":{"type":"string","title":"Dia"},"abertura":{"type":"string","title":"Abertura"},"fechamento":{"type":"string","title":"Fechamento"}},"type":"object","required":["dia","abertura","fechamento"],"title":"DiaFuncionamento"},"EstabelecimentoCreate":{"properties":{"nome":{"type":"string","title":"Nome"},"cnpj":{"type":"string","title":"Cnpj"},"endereco":{"type":"string","title":"Endereco"},"telefone":{"type":"string","title":"Telefone"},"email":{"type":"string","format":"email","title":"Email"},"logo_url":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Logo Url"},"dias_funcionamento":{"anyOf":[{"items":{"$ref":"#/components/schemas/DiaFuncionamento"},"type":"array"},{"type":"null"}],"title":"Dias Funcionamento"}},"type":"object","required":["nome","cnpj","endereco","telefone","email"],"title":"EstabelecimentoCreate"},"EstabelecimentoPublic":{"properties":{"nome":{"type":"string","title":"Nome"},"aberto":{"type":"boolean","title":"Aberto"}},"type":"object","required":["nome","aberto"],"title":"EstabelecimentoPublic"},"EstabelecimentoRead":{"properties":{"nome":{"type":"string","title":"Nome"},"cnpj":{"type":"string","title":"Cnpj"},"endereco":{"type":"string","title":"Endereco"},"telefone":{"type":"string","title":"Telefone"},"email":{"type":"string","format":"email","title":"Email"},"logo_url":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Logo Url"},"id":{"type":"integer","title":"Id"},"dias_funcionamento":{"items":{"$ref":"#/components/schemas/DiaFuncionamento"},"type":"array","title":"Dias Funcionamento"},"esta_aberto":{"type":"boolean","title":"Esta Aberto"}},"type":"object","required":["nome","cnpj","endereco","telefone","email","id","dias_funcionamento","esta_aberto"],"title":"EstabelecimentoRead"},"EstabelecimentoUpdate":{"properties":{"nome":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Nome"},"endereco":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Endereco"},"telefone":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Telefone"},"email":{"anyOf":[{"type":"string","format":"email"},{"type":"null"}],"title":"Email"},"logo_url":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Logo Url"}},"type":"object","title":"EstabelecimentoUpdate"},"GrupoAdicionalCreate":{"properties":{"nome":{"type":"string","title":"Nome"},"max_selecoes":{"type":"integer","title":"Max Selecoes","default":1},"produto_id":{"type":"integer","title":"Produto Id"}},"type":"object","required":["nome","produto_id"],"title":"GrupoAdicionalCreate"},"GrupoAdicionalRead":{"properties":{"nome":{"type":"string","title":"Nome"},"max_selecoes":{"type":"integer","title":"Max Selecoes","default":1},"produto_id":{"type":"integer","title":"Produto Id"},"id":{"type":"integer","title":"Id"}},"type":"object","required":["nome","produto_id","id"],"title":"GrupoAdicionalRead"},"GrupoAdicionalUpdate":{"properties":{"nome":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Nome"},"max_selecoes":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Max Selecoes"}},"type":"object","title":"GrupoAdicionalUpdate"},"HTTPValidationError":{"properties":{"detail":{"items":{"$ref":"#/components/schemas/ValidationError"},"type":"array","title":"Detail"}},"type":"object","title":"HTTPValidationError"},"MesaCreate":{"properties":{"numero":{"type":"integer","title":"Numero"}},"type":"object","required":["numero"],"title":"MesaCreate"},"MesaRead":{"properties":{"numero":{"type":"integer","title":"Numero"},"id":{"type":"integer","title":"Id"},"token":{"type":"string","title":"Token"},"ativa":{"type":"boolean","title":"Ativa"},"criado_em":{"anyOf":[{"type":"string","format":"date-time"},{"type":"null"}],"title":"Criado Em"}},"type":"object","required":["numero","id","token","ativa"],"title":"MesaRead"},"MesaUpdate":{"properties":{"numero":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Numero"},"ativa":{"anyOf":[{"type":"boolean"},{"type":"null"}],"title":"Ativa"}},"type":"object","title":"MesaUpdate"},"PedidoCreate":{"properties":{"nome_cliente":{"type":"string","title":"Nome Cliente"},"numero_mesa":{"type":"integer","title":"Numero Mesa"},"obs":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Obs"},"itens":{"items":{"$ref":"#/components/schemas/PedidoItem-Input"},"type":"array","title":"Itens"}},"type":"object","required":["nome_cliente","numero_mesa"],"title":"PedidoCreate"},"PedidoItem-Input":{"properties":{"produto_id":{"type":"integer","title":"Produto Id"},"nome_produto":{"type":"string","title":"Nome Produto"},"preco_unitario":{"anyOf":[{"type":"number"},{"type":"string","pattern":"^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"}],"title":"Preco Unitario"},"quantidade":{"type":"integer","title":"Quantidade"},"adicionais":{"items":{"$ref":"#/components/schemas/PedidoItemAdicional-Input"},"type":"array","title":"Adicionais"}},"type":"object","required":["produto_id","nome_produto","preco_unitario","quantidade"],"title":"PedidoItem"},"PedidoItem-Output":{"properties":{"produto_id":{"type":"integer","title":"Produto Id"},"nome_produto":{"type":"string","title":"Nome Produto"},"preco_unitario":{"type":"string","pattern":"^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$","title":"Preco Unitario"},"quantidade":{"type":"integer","title":"Quantidade"},"adicionais":{"items":{"$ref":"#/components/schemas/PedidoItemAdicional-Output"},"type":"array","title":"Adicionais"}},"type":"object","required":["produto_id","nome_produto","preco_unitario","quantidade"],"title":"PedidoItem"},"PedidoItemAdicional-Input":{"properties":{"id":{"type":"integer","title":"Id"},"nome":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Nome"},"preco":{"anyOf":[{"type":"number"},{"type":"string","pattern":"^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"}],"title":"Preco"}},"type":"object","required":["id","preco"],"title":"PedidoItemAdicional"},"PedidoItemAdicional-Output":{"properties":{"id":{"type":"integer","title":"Id"},"nome":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Nome"},"preco":{"type":"string","pattern":"^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$","title":"Preco"}},"type":"object","required":["id","preco"],"title":"PedidoItemAdicional"},"PedidoRead":{"properties":{"nome_cliente":{"type":"string","title":"Nome Cliente"},"numero_mesa":{"type":"integer","title":"Numero Mesa"},"obs":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Obs"},"itens":{"items":{"$ref":"#/components/schemas/PedidoItem-Output"},"type":"array","title":"Itens"},"id":{"type":"integer","title":"Id"},"status":{"type":"string","title":"Status"},"total":{"type":"string","pattern":"^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$","title":"Total"},"criado_em":{"type":"string","format":"date-time","title":"Criado Em"}},"type":"object","required":["nome_cliente","numero_mesa","id","status","total"],"title":"PedidoRead"},"PedidoUpdate":{"properties":{"status":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Status"}},"type":"object","title":"PedidoUpdate"},"ProdutoCreate-Input":{"properties":{"nome":{"type":"string","title":"Nome"},"descricao":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Descricao"},"preco":{"anyOf":[{"type":"number"},{"type":"string","pattern":"^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"}],"title":"Preco"},"imagem_url":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Imagem Url"},"categoria_id":{"type":"integer","title":"Categoria Id"}},"type":"object","required":["nome","preco","categoria_id"],"title":"ProdutoCreate"},"ProdutoCreate-Output":{"properties":{"nome":{"type":"string","title":"Nome"},"descricao":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Descricao"},"preco":{"type":"string","pattern":"^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$","title":"Preco"},"imagem_url":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Imagem Url"},"categoria_id":{"type":"integer","title":"Categoria Id"}},"type":"object","required":["nome","preco","categoria_id"],"title":"ProdutoCreate"},"ProdutoPublic":{"properties":{"id":{"type":"integer","title":"Id"},"nome":{"type":"string","title":"Nome"},"descricao":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Descricao"},"preco":{"type":"number","title":"Preco"},"imagem_url":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Imagem Url"},"disponivel":{"type":"boolean","title":"Disponivel"},"adicionais":{"items":{"$ref":"#/components/schemas/AdicionalPublic"},"type":"array","title":"Adicionais","default":[]}},"type":"object","required":["id","nome","descricao","preco","imagem_url","disponivel"],"title":"ProdutoPublic"},"ProdutoRead":{"properties":{"nome":{"type":"string","title":"Nome"},"descricao":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Descricao"},"preco":{"type":"string","pattern":"^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$","title":"Preco"},"imagem_url":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Imagem Url"},"categoria_id":{"type":"integer","title":"Categoria Id"},"id":{"type":"integer","title":"Id"},"ativo":{"type":"boolean","title":"Ativo"}},"type":"object","required":["nome","preco","categoria_id","id","ativo"],"title":"ProdutoRead"},"ProdutoUpdate":{"properties":{"nome":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Nome"},"descricao":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Descricao"},"preco":{"anyOf":[{"type":"number"},{"type":"string","pattern":"^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"},{"type":"null"}],"title":"Preco"},"imagem_url":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Imagem Url"},"categoria_id":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Categoria Id"},"estabelecimento_id":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Estabelecimento Id"},"ativo":{"anyOf":[{"type":"boolean"},{"type":"null"}],"title":"Ativo"}},"type":"object","title":"ProdutoUpdate"},"StatusComanda":{"type":"string","enum":["aberta","fechada","paga"],"title":"StatusComanda"},"TokenResponse":{"properties":{"usuario_id":{"type":"integer","title":"Usuario Id"},"estabelecimento_id":{"type":"integer","title":"Estabelecimento Id"},"access_token":{"type":"string","title":"Access Token"},"token_type":{"type":"string","title":"Token Type","default":"bearer"}},"type":"object","required":["usuario_id","estabelecimento_id","access_token"],"title":"TokenResponse"},"UsuarioCreate":{"properties":{"usuario":{"type":"string","title":"Usuario"},"estabelecimento_id":{"type":"integer","title":"Estabelecimento Id"},"senha":{"type":"string","title":"Senha"}},"type":"object","required":["usuario","estabelecimento_id","senha"],"title":"UsuarioCreate"},"UsuarioRead":{"properties":{"usuario":{"type":"string","title":"Usuario"},"estabelecimento_id":{"type":"integer","title":"Estabelecimento Id"}},"type":"object","required":["usuario","estabelecimento_id"],"title":"UsuarioRead"},"ValidationError":{"properties":{"loc":{"items":{"anyOf":[{"type":"string"},{"type":"integer"}]},"type":"array","title":"Location"},"msg":{"type":"string","title":"Message"},"type":{"type":"string","title":"Error Type"},"input":{"title":"Input"},"ctx":{"type":"object","title":"Context"}},"type":"object","required":["loc","msg","type"],"title":"ValidationError"}},"securitySchemes":{"OAuth2PasswordBearer":{"type":"oauth2","flows":{"password":{"scopes":{},"tokenUrl":"/api/v1/admin/autenticacao/login"}}}}}}
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "QuickPed",
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/api/v1/admin/autenticacao/login": {
+            "post": {
+                "tags": [
+                    "Admin - Autenticacao"
+                ],
+                "summary": "Login",
+                "operationId": "login_api_v1_admin_autenticacao_login_post",
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Body_login_api_v1_admin_autenticacao_login_post"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TokenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/autenticacao/registrar": {
+            "post": {
+                "tags": [
+                    "Admin - Autenticacao"
+                ],
+                "summary": "Registrar",
+                "operationId": "registrar_api_v1_admin_autenticacao_registrar_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UsuarioCreate"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UsuarioRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/estabelecimento/": {
+            "get": {
+                "tags": [
+                    "Admin - Estabelecimento"
+                ],
+                "summary": "Get Estabelecimento",
+                "operationId": "get_estabelecimento_api_v1_admin_estabelecimento__get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EstabelecimentoRead"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admin - Estabelecimento"
+                ],
+                "summary": "Update Estabelecimento",
+                "operationId": "update_estabelecimento_api_v1_admin_estabelecimento__put",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EstabelecimentoUpdate"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EstabelecimentoRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin - Estabelecimento"
+                ],
+                "summary": "Create Estabelecimento",
+                "operationId": "create_estabelecimento_api_v1_admin_estabelecimento__post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EstabelecimentoCreate"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EstabelecimentoRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/categoria-produto/": {
+            "post": {
+                "tags": [
+                    "Admin - Categoria Produto"
+                ],
+                "summary": "Create Categoria Produto",
+                "operationId": "create_categoria_produto_api_v1_admin_categoria_produto__post",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CategoriaProdutoCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CategoriaProdutoRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Admin - Categoria Produto"
+                ],
+                "summary": "Get Categoria Produtos",
+                "operationId": "get_categoria_produtos_api_v1_admin_categoria_produto__get",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/CategoriaProdutoRead"
+                                    },
+                                    "title": "Response Get Categoria Produtos Api V1 Admin Categoria Produto  Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Admin - Categoria Produto"
+                ],
+                "summary": "Update Categoria Produto",
+                "operationId": "update_categoria_produto_api_v1_admin_categoria_produto__put",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "categoria_produto_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Categoria Produto Id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CategoriaProdutoUpdate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CategoriaProdutoRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/categoria-produto/{categoria_produto_id}": {
+            "delete": {
+                "tags": [
+                    "Admin - Categoria Produto"
+                ],
+                "summary": "Delete Categoria Produto",
+                "operationId": "delete_categoria_produto_api_v1_admin_categoria_produto__categoria_produto_id__delete",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "categoria_produto_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Categoria Produto Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CategoriaProdutoRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/produto/": {
+            "post": {
+                "tags": [
+                    "Admin - Produto"
+                ],
+                "summary": "Create Produto",
+                "operationId": "create_produto_api_v1_admin_produto__post",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProdutoCreate-Input"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProdutoCreate-Output"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Admin - Produto"
+                ],
+                "summary": "Get Produtos",
+                "operationId": "get_produtos_api_v1_admin_produto__get",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ProdutoRead"
+                                    },
+                                    "title": "Response Get Produtos Api V1 Admin Produto  Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Admin - Produto"
+                ],
+                "summary": "Update Produto",
+                "operationId": "update_produto_api_v1_admin_produto__put",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "produto_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Produto Id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProdutoUpdate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProdutoRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Admin - Produto"
+                ],
+                "summary": "Delete Produto",
+                "operationId": "delete_produto_api_v1_admin_produto__delete",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "produto_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Produto Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProdutoRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/produto/grupo-adicional/": {
+            "post": {
+                "tags": [
+                    "Admin - Grupo Adicional"
+                ],
+                "summary": "Create Grupo Adicional",
+                "operationId": "create_grupo_adicional_api_v1_admin_produto_grupo_adicional__post",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GrupoAdicionalCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GrupoAdicionalRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Admin - Grupo Adicional"
+                ],
+                "summary": "Get Grupos Adicionais",
+                "operationId": "get_grupos_adicionais_api_v1_admin_produto_grupo_adicional__get",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/GrupoAdicionalRead"
+                                    },
+                                    "title": "Response Get Grupos Adicionais Api V1 Admin Produto Grupo Adicional  Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Admin - Grupo Adicional"
+                ],
+                "summary": "Update Grupo Adicional",
+                "operationId": "update_grupo_adicional_api_v1_admin_produto_grupo_adicional__put",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "grupo_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Grupo Id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GrupoAdicionalUpdate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GrupoAdicionalRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Admin - Grupo Adicional"
+                ],
+                "summary": "Delete Grupo Adicional",
+                "operationId": "delete_grupo_adicional_api_v1_admin_produto_grupo_adicional__delete",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "grupo_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Grupo Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GrupoAdicionalRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/produto/adicional/": {
+            "post": {
+                "tags": [
+                    "Admin - Adicional"
+                ],
+                "summary": "Create Adicional",
+                "operationId": "create_adicional_api_v1_admin_produto_adicional__post",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AdicionalCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdicionalRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Admin - Adicional"
+                ],
+                "summary": "Get Adicionais",
+                "operationId": "get_adicionais_api_v1_admin_produto_adicional__get",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AdicionalRead"
+                                    },
+                                    "title": "Response Get Adicionais Api V1 Admin Produto Adicional  Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Admin - Adicional"
+                ],
+                "summary": "Update Adicional",
+                "operationId": "update_adicional_api_v1_admin_produto_adicional__put",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "adicional_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Adicional Id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AdicionalUpdate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdicionalRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Admin - Adicional"
+                ],
+                "summary": "Delete Adicional",
+                "operationId": "delete_adicional_api_v1_admin_produto_adicional__delete",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "adicional_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Adicional Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdicionalRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/pedido/": {
+            "get": {
+                "tags": [
+                    "Admin - Pedido"
+                ],
+                "summary": "Get Pedidos",
+                "operationId": "get_Pedidos_api_v1_admin_pedido__get",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PedidoRead"
+                                    },
+                                    "title": "Response Get Pedidos Api V1 Admin Pedido  Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Admin - Pedido"
+                ],
+                "summary": "Update Pedido",
+                "operationId": "update_Pedido_api_v1_admin_pedido__put",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "Pedido_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Pedido Id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PedidoUpdate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PedidoRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Admin - Pedido"
+                ],
+                "summary": "Update Pedido",
+                "operationId": "update_Pedido_api_v1_admin_pedido__delete",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "Pedido_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Pedido Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PedidoRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/comanda/": {
+            "get": {
+                "tags": [
+                    "Admin - Comanda"
+                ],
+                "summary": "Get Comanda",
+                "operationId": "get_comanda_api_v1_admin_comanda__get",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ComandaRead"
+                                    },
+                                    "title": "Response Get Comanda Api V1 Admin Comanda  Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Admin - Comanda"
+                ],
+                "summary": "Update Comanda",
+                "operationId": "update_comanda_api_v1_admin_comanda__put",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "comanda_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Comanda Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ComandaRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/mesa/": {
+            "post": {
+                "tags": [
+                    "Admin - Mesa"
+                ],
+                "summary": "Create Mesa",
+                "operationId": "create_mesa_api_v1_admin_mesa__post",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MesaCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MesaCreate"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Admin - Mesa"
+                ],
+                "summary": "Get Mesas",
+                "operationId": "get_mesas_api_v1_admin_mesa__get",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/MesaRead"
+                                    },
+                                    "title": "Response Get Mesas Api V1 Admin Mesa  Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Admin - Mesa"
+                ],
+                "summary": "Update Mesa",
+                "operationId": "update_mesa_api_v1_admin_mesa__put",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "mesa_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Mesa Id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MesaUpdate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MesaRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Admin - Mesa"
+                ],
+                "summary": "Delete Mesa",
+                "operationId": "delete_mesa_api_v1_admin_mesa__delete",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "mesa_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Mesa Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MesaRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/{slug}/cardapio/": {
+            "get": {
+                "tags": [
+                    "Public - Cardápio"
+                ],
+                "summary": "Get Cardapio",
+                "operationId": "get_cardapio_api_v1__slug__cardapio__get",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Slug"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CardapioPublicResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/{slug}/pedido/": {
+            "post": {
+                "tags": [
+                    "Public - Pedido"
+                ],
+                "summary": "Create Pedido",
+                "operationId": "create_Pedido_api_v1__slug__pedido__post",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Slug"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PedidoCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PedidoRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/{slug}/pedido/{mesa_token}": {
+            "get": {
+                "tags": [
+                    "Public - Pedido"
+                ],
+                "summary": "Get Pedidos",
+                "operationId": "get_Pedidos_api_v1__slug__pedido__mesa_token__get",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Slug"
+                        }
+                    },
+                    {
+                        "name": "mesa_token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Mesa Token"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PedidoRead"
+                                    },
+                                    "title": "Response Get Pedidos Api V1  Slug  Pedido  Mesa Token  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AdicionalCreate": {
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "title": "Nome"
+                    },
+                    "preco": {
+                        "anyOf": [
+                            {
+                                "type": "number"
+                            },
+                            {
+                                "type": "string",
+                                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+                            }
+                        ],
+                        "title": "Preco"
+                    },
+                    "grupo_id": {
+                        "type": "integer",
+                        "title": "Grupo Id"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "nome",
+                    "preco",
+                    "grupo_id"
+                ],
+                "title": "AdicionalCreate"
+            },
+            "AdicionalPublic": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "nome": {
+                        "type": "string",
+                        "title": "Nome"
+                    },
+                    "preco": {
+                        "type": "number",
+                        "title": "Preco"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "nome",
+                    "preco"
+                ],
+                "title": "AdicionalPublic"
+            },
+            "AdicionalRead": {
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "title": "Nome"
+                    },
+                    "preco": {
+                        "type": "string",
+                        "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                        "title": "Preco"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "grupo_id": {
+                        "type": "integer",
+                        "title": "Grupo Id"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "nome",
+                    "preco",
+                    "id",
+                    "grupo_id"
+                ],
+                "title": "AdicionalRead"
+            },
+            "AdicionalUpdate": {
+                "properties": {
+                    "nome": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Nome"
+                    },
+                    "preco": {
+                        "anyOf": [
+                            {
+                                "type": "number"
+                            },
+                            {
+                                "type": "string",
+                                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Preco"
+                    },
+                    "grupo_id": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Grupo Id"
+                    }
+                },
+                "type": "object",
+                "title": "AdicionalUpdate"
+            },
+            "Body_login_api_v1_admin_autenticacao_login_post": {
+                "properties": {
+                    "grant_type": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "pattern": "^password$"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Grant Type"
+                    },
+                    "username": {
+                        "type": "string",
+                        "title": "Username"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "title": "Password"
+                    },
+                    "scope": {
+                        "type": "string",
+                        "title": "Scope",
+                        "default": ""
+                    },
+                    "client_id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Client Id"
+                    },
+                    "client_secret": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "format": "password",
+                        "title": "Client Secret"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "username",
+                    "password"
+                ],
+                "title": "Body_login_api_v1_admin_autenticacao_login_post"
+            },
+            "CardapioPublicResponse": {
+                "properties": {
+                    "estabelecimento": {
+                        "$ref": "#/components/schemas/EstabelecimentoPublic"
+                    },
+                    "categorias": {
+                        "items": {
+                            "$ref": "#/components/schemas/CategoriaPublic"
+                        },
+                        "type": "array",
+                        "title": "Categorias"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "estabelecimento",
+                    "categorias"
+                ],
+                "title": "CardapioPublicResponse"
+            },
+            "CategoriaProdutoCreate": {
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "title": "Nome"
+                    },
+                    "icone": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Icone"
+                    },
+                    "ordem": {
+                        "type": "integer",
+                        "title": "Ordem",
+                        "default": 0
+                    },
+                    "estabelecimento_id": {
+                        "type": "integer",
+                        "title": "Estabelecimento Id"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "nome",
+                    "estabelecimento_id"
+                ],
+                "title": "CategoriaProdutoCreate"
+            },
+            "CategoriaProdutoRead": {
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "title": "Nome"
+                    },
+                    "icone": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Icone"
+                    },
+                    "ordem": {
+                        "type": "integer",
+                        "title": "Ordem",
+                        "default": 0
+                    },
+                    "estabelecimento_id": {
+                        "type": "integer",
+                        "title": "Estabelecimento Id"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "nome",
+                    "estabelecimento_id",
+                    "id"
+                ],
+                "title": "CategoriaProdutoRead"
+            },
+            "CategoriaProdutoUpdate": {
+                "properties": {
+                    "nome": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Nome"
+                    },
+                    "icone": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Icone"
+                    },
+                    "ordem": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Ordem"
+                    },
+                    "ativo": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Ativo"
+                    }
+                },
+                "type": "object",
+                "title": "CategoriaProdutoUpdate"
+            },
+            "CategoriaPublic": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "nome": {
+                        "type": "string",
+                        "title": "Nome"
+                    },
+                    "ordem": {
+                        "type": "integer",
+                        "title": "Ordem"
+                    },
+                    "produtos": {
+                        "items": {
+                            "$ref": "#/components/schemas/ProdutoPublic"
+                        },
+                        "type": "array",
+                        "title": "Produtos"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "nome",
+                    "ordem",
+                    "produtos"
+                ],
+                "title": "CategoriaPublic"
+            },
+            "ComandaRead": {
+                "properties": {
+                    "numero_mesa": {
+                        "type": "integer",
+                        "title": "Numero Mesa"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/StatusComanda",
+                        "default": "aberta"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "total": {
+                        "type": "string",
+                        "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                        "title": "Total"
+                    },
+                    "pedidos": {
+                        "items": {
+                            "$ref": "#/components/schemas/PedidoRead"
+                        },
+                        "type": "array",
+                        "title": "Pedidos",
+                        "default": []
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "numero_mesa",
+                    "id",
+                    "total"
+                ],
+                "title": "ComandaRead"
+            },
+            "DiaFuncionamento": {
+                "properties": {
+                    "dia": {
+                        "type": "string",
+                        "title": "Dia"
+                    },
+                    "abertura": {
+                        "type": "string",
+                        "title": "Abertura"
+                    },
+                    "fechamento": {
+                        "type": "string",
+                        "title": "Fechamento"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "dia",
+                    "abertura",
+                    "fechamento"
+                ],
+                "title": "DiaFuncionamento"
+            },
+            "EstabelecimentoCreate": {
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "title": "Nome"
+                    },
+                    "cnpj": {
+                        "type": "string",
+                        "title": "Cnpj"
+                    },
+                    "endereco": {
+                        "type": "string",
+                        "title": "Endereco"
+                    },
+                    "telefone": {
+                        "type": "string",
+                        "title": "Telefone"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "Email"
+                    },
+                    "logo_url": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Logo Url"
+                    },
+                    "dias_funcionamento": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "$ref": "#/components/schemas/DiaFuncionamento"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Dias Funcionamento"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "nome",
+                    "cnpj",
+                    "endereco",
+                    "telefone",
+                    "email"
+                ],
+                "title": "EstabelecimentoCreate"
+            },
+            "EstabelecimentoPublic": {
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "title": "Nome"
+                    },
+                    "aberto": {
+                        "type": "boolean",
+                        "title": "Aberto"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "nome",
+                    "aberto"
+                ],
+                "title": "EstabelecimentoPublic"
+            },
+            "EstabelecimentoRead": {
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "title": "Nome"
+                    },
+                    "cnpj": {
+                        "type": "string",
+                        "title": "Cnpj"
+                    },
+                    "endereco": {
+                        "type": "string",
+                        "title": "Endereco"
+                    },
+                    "telefone": {
+                        "type": "string",
+                        "title": "Telefone"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "Email"
+                    },
+                    "logo_url": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Logo Url"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "dias_funcionamento": {
+                        "items": {
+                            "$ref": "#/components/schemas/DiaFuncionamento"
+                        },
+                        "type": "array",
+                        "title": "Dias Funcionamento"
+                    },
+                    "esta_aberto": {
+                        "type": "boolean",
+                        "title": "Esta Aberto"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "nome",
+                    "cnpj",
+                    "endereco",
+                    "telefone",
+                    "email",
+                    "id",
+                    "dias_funcionamento",
+                    "esta_aberto"
+                ],
+                "title": "EstabelecimentoRead"
+            },
+            "EstabelecimentoUpdate": {
+                "properties": {
+                    "nome": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Nome"
+                    },
+                    "endereco": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Endereco"
+                    },
+                    "telefone": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Telefone"
+                    },
+                    "email": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "email"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Email"
+                    },
+                    "logo_url": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Logo Url"
+                    },
+                    "aberto": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Aberto"
+                    }
+                },
+                "type": "object",
+                "title": "EstabelecimentoUpdate"
+            },
+            "GrupoAdicionalCreate": {
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "title": "Nome"
+                    },
+                    "max_selecoes": {
+                        "type": "integer",
+                        "title": "Max Selecoes",
+                        "default": 1
+                    },
+                    "produto_id": {
+                        "type": "integer",
+                        "title": "Produto Id"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "nome",
+                    "produto_id"
+                ],
+                "title": "GrupoAdicionalCreate"
+            },
+            "GrupoAdicionalRead": {
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "title": "Nome"
+                    },
+                    "max_selecoes": {
+                        "type": "integer",
+                        "title": "Max Selecoes",
+                        "default": 1
+                    },
+                    "produto_id": {
+                        "type": "integer",
+                        "title": "Produto Id"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "nome",
+                    "produto_id",
+                    "id"
+                ],
+                "title": "GrupoAdicionalRead"
+            },
+            "GrupoAdicionalUpdate": {
+                "properties": {
+                    "nome": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Nome"
+                    },
+                    "max_selecoes": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Max Selecoes"
+                    }
+                },
+                "type": "object",
+                "title": "GrupoAdicionalUpdate"
+            },
+            "HTTPValidationError": {
+                "properties": {
+                    "detail": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "type": "array",
+                        "title": "Detail"
+                    }
+                },
+                "type": "object",
+                "title": "HTTPValidationError"
+            },
+            "MesaCreate": {
+                "properties": {
+                    "numero": {
+                        "type": "integer",
+                        "title": "Numero"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "numero"
+                ],
+                "title": "MesaCreate"
+            },
+            "MesaRead": {
+                "properties": {
+                    "numero": {
+                        "type": "integer",
+                        "title": "Numero"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "token": {
+                        "type": "string",
+                        "title": "Token"
+                    },
+                    "ativa": {
+                        "type": "boolean",
+                        "title": "Ativa"
+                    },
+                    "criado_em": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Criado Em"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "numero",
+                    "id",
+                    "token",
+                    "ativa"
+                ],
+                "title": "MesaRead"
+            },
+            "MesaUpdate": {
+                "properties": {
+                    "numero": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Numero"
+                    },
+                    "ativa": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Ativa"
+                    }
+                },
+                "type": "object",
+                "title": "MesaUpdate"
+            },
+            "PedidoCreate": {
+                "properties": {
+                    "nome_cliente": {
+                        "type": "string",
+                        "title": "Nome Cliente"
+                    },
+                    "numero_mesa": {
+                        "type": "integer",
+                        "title": "Numero Mesa"
+                    },
+                    "obs": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Obs"
+                    },
+                    "itens": {
+                        "items": {
+                            "$ref": "#/components/schemas/PedidoItem-Input"
+                        },
+                        "type": "array",
+                        "title": "Itens"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "nome_cliente",
+                    "numero_mesa"
+                ],
+                "title": "PedidoCreate"
+            },
+            "PedidoItem-Input": {
+                "properties": {
+                    "produto_id": {
+                        "type": "integer",
+                        "title": "Produto Id"
+                    },
+                    "nome_produto": {
+                        "type": "string",
+                        "title": "Nome Produto"
+                    },
+                    "preco_unitario": {
+                        "anyOf": [
+                            {
+                                "type": "number"
+                            },
+                            {
+                                "type": "string",
+                                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+                            }
+                        ],
+                        "title": "Preco Unitario"
+                    },
+                    "quantidade": {
+                        "type": "integer",
+                        "title": "Quantidade"
+                    },
+                    "adicionais": {
+                        "items": {
+                            "$ref": "#/components/schemas/PedidoItemAdicional-Input"
+                        },
+                        "type": "array",
+                        "title": "Adicionais"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "produto_id",
+                    "nome_produto",
+                    "preco_unitario",
+                    "quantidade"
+                ],
+                "title": "PedidoItem"
+            },
+            "PedidoItem-Output": {
+                "properties": {
+                    "produto_id": {
+                        "type": "integer",
+                        "title": "Produto Id"
+                    },
+                    "nome_produto": {
+                        "type": "string",
+                        "title": "Nome Produto"
+                    },
+                    "preco_unitario": {
+                        "type": "string",
+                        "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                        "title": "Preco Unitario"
+                    },
+                    "quantidade": {
+                        "type": "integer",
+                        "title": "Quantidade"
+                    },
+                    "adicionais": {
+                        "items": {
+                            "$ref": "#/components/schemas/PedidoItemAdicional-Output"
+                        },
+                        "type": "array",
+                        "title": "Adicionais"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "produto_id",
+                    "nome_produto",
+                    "preco_unitario",
+                    "quantidade"
+                ],
+                "title": "PedidoItem"
+            },
+            "PedidoItemAdicional-Input": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "nome": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Nome"
+                    },
+                    "preco": {
+                        "anyOf": [
+                            {
+                                "type": "number"
+                            },
+                            {
+                                "type": "string",
+                                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+                            }
+                        ],
+                        "title": "Preco"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "preco"
+                ],
+                "title": "PedidoItemAdicional"
+            },
+            "PedidoItemAdicional-Output": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "nome": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Nome"
+                    },
+                    "preco": {
+                        "type": "string",
+                        "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                        "title": "Preco"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "preco"
+                ],
+                "title": "PedidoItemAdicional"
+            },
+            "PedidoRead": {
+                "properties": {
+                    "nome_cliente": {
+                        "type": "string",
+                        "title": "Nome Cliente"
+                    },
+                    "numero_mesa": {
+                        "type": "integer",
+                        "title": "Numero Mesa"
+                    },
+                    "obs": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Obs"
+                    },
+                    "itens": {
+                        "items": {
+                            "$ref": "#/components/schemas/PedidoItem-Output"
+                        },
+                        "type": "array",
+                        "title": "Itens"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "status": {
+                        "type": "string",
+                        "title": "Status"
+                    },
+                    "total": {
+                        "type": "string",
+                        "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                        "title": "Total"
+                    },
+                    "criado_em": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Criado Em"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "nome_cliente",
+                    "numero_mesa",
+                    "id",
+                    "status",
+                    "total"
+                ],
+                "title": "PedidoRead"
+            },
+            "PedidoUpdate": {
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "title": "Status"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "status"
+                ],
+                "title": "PedidoUpdate"
+            },
+            "ProdutoCreate-Input": {
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "title": "Nome"
+                    },
+                    "descricao": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Descricao"
+                    },
+                    "preco": {
+                        "anyOf": [
+                            {
+                                "type": "number"
+                            },
+                            {
+                                "type": "string",
+                                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+                            }
+                        ],
+                        "title": "Preco"
+                    },
+                    "imagem_url": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Imagem Url"
+                    },
+                    "categoria_id": {
+                        "type": "integer",
+                        "title": "Categoria Id"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "nome",
+                    "preco",
+                    "categoria_id"
+                ],
+                "title": "ProdutoCreate"
+            },
+            "ProdutoCreate-Output": {
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "title": "Nome"
+                    },
+                    "descricao": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Descricao"
+                    },
+                    "preco": {
+                        "type": "string",
+                        "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                        "title": "Preco"
+                    },
+                    "imagem_url": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Imagem Url"
+                    },
+                    "categoria_id": {
+                        "type": "integer",
+                        "title": "Categoria Id"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "nome",
+                    "preco",
+                    "categoria_id"
+                ],
+                "title": "ProdutoCreate"
+            },
+            "ProdutoPublic": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "nome": {
+                        "type": "string",
+                        "title": "Nome"
+                    },
+                    "descricao": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Descricao"
+                    },
+                    "preco": {
+                        "type": "number",
+                        "title": "Preco"
+                    },
+                    "imagem_url": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Imagem Url"
+                    },
+                    "disponivel": {
+                        "type": "boolean",
+                        "title": "Disponivel"
+                    },
+                    "adicionais": {
+                        "items": {
+                            "$ref": "#/components/schemas/AdicionalPublic"
+                        },
+                        "type": "array",
+                        "title": "Adicionais",
+                        "default": []
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "nome",
+                    "descricao",
+                    "preco",
+                    "imagem_url",
+                    "disponivel"
+                ],
+                "title": "ProdutoPublic"
+            },
+            "ProdutoRead": {
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "title": "Nome"
+                    },
+                    "descricao": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Descricao"
+                    },
+                    "preco": {
+                        "type": "string",
+                        "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                        "title": "Preco"
+                    },
+                    "imagem_url": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Imagem Url"
+                    },
+                    "categoria_id": {
+                        "type": "integer",
+                        "title": "Categoria Id"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "ativo": {
+                        "type": "boolean",
+                        "title": "Ativo"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "nome",
+                    "preco",
+                    "categoria_id",
+                    "id",
+                    "ativo"
+                ],
+                "title": "ProdutoRead"
+            },
+            "ProdutoUpdate": {
+                "properties": {
+                    "nome": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Nome"
+                    },
+                    "descricao": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Descricao"
+                    },
+                    "preco": {
+                        "anyOf": [
+                            {
+                                "type": "number"
+                            },
+                            {
+                                "type": "string",
+                                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Preco"
+                    },
+                    "imagem_url": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Imagem Url"
+                    },
+                    "categoria_id": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Categoria Id"
+                    },
+                    "estabelecimento_id": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Estabelecimento Id"
+                    },
+                    "ativo": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Ativo"
+                    }
+                },
+                "type": "object",
+                "title": "ProdutoUpdate"
+            },
+            "StatusComanda": {
+                "type": "string",
+                "enum": [
+                    "aberta",
+                    "fechada"
+                ],
+                "title": "StatusComanda"
+            },
+            "TokenResponse": {
+                "properties": {
+                    "usuario_id": {
+                        "type": "integer",
+                        "title": "Usuario Id"
+                    },
+                    "estabelecimento_id": {
+                        "type": "integer",
+                        "title": "Estabelecimento Id"
+                    },
+                    "access_token": {
+                        "type": "string",
+                        "title": "Access Token"
+                    },
+                    "token_type": {
+                        "type": "string",
+                        "title": "Token Type",
+                        "default": "bearer"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "usuario_id",
+                    "estabelecimento_id",
+                    "access_token"
+                ],
+                "title": "TokenResponse"
+            },
+            "UsuarioCreate": {
+                "properties": {
+                    "usuario": {
+                        "type": "string",
+                        "title": "Usuario"
+                    },
+                    "estabelecimento_id": {
+                        "type": "integer",
+                        "title": "Estabelecimento Id"
+                    },
+                    "senha": {
+                        "type": "string",
+                        "title": "Senha"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "usuario",
+                    "estabelecimento_id",
+                    "senha"
+                ],
+                "title": "UsuarioCreate"
+            },
+            "UsuarioRead": {
+                "properties": {
+                    "usuario": {
+                        "type": "string",
+                        "title": "Usuario"
+                    },
+                    "estabelecimento_id": {
+                        "type": "integer",
+                        "title": "Estabelecimento Id"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "usuario",
+                    "estabelecimento_id"
+                ],
+                "title": "UsuarioRead"
+            },
+            "ValidationError": {
+                "properties": {
+                    "loc": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                    },
+                    "msg": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                    },
+                    "input": {
+                        "title": "Input"
+                    },
+                    "ctx": {
+                        "type": "object",
+                        "title": "Context"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "title": "ValidationError"
+            }
+        },
+        "securitySchemes": {
+            "OAuth2PasswordBearer": {
+                "type": "oauth2",
+                "flows": {
+                    "password": {
+                        "scopes": {},
+                        "tokenUrl": "/api/v1/admin/autenticacao/login"
+                    }
+                }
+            }
+        }
+    }
+}

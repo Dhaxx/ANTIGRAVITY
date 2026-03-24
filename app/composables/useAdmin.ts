@@ -169,7 +169,14 @@ export const useAdminComandas = () => {
     finally { loading.value = false }
   }
 
-  return { comandas, loading, buscar }
+  async function fecharComanda(comandaId: number) {
+    return apiFetch(`/api/v1/admin/comanda/?comanda_id=${comandaId}`, {
+      method: 'PUT',
+      body: { status: 'fechada' }
+    })
+  }
+
+  return { comandas, loading, buscar, fecharComanda }
 }
 
 // ─── Estabelecimento ──────────────────────────────────────────────────────────
@@ -193,7 +200,7 @@ export const useAdminEstabelecimento = () => {
     }
   }
 
-  async function atualizar(dados: { nome?: string; endereco?: string; telefone?: string; email?: string; logo_url?: string }) {
+  async function atualizar(dados: { nome?: string; endereco?: string; telefone?: string; email?: string; logo_url?: string; esta_aberto?: boolean | null }) {
     saving.value = true
     error.value = null
     try {

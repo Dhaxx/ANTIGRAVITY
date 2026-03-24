@@ -90,6 +90,27 @@ const route = useRoute()
 const config = useRuntimeConfig()
 const slug = computed(() => route.params.slug as string)
 
+const mesaToken = computed(() => route.query.mesa as string | undefined)
+const numeroMesaPreenchido = ref<number | null>(null)
+
+async function buscarMesaPorToken() {
+  if (!mesaToken.value || !slug.value) return
+  try {
+    const data = await $fetch<{ numero: number }>(
+      `${config.public.apiBase}/api/v1/${slug.value}/mesa/${mesaToken.value}`
+    )
+    numeroMesaPreenchido.value = data.numero
+  } catch (e) {
+    console.warn('[cardapio] Não foi possível buscar dados da mesa:', e)
+  }
+}
+
+onMounted(() => {
+  if (mesaToken.value) {
+    buscarMesaPorToken()
+  }
+})
+
 const usandoMock = ref(false)
 
 const { data: cardapio, pending: loading, refresh } = await useAsyncData(
@@ -151,7 +172,13 @@ useHead({
       <div v-if="cardapio" class="cardapio-hero">
         <div class="container">
           <div class="cardapio-hero__logo">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <img
+              v-if="cardapio?.estabelecimento.logo_url"
+              :src="cardapio.estabelecimento.logo_url"
+              :alt="cardapio.estabelecimento.nome"
+              class="logo-img"
+            />
+            <svg v-else width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
               <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
               <line x1="6" y1="1" x2="6" y2="4"/>
@@ -213,7 +240,7 @@ useHead({
     />
 
     <!-- Drawer do carrinho -->
-    <CarrinhoDrawer :slug="slug" />
+    <CarrinhoDrawer :slug="slug" :mesa-preenchida="numeroMesaPreenchido" />
   </div>
 </template>
 
@@ -242,6 +269,12 @@ useHead({
   justify-content: center;
   margin: 0 auto 12px;
   box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+.logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .cardapio-hero__nome {
   font-size: 22px;

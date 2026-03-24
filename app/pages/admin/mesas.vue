@@ -5,9 +5,9 @@ import QRCode from 'qrcode'
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
 const { mesas, loading, buscar, criar, atualizar, deletar } = useAdminMesas()
-const { estabelecimento } = useAdminEstabelecimento()
+const { estabelecimento, buscar: buscarEstabelecimento } = useAdminEstabelecimento()
 onMounted(async () => {
-  await Promise.all([buscar()])
+  await Promise.all([buscar(), buscarEstabelecimento()])
 })
 
 const showForm = ref(false)
@@ -35,7 +35,8 @@ const baseUrl = computed(() => {
 })
 
 function linkMesa(token: string) {
-  return `${baseUrl.value}/cardapio?mesa=${token}`
+  const slug = estabelecimento.value?.slug || 'estabelecimento'
+  return `${baseUrl.value}/${slug}/cardapio?mesa=${token}`
 }
 
 const qrCodes = ref<Record<number, string>>({})
@@ -48,10 +49,12 @@ async function gerarQR(mesa: any) {
   qrCodes.value[mesa.id] = canvas.toDataURL('image/png')
 }
 
-watch(mesasOrdenadas, async (novas) => {
+watch([mesasOrdenadas, () => estabelecimento.value], async ([novas]) => {
+  if (!estabelecimento.value?.nome) return
   await nextTick()
   for (const mesa of novas) {
-    if (mesa.token && !qrCodes.value[mesa.id]) {
+    if (mesa.token) {
+      delete qrCodes.value[mesa.id]
       await gerarQR(mesa)
     }
   }

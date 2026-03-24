@@ -2,7 +2,7 @@
 import { useCarrinhoStore } from '~/stores/carrinho'
 import { usePedido } from '~/composables/usePedido'
 
-const props = defineProps<{ slug: string }>()
+const props = defineProps<{ slug: string; mesaPreenchida?: number | null }>()
 
 const carrinho = useCarrinhoStore()
 const { loading, error, pedidoCriado, enviarPedido, montarPayload } = usePedido()
@@ -11,6 +11,10 @@ const nomeCliente = ref('')
 const numeroMesa = ref<string>('')
 const obs = ref('')
 const sucesso = ref(false)
+
+watch(() => props.mesaPreenchida, (val) => {
+  if (val) numeroMesa.value = String(val)
+}, { immediate: true })
 
 const formValido = computed(() =>
   nomeCliente.value.trim().length >= 2 && Number(numeroMesa.value) > 0 && carrinho.itens.length > 0

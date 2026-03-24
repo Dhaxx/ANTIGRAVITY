@@ -1426,6 +1426,48 @@
                     }
                 }
             }
+        },
+        "/api/v1/{slug}/mesa/{token}": {
+            "get": {
+                "tags": [
+                    "Public - Mesa"
+                ],
+                "summary": "Get Mesa By Token",
+                "operationId": "get_mesa_by_token_api_v1__slug__mesa__token__get",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Token"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MesaRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -1913,6 +1955,13 @@
                         "type": "string",
                         "title": "Nome"
                     },
+                    "logo_url": {
+                        "anyOf": [
+                            { "type": "string" },
+                            { "type": "null" }
+                        ],
+                        "title": "Logo Url"
+                    },
                     "aberto": {
                         "type": "boolean",
                         "title": "Aberto"
@@ -1973,6 +2022,10 @@
                     "esta_aberto": {
                         "type": "boolean",
                         "title": "Esta Aberto"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "title": "Slug"
                     }
                 },
                 "type": "object",
@@ -1984,7 +2037,8 @@
                     "email",
                     "id",
                     "dias_funcionamento",
-                    "esta_aberto"
+                    "esta_aberto",
+                    "slug"
                 ],
                 "title": "EstabelecimentoRead"
             },
@@ -2046,7 +2100,7 @@
                         ],
                         "title": "Logo Url"
                     },
-                    "aberto": {
+                    "esta_aberto": {
                         "anyOf": [
                             {
                                 "type": "boolean"
@@ -2055,7 +2109,7 @@
                                 "type": "null"
                             }
                         ],
-                        "title": "Aberto"
+                        "title": "Esta Aberto"
                     }
                 },
                 "type": "object",

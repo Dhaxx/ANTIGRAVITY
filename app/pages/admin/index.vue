@@ -13,7 +13,7 @@ onMounted(async () => {
 
 // Estatísticas do dashboard
 const pedidosPendentes = computed(() =>
-  pedidos.value.filter((p: any) => p.status === 'pendente').length
+  pedidos.value.filter((p: any) => p.status?.toLowerCase() === 'pendente').length
 )
 const pedidosHoje = computed(() => pedidos.value.length)
 const mesasAtivas = computed(() => mesas.value.filter((m: any) => m.ativa).length)
@@ -82,7 +82,7 @@ useHead({ title: 'Dashboard — QuickPed Admin' })
           </svg>
         </div>
         <div class="kpi-card__info">
-          <p class="kpi-card__label">Aguardando</p>
+          <p class="kpi-card__label">Pendentes</p>
           <p class="kpi-card__value">{{ loadingPedidos ? '–' : pedidosPendentes }}</p>
         </div>
       </div>

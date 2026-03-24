@@ -5,7 +5,15 @@ definePageMeta({ layout: 'admin', middleware: 'auth' })
 
 const { pedidos, loading, error, buscarPedidos, atualizarStatus, deletarPedido } = useAdminPedidos()
 
-onMounted(buscarPedidos)
+onMounted(() => {
+  buscarPedidos()
+  
+  const interval = setInterval(() => {
+    buscarPedidos()
+  }, 5000)
+  
+  onUnmounted(() => clearInterval(interval))
+})
 
 const normalizarStatus = (s: string) => {
   const m: Record<string, string> = {

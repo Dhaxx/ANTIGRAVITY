@@ -1,6 +1,24 @@
 <script setup lang="ts">
 import type { ProdutoPublic, CardapioPublicResponse } from '~/types/api'
 
+interface ComandaRead {
+  id: number
+  numero_mesa: number
+  status: string
+  total: string
+  pedidos: Array<{
+    id: number
+    status: string
+    total: string
+    itens: Array<{
+      id: number
+      nome_produto: string
+      preco_unitario: string
+      quantidade: number
+    }>
+  }>
+}
+
 // Mock fallback caso a API falhe
 const MOCK_CARDAPIO: CardapioPublicResponse = {
   estabelecimento: { nome: 'Aroma de Oliveira', aberto: true },
@@ -92,6 +110,21 @@ const slug = computed(() => route.params.slug as string)
 
 const mesaToken = computed(() => route.query.mesa as string | undefined)
 const numeroMesaPreenchido = ref<number | null>(null)
+const comandaAtual = ref<ComandaRead | null>(null)
+const comandaModalAberto = ref(false)
+
+async function buscarComanda() {
+  if (!mesaToken.value || !slug.value) return
+  try {
+    const data = await $fetch<ComandaRead>(
+      `${config.public.apiBase}/api/v1/${slug.value}/comanda/`,
+      { params: { token: mesaToken.value } }
+    )
+    comandaAtual.value = data
+  } catch (e) {
+    console.warn('[cardapio] Não foi possível buscar a comanda:', e)
+  }
+}
 
 async function buscarMesaPorToken() {
   if (!mesaToken.value || !slug.value) return
@@ -108,6 +141,7 @@ async function buscarMesaPorToken() {
 onMounted(() => {
   if (mesaToken.value) {
     buscarMesaPorToken()
+    buscarComanda()
   }
 })
 
@@ -165,7 +199,11 @@ useHead({
 <template>
   <div class="cardapio-page">
     <!-- Header -->
-    <AppHeader :nome-estabelecimento="cardapio?.estabelecimento?.nome" />
+    <AppHeader 
+      :nome-estabelecimento="cardapio?.estabelecimento?.nome" 
+      :comanda-aberta="!!comandaAtual"
+      @ver-comanda="comandaModalAberto = true"
+    />
 
     <!-- Hero -->
     <Transition name="fade">
@@ -239,8 +277,66 @@ useHead({
       @fechar="fecharModal"
     />
 
+    <!-- Modal da comanda -->
+    <Teleport to="body">
+      <Transition name="overlay">
+        <div v-if="comandaModalAberto" class="comanda-overlay" @click="comandaModalAberto = false" />
+      </Transition>
+      <Transition name="slide">
+        <div v-if="comandaModalAberto" class="comanda-sheet">
+          <div class="comanda-sheet__header">
+            <h2>Minha Comanda</h2>
+            <button class="comanda-sheet__close" @click="comandaModalAberto = false">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+          <div class="comanda-sheet__content">
+            <div v-if="comandaAtual" class="comanda-info">
+              <div class="comanda-info__meta">
+                <span class="comanda-info__mesa">Mesa {{ comandaAtual.numero_mesa }}</span>
+                <span class="comanda-info__status">{{ comandaAtual.status }}</span>
+              </div>
+              <div v-if="comandaAtual.pedidos.length === 0" class="comanda-vazio">
+                Nenhum pedido ainda
+              </div>
+              <div v-else class="comanda-pedidos">
+                <div v-for="pedido in comandaAtual.pedidos" :key="pedido.id" class="comanda-pedido">
+                  <div class="comanda-pedido__header">
+                    <span>Pedido #{{ pedido.id }}</span>
+                    <span class="comanda-pedido__status">{{ pedido.status }}</span>
+                  </div>
+                  <ul class="comanda-pedido__itens">
+                    <li v-for="item in pedido.itens" :key="item.id">
+                      <span class="item-qtd">{{ item.quantidade }}x</span>
+                      <span class="item-nome">{{ item.nome_produto }}</span>
+                      <span class="item-preco">R$ {{ item.preco_unitario }}</span>
+                    </li>
+                  </ul>
+                  <div class="comanda-pedido__total">
+                    Total: R$ {{ pedido.total }}
+                  </div>
+                </div>
+              </div>
+              <div class="comanda-total">
+                Total geral: R$ {{ comandaAtual.total }}
+              </div>
+            </div>
+            <div v-else class="comanda-carregando">
+              Carregando...
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
     <!-- Drawer do carrinho -->
-    <CarrinhoDrawer :slug="slug" :mesa-preenchida="numeroMesaPreenchido" />
+    <CarrinhoDrawer 
+      :slug="slug" 
+      :mesa-preenchida="numeroMesaPreenchido" 
+      @pedido-criado="buscarComanda"
+    />
   </div>
 </template>
 
@@ -350,5 +446,159 @@ useHead({
   padding: 24px 0;
   color: var(--color-text-muted);
   font-size: 14px;
+}
+
+/* Modal Comanda */
+.comanda-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 200;
+}
+.comanda-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-surface);
+  border-radius: 20px 20px 0 0;
+  max-height: 80dvh;
+  z-index: 201;
+  display: flex;
+  flex-direction: column;
+}
+.comanda-sheet__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+.comanda-sheet__header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+.comanda-sheet__close {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px;
+}
+.comanda-sheet__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+}
+.comanda-info__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.comanda-info__mesa {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+.comanda-info__status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+  text-transform: capitalize;
+}
+.comanda-vazio {
+  text-align: center;
+  padding: 32px 0;
+  color: var(--color-text-muted);
+}
+.comanda-pedidos {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.comanda-pedido {
+  background: var(--color-surface-alt);
+  border-radius: var(--radius-md);
+  padding: 12px;
+}
+.comanda-pedido__header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+.comanda-pedido__status {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+  text-transform: capitalize;
+}
+.comanda-pedido__itens {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px 0;
+}
+.comanda-pedido__itens li {
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  padding: 4px 0;
+}
+.item-qtd {
+  font-weight: 600;
+  color: var(--color-text);
+  min-width: 24px;
+}
+.item-nome {
+  flex: 1;
+}
+.item-preco {
+  font-weight: 500;
+}
+.comanda-pedido__total {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text);
+  text-align: right;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-border);
+}
+.comanda-total {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--color-primary-bg);
+  border-radius: var(--radius-md);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-primary);
+  text-align: center;
+}
+.comanda-carregando {
+  text-align: center;
+  padding: 32px 0;
+  color: var(--color-text-muted);
+}
+
+.overlay-enter-active, .overlay-leave-active {
+  transition: opacity 0.3s ease;
+}
+.overlay-enter-from, .overlay-leave-to {
+  opacity: 0;
+}
+.slide-enter-active, .slide-leave-active {
+  transition: transform 0.3s ease;
+}
+.slide-enter-from, .slide-leave-to {
+  transform: translateY(100%);
 }
 </style>

@@ -4,6 +4,10 @@ import { usePedido } from '~/composables/usePedido'
 
 const props = defineProps<{ slug: string; mesaPreenchida?: number | null }>()
 
+const emit = defineEmits<{
+  (e: 'pedido-criado'): void
+}>()
+
 const carrinho = useCarrinhoStore()
 const { loading, error, pedidoCriado, enviarPedido, montarPayload } = usePedido()
 
@@ -29,6 +33,7 @@ async function finalizar() {
     nomeCliente.value = ''
     numeroMesa.value = ''
     obs.value = ''
+    emit('pedido-criado')
     setTimeout(() => { sucesso.value = false; carrinho.fecharCarrinho() }, 3500)
   }
 }

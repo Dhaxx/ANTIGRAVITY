@@ -1468,6 +1468,48 @@
                     }
                 }
             }
+        },
+        "/api/v1/{slug}/comanda/": {
+            "get": {
+                "tags": [
+                    "Public - Comanda"
+                ],
+                "summary": "Get Mesa Comanda",
+                "operationId": "get_mesa_comanda_api_v1__slug__comanda__get",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Token"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ComandaRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -1955,22 +1997,32 @@
                         "type": "string",
                         "title": "Nome"
                     },
-                    "logo_url": {
-                        "anyOf": [
-                            { "type": "string" },
-                            { "type": "null" }
-                        ],
-                        "title": "Logo Url"
-                    },
                     "aberto": {
                         "type": "boolean",
                         "title": "Aberto"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "title": "Slug"
+                    },
+                    "logo_url": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Logo Url"
                     }
                 },
                 "type": "object",
                 "required": [
                     "nome",
-                    "aberto"
+                    "aberto",
+                    "slug",
+                    "logo_url"
                 ],
                 "title": "EstabelecimentoPublic"
             },

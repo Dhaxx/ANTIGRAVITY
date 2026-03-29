@@ -236,36 +236,50 @@ export const useAdminEstabelecimento = () => {
 // ─── Grupos de Adicionais ─────────────────────────────────────────────────────
 export const useAdminAdicionalGrupos = () => {
   const { apiFetch } = useAdminFetch()
+  const auth = useAuthStore()
 
   const grupos = ref<any[]>([])
   const loading = ref(false)
 
-  async function buscar() {
+  async function buscar(produtoId: number) {
     loading.value = true
-    try { grupos.value = await apiFetch('/api/v1/admin/grupo-adicional/') }
+    try { 
+      grupos.value = await apiFetch(`/api/v1/admin/produto/grupo-adicional/?produto_id=${produtoId}`)
+    }
     catch { grupos.value = [] }
     finally { loading.value = false }
   }
 
-  async function criar(dados: { nome: string; multiplo?: boolean; produto_id?: number }) {
-    const result = await apiFetch('/api/v1/admin/grupo-adicional/', { method: 'POST', body: dados })
-    await buscar()
+  async function criar(dados: { nome: string; max_selecoes?: number; produto_id?: number; adicionais?: { nome: string; preco: number }[] }) {
+    const payload = { 
+      ...dados, 
+      produto_id: dados.produto_id ?? auth.estabelecimentoId 
+    }
+    const result = await apiFetch('/api/v1/admin/produto/grupo-adicional/', { 
+      method: 'POST', 
+      body: payload
+    })
+    if (dados.produto_id) {
+      await buscar(dados.produto_id)
+    }
     return result
   }
 
-  async function atualizar(id: number, dados: { nome?: string; multiplo?: boolean }) {
-    const result = await apiFetch(`/api/v1/admin/grupo-adicional/?grupo_id=${id}`, { method: 'PUT', body: dados })
-    await buscar()
+  async function atualizar(produtoId: number, id: number, dados: { nome?: string; max_selecoes?: number }) {
+    const result = await apiFetch(`/api/v1/admin/produto/grupo-adicional/?grupo_id=${id}`, { method: 'PUT', body: dados })
+    await buscar(produtoId)
     return result
   }
 
-  async function deletar(id: number) {
-    await apiFetch(`/api/v1/admin/grupo-adicional/?grupo_id=${id}`, { method: 'DELETE' })
-    await buscar()
+  async function deletar(produtoId: number, id: number) {
+    await apiFetch(`/api/v1/admin/produto/grupo-adicional/?grupo_id=${id}`, { method: 'DELETE' })
+    await buscar(produtoId)
   }
 
   return { grupos, loading, buscar, criar, atualizar, deletar }
 }
+
+const useAdminGrupos = useAdminAdicionalGrupos
 
 // ─── Adicionais ───────────────────────────────────────────────────────────────
 export const useAdminAdicionais = () => {
@@ -274,28 +288,32 @@ export const useAdminAdicionais = () => {
   const adicionais = ref<any[]>([])
   const loading = ref(false)
 
-  async function buscar() {
+  async function buscar(grupoId: number) {
     loading.value = true
-    try { adicionais.value = await apiFetch('/api/v1/admin/adicional/') }
+    try { 
+      adicionais.value = await apiFetch(`/api/v1/admin/produto/adicional/?grupo_id=${grupoId}`)
+    }
     catch { adicionais.value = [] }
     finally { loading.value = false }
   }
 
   async function criar(dados: { nome: string; preco: number; grupo_id: number }) {
-    const result = await apiFetch('/api/v1/admin/adicional/', { method: 'POST', body: dados })
-    await buscar()
+    const result = await apiFetch('/api/v1/admin/produto/adicional/', { method: 'POST', body: dados })
+    if (dados.grupo_id) {
+      await buscar(dados.grupo_id)
+    }
     return result
   }
 
-  async function atualizar(id: number, dados: { nome?: string; preco?: number }) {
-    const result = await apiFetch(`/api/v1/admin/adicional/?adicional_id=${id}`, { method: 'PUT', body: dados })
-    await buscar()
+  async function atualizar(grupoId: number, id: number, dados: { nome?: string; preco?: number }) {
+    const result = await apiFetch(`/api/v1/admin/produto/adicional/?adicional_id=${id}`, { method: 'PUT', body: dados })
+    await buscar(grupoId)
     return result
   }
 
-  async function deletar(id: number) {
-    await apiFetch(`/api/v1/admin/adicional/?adicional_id=${id}`, { method: 'DELETE' })
-    await buscar()
+  async function deletar(grupoId: number, id: number) {
+    await apiFetch(`/api/v1/admin/produto/adicional/?adicional_id=${id}`, { method: 'DELETE' })
+    await buscar(grupoId)
   }
 
   return { adicionais, loading, buscar, criar, atualizar, deletar }

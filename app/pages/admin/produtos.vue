@@ -7,14 +7,14 @@ definePageMeta({ layout: 'admin', middleware: 'auth' })
 const auth = useAuthStore()
 const { categorias, loading: loadingCats, buscar: buscarCats, criar: criarCat, atualizar: atualizarCat, deletar: deletarCat, toggleAtivo: toggleCatAtivo } = useAdminCategorias()
 const { produtos, loading: loadingProd, buscar: buscarProd, criar: criarProd, atualizar: atualizarProd, deletar: deletarProd, toggleAtivo: toggleProdAtivo } = useAdminProdutos()
-const { grupos, loading: loadingGrupos, buscar: buscarGrupos, criar: criarGrupo, deletar: deletarGrupo } = useAdminAdicionalGrupos()
-const { adicionais, loading: loadingAdicionais, buscar: buscarAdicionais, criar: criarAdicional, deletar: deletarAdicional } = useAdminAdicionais()
+const { grupos, loading: loadingGrupos, buscar: buscarGrupos, criar: criarGrupo, atualizar: atualizarGrupo, deletar: deletarGrupo } = useAdminAdicionalGrupos()
+const { adicionais, loading: loadingAdicionais, buscar: buscarAdicionais, criar: criarAdicional, atualizar: atualizarAdicional, deletar: deletarAdicional } = useAdminAdicionais()
 
 onMounted(async () => {
-  await Promise.all([buscarCats(), buscarProd(), buscarGrupos(), buscarAdicionais()])
+  await Promise.all([buscarCats(), buscarProd()])
 })
 
-const tabAtiva = ref<'categorias' | 'produtos' | 'adicionais'>('produtos')
+const tabAtiva = ref<'categorias' | 'produtos'>('produtos')
 
 // ─── Categoria form ───────────────────────────────────────────────────────────
 const showCatForm = ref(false)
@@ -48,10 +48,85 @@ async function salvarCat() {
 // ─── Produto form ─────────────────────────────────────────────────────────────
 const showProdForm = ref(false)
 const prodEditando = ref<any | null>(null)
-const prodForm = reactive({ nome: '', descricao: '', preco: '', imagem_url: '', categoria_id: '', grupo_adicional_ids: [] as number[] })
+const prodForm = reactive({ 
+  nome: '', 
+  descricao: '', 
+  preco: '', 
+  imagem_url: '', 
+  categoria_id: '', 
+  grupo_adicional_ids: [] as number[],
+  novosGrupos: [] as { nome: string; multiplo: boolean; adicionais: { nome: string; preco: string }[] }[]
+})
 const prodLoading = ref(false)
+const showNovoGrupoForm = ref(false)
+const novoGrupoForm = reactive({ nome: '', max_selecoes: 1 })
+const novoGrupoAdicionais = ref<{ nome: string; preco: string; editando?: number }[]>([])
+const erroNovoGrupo = ref('')
 
-function abrirProdForm(prod?: any) {
+function abrirNovoGrupoForm() {
+  novoGrupoForm.nome = ''
+  novoGrupoForm.max_selecoes = 1
+  novoGrupoAdicionais.value = []
+  erroNovoGrupo.value = ''
+  showNovoGrupoForm.value = true
+}
+
+function adicionarNovoAdicional() {
+  novoGrupoAdicionais.value.push({ nome: '', preco: '0' })
+}
+
+function removerNovoAdicional(index: number) {
+  novoGrupoAdicionais.value.splice(index, 1)
+}
+
+function editarNovoAdicional(index: number) {
+  novoGrupoAdicionais.value[index].editando = (novoGrupoAdicionais.value[index].editando === index) ? -1 : index
+}
+
+async function salvarNovoGrupo() {
+  erroNovoGrupo.value = ''
+  
+  if (!novoGrupoForm.nome?.trim()) {
+    erroNovoGrupo.value = 'Nome do grupo é obrigatório'
+    return
+  }
+  if (!novoGrupoForm.max_selecoes || novoGrupoForm.max_selecoes < 1) {
+    erroNovoGrupo.value = 'Máximo de escolhas deve ser maior que 0'
+    return
+  }
+  
+  const invalidAdicional = novoGrupoAdicionais.value.findIndex(a => !a.nome?.trim() || a.preco === '' || a.preco === null)
+  if (invalidAdicional !== -1) {
+    erroNovoGrupo.value = `Adicional ${invalidAdicional + 1}: nome e preço são obrigatórios`
+    return
+  }
+  
+  const produtoId = prodEditando.value?.id
+  
+  const adicionaisPayload = novoGrupoAdicionais.value
+    .filter(a => a.nome && a.preco !== '' && a.preco !== null)
+    .map(a => ({
+      nome: a.nome,
+      preco: Number(a.preco) || 0
+    }))
+  
+  const grupo = await criarGrupo({ 
+    nome: novoGrupoForm.nome, 
+    max_selecoes: novoGrupoForm.max_selecoes,
+    produto_id: produtoId,
+    adicionais: adicionaisPayload
+  })
+  
+  if (produtoId) {
+    await buscarGrupos(produtoId)
+  } else {
+    grupos.value.push(grupo)
+  }
+  prodForm.grupo_adicional_ids.push(grupo.id)
+  showNovoGrupoForm.value = false
+}
+
+async function abrirProdForm(prod?: any) {
   prodEditando.value = prod ?? null
   prodForm.nome = prod?.nome ?? ''
   prodForm.descricao = prod?.descricao ?? ''
@@ -59,7 +134,89 @@ function abrirProdForm(prod?: any) {
   prodForm.imagem_url = prod?.imagem_url ?? ''
   prodForm.categoria_id = prod?.categoria_id?.toString() ?? ''
   prodForm.grupo_adicional_ids = prod?.grupo_adicional_ids ?? []
+  
+  if (prod?.id) {
+    await buscarGrupos(prod.id)
+  }
+  
   showProdForm.value = true
+}
+
+const showEditarGrupoForm = ref(false)
+const grupoEditando = ref<any | null>(null)
+const grupoEditForm = reactive({ nome: '', max_selecoes: 1 })
+const grupoEditAdicionais = ref<any[]>([])
+const erroEditarGrupo = ref('')
+
+async function abrirEditarGrupo(grupo: any) {
+  grupoEditando.value = grupo
+  grupoEditForm.nome = grupo.nome
+  grupoEditForm.max_selecoes = grupo.max_selecoes || 1
+  grupoEditAdicionais.value = grupo.adicionais?.map((a: any) => ({ ...a, editando: -1 })) || []
+  erroEditarGrupo.value = ''
+  showEditarGrupoForm.value = true
+}
+
+async function salvarEditarGrupo() {
+  erroEditarGrupo.value = ''
+  
+  if (!grupoEditForm.nome?.trim()) {
+    erroEditarGrupo.value = 'Nome do grupo é obrigatório'
+    return
+  }
+  if (!grupoEditForm.max_selecoes || grupoEditForm.max_selecoes < 1) {
+    erroEditarGrupo.value = 'Máximo de escolhas deve ser maior que 0'
+    return
+  }
+  
+  const invalidAdicional = grupoEditAdicionais.value.findIndex((a: any) => !a.nome?.trim() || a.preco === '' || a.preco === null)
+  if (invalidAdicional !== -1) {
+    erroEditarGrupo.value = `Adicional ${invalidAdicional + 1}: nome e preço são obrigatórios`
+    return
+  }
+  
+  const produtoId = prodEditando.value?.id
+  
+  await atualizarGrupo(produtoId!, grupoEditando.value.id, {
+    nome: grupoEditForm.nome,
+    max_selecoes: grupoEditForm.max_selecoes
+  })
+  
+  for (const adicional of grupoEditAdicionais.value) {
+    if (adicional.id) {
+      await atualizarAdicional(produtoId!, adicional.id, {
+        nome: adicional.nome,
+        preco: Number(adicional.preco)
+      })
+    } else {
+      await criarAdicional({
+        nome: adicional.nome,
+        preco: Number(adicional.preco),
+        grupo_id: grupoEditando.value.id
+      })
+    }
+  }
+  
+  await buscarGrupos(produtoId!)
+  showEditarGrupoForm.value = false
+}
+
+function adicionarEditAdicional() {
+  grupoEditAdicionais.value.push({ nome: '', preco: '0', editando: -1 })
+}
+
+function removerEditAdicional(index: number) {
+  const adic = grupoEditAdicionais.value[index]
+  if (adic.id) {
+    deletarAdicional(prodEditando.value!.id, adic.id)
+  }
+  grupoEditAdicionais.value.splice(index, 1)
+}
+
+async function deletarGrupoExistente(grupoId: number) {
+  if (!confirm('Tem certeza que deseja excluir este grupo e todos os seus adicionais?')) return
+  await deletarGrupo(prodEditando.value!.id, grupoId)
+  prodForm.grupo_adicional_ids = prodForm.grupo_adicional_ids.filter((id: number) => id !== grupoId)
 }
 
 async function salvarProd() {
@@ -90,48 +247,6 @@ async function toggleCategoriaAtivo(cat: any) {
   await toggleCatAtivo(cat.id, !cat.ativo)
 }
 
-// ─── Grupo adicional form ─────────────────────────────────────────────────────
-const showGrupoForm = ref(false)
-const grupoForm = reactive({ nome: '', multiplo: false })
-const grupoLoading = ref(false)
-
-function abrirGrupoForm() {
-  grupoForm.nome = ''
-  grupoForm.multiplo = false
-  showGrupoForm.value = true
-}
-
-async function salvarGrupo() {
-  if (!grupoForm.nome) return
-  grupoLoading.value = true
-  try {
-    await criarGrupo({ nome: grupoForm.nome, multiplo: grupoForm.multiplo })
-    showGrupoForm.value = false
-  } finally { grupoLoading.value = false }
-}
-
-// ─── Adicional form ──────────────────────────────────────────────────────────
-const showAdicionalForm = ref(false)
-const grupoSelecionado = ref<number | null>(null)
-const adicionalForm = reactive({ nome: '', preco: '' })
-const adicionalLoading = ref(false)
-
-function abrirAdicionalForm(grupoId: number) {
-  grupoSelecionado.value = grupoId
-  adicionalForm.nome = ''
-  adicionalForm.preco = ''
-  showAdicionalForm.value = true
-}
-
-async function salvarAdicional() {
-  if (!adicionalForm.nome || !adicionalForm.preco || !grupoSelecionado.value) return
-  adicionalLoading.value = true
-  try {
-    await criarAdicional({ nome: adicionalForm.nome, preco: Number(adicionalForm.preco), grupo_id: grupoSelecionado.value })
-    showAdicionalForm.value = false
-  } finally { adicionalLoading.value = false }
-}
-
 function adicionaisDoGrupo(grupoId: number) {
   return computed(() => adicionais.value.filter((a: any) => a.grupo_id === grupoId))
 }
@@ -158,7 +273,6 @@ useHead({ title: 'Produtos — QuickPed Admin' })
     <div class="tabs">
       <button class="tab-btn" :class="{ active: tabAtiva === 'produtos' }" @click="tabAtiva = 'produtos'">Produtos</button>
       <button class="tab-btn" :class="{ active: tabAtiva === 'categorias' }" @click="tabAtiva = 'categorias'">Categorias</button>
-      <button class="tab-btn" :class="{ active: tabAtiva === 'adicionais' }" @click="tabAtiva = 'adicionais'">Adicionais</button>
     </div>
 
     <!-- ── PRODUTOS ── -->
@@ -249,43 +363,6 @@ useHead({ title: 'Produtos — QuickPed Admin' })
       </div>
     </div>
 
-    <!-- ── ADICIONAIS ── -->
-    <div v-if="tabAtiva === 'adicionais'" class="admin-card">
-      <div class="admin-card__header">
-        <h2 class="admin-card__title">Grupos de adicionais ({{ grupos.length }})</h2>
-        <button class="btn-add" @click="abrirGrupoForm()">+ Novo grupo</button>
-      </div>
-
-      <div v-if="loadingGrupos" class="admin-loading">
-        <div class="skeleton" style="height:52px;margin-bottom:8px;border-radius:8px;" v-for="i in 3" :key="i" />
-      </div>
-
-      <div v-else-if="grupos.length === 0" class="admin-empty">Nenhum grupo cadastrado. Crie um grupo para adicionar adicionais.</div>
-
-      <div v-else class="adicional-grupos">
-        <div v-for="g in grupos" :key="g.id" class="grupo-card">
-          <div class="grupo-card__header">
-            <div class="grupo-info">
-              <span class="grupo-nome">{{ g.nome }}</span>
-              <span v-if="g.multiplo" class="pill pill--blue">Múltipla escolha</span>
-            </div>
-            <div class="grupo-actions">
-              <button class="btn-sm" @click="abrirAdicionalForm(g.id)">+ Adicional</button>
-              <button class="btn-icon-sm danger" title="Excluir grupo" @click="deletarGrupo(g.id)">🗑️</button>
-            </div>
-          </div>
-          <div class="grupo-adicionais">
-            <div v-if="adicionaisDoGrupo(g.id).value.length === 0" class="grupo-empty">Nenhum adicional neste grupo</div>
-            <div v-for="a in adicionaisDoGrupo(g.id).value" :key="a.id" class="adicional-item">
-              <span class="adicional-nome">{{ a.nome }}</span>
-              <span class="adicional-preco">{{ formatarPreco(a.preco) }}</span>
-              <button class="btn-icon-sm danger" @click="deletarAdicional(a.id)">🗑️</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- ── MODAL PRODUTO ── -->
     <Teleport to="body">
       <Transition name="overlay">
@@ -323,18 +400,24 @@ useHead({ title: 'Produtos — QuickPed Admin' })
             </div>
             <div class="form-group">
               <label class="form-label">Grupos de adicionais</label>
-              <div class="checkbox-grid">
-                <label v-for="g in grupos" :key="g.id" class="checkbox-item">
-                  <input
-                    type="checkbox"
-                    :value="g.id"
-                    v-model="prodForm.grupo_adicional_ids"
-                  />
-                  {{ g.nome }}
-                  <span v-if="g.multiplo" class="text-muted">(múltiplo)</span>
-                </label>
+              <div class="checkbox-grid grupos-list">
+                <div v-for="g in grupos" :key="g.id" class="grupo-item">
+                  <label class="checkbox-item">
+                    <input
+                      type="checkbox"
+                      :value="g.id"
+                      v-model="prodForm.grupo_adicional_ids"
+                    />
+                    {{ g.nome }}
+                    <span v-if="g.max_selecoes > 1" class="text-muted">(máx: {{ g.max_selecoes }})</span>
+                  </label>
+                  <div class="grupo-actions">
+                    <button type="button" class="btn-icon-sm" title="Editar grupo" @click="abrirEditarGrupo(g)">✏️</button>
+                    <button type="button" class="btn-icon-sm danger" title="Excluir grupo" @click="deletarGrupoExistente(g.id)">🗑️</button>
+                  </div>
+                </div>
               </div>
-              <p v-if="grupos.length === 0" class="form-hint">Nenhum grupo criado. Crie grupos na aba "Adicionais".</p>
+              <button type="button" class="btn-link" @click="abrirNovoGrupoForm">+ Criar novo grupo</button>
             </div>
           </div>
           <div class="modal-footer">
@@ -342,6 +425,97 @@ useHead({ title: 'Produtos — QuickPed Admin' })
             <button class="btn-primary modal-save" :disabled="prodLoading || !prodForm.nome || !prodForm.preco || !prodForm.categoria_id" @click="salvarProd">
               {{ prodLoading ? 'Salvando...' : 'Salvar' }}
             </button>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- ── MODAL NOVO GRUPO DE ADICIONAIS ── -->
+    <Teleport to="body">
+      <Transition name="overlay">
+        <div v-if="showNovoGrupoForm" class="modal-bg" @click.self="showNovoGrupoForm = false" />
+      </Transition>
+      <Transition name="fade">
+        <div v-if="showNovoGrupoForm" class="modal-box modal-box--wide">
+          <div class="modal-header">
+            <h3>Novo grupo de adicionais</h3>
+            <button class="modal-close" @click="showNovoGrupoForm = false">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label">Nome do grupo *</label>
+              <input v-model="novoGrupoForm.nome" class="form-input" placeholder="Ex: Tamanho, Extras..." />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Máximo de escolhas *</label>
+              <input 
+                v-model.number="novoGrupoForm.max_selecoes" 
+                class="form-input" 
+                type="number" 
+                min="1" 
+                placeholder="Ex: 1, 2, 3..." 
+              />
+              <p class="form-hint">Quantos adicionais o cliente pode escolher. Use 1 para escolha única.</p>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Adicionais</label>
+              <div v-for="(adic, index) in novoGrupoAdicionais" :key="index" class="adicional-input-row">
+                <input v-model="adic.nome" class="form-input" placeholder="Nome" :class="{ 'input-error': !adic.nome?.trim() }" />
+                <input v-model="adic.preco" class="form-input" type="number" step="0.01" placeholder="Preço" style="width: 100px;" :class="{ 'input-error': adic.preco === '' || adic.preco === null }" />
+                <button type="button" class="btn-icon-sm" title="Remover" @click="removerNovoAdicional(index)">🗑️</button>
+              </div>
+              <button type="button" class="btn-link" @click="adicionarNovoAdicional">+ Adicionar adicional</button>
+            </div>
+            <div v-if="erroNovoGrupo" class="form-error">{{ erroNovoGrupo }}</div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-cancel" @click="showNovoGrupoForm = false">Cancelar</button>
+            <button class="btn-primary modal-save" :disabled="!novoGrupoForm.nome" @click="salvarNovoGrupo">Criar grupo</button>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- ── MODAL EDITAR GRUPO DE ADICIONAIS ── -->
+    <Teleport to="body">
+      <Transition name="overlay">
+        <div v-if="showEditarGrupoForm" class="modal-bg" @click.self="showEditarGrupoForm = false" />
+      </Transition>
+      <Transition name="fade">
+        <div v-if="showEditarGrupoForm" class="modal-box modal-box--wide">
+          <div class="modal-header">
+            <h3>Editar grupo de adicionais</h3>
+            <button class="modal-close" @click="showEditarGrupoForm = false">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label">Nome do grupo *</label>
+              <input v-model="grupoEditForm.nome" class="form-input" placeholder="Ex: Tamanho, Extras..." />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Máximo de escolhas *</label>
+              <input 
+                v-model.number="grupoEditForm.max_selecoes" 
+                class="form-input" 
+                type="number" 
+                min="1" 
+                placeholder="Ex: 1, 2, 3..." 
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Adicionais</label>
+              <div v-for="(adic, index) in grupoEditAdicionais" :key="index" class="adicional-input-row">
+                <input v-model="adic.nome" class="form-input" placeholder="Nome" :class="{ 'input-error': !adic.nome?.trim() }" />
+                <input v-model="adic.preco" class="form-input" type="number" step="0.01" placeholder="Preço" style="width: 100px;" :class="{ 'input-error': adic.preco === '' || adic.preco === null }" />
+                <button type="button" class="btn-icon-sm danger" title="Remover" @click="removerEditAdicional(index)">🗑️</button>
+              </div>
+              <button type="button" class="btn-link" @click="adicionarEditAdicional">+ Adicionar adicional</button>
+            </div>
+            <div v-if="erroEditarGrupo" class="form-error">{{ erroEditarGrupo }}</div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-cancel" @click="showEditarGrupoForm = false">Cancelar</button>
+            <button class="btn-primary modal-save" @click="salvarEditarGrupo">Salvar</button>
           </div>
         </div>
       </Transition>
@@ -372,70 +546,6 @@ useHead({ title: 'Produtos — QuickPed Admin' })
             <button class="btn-cancel" @click="showCatForm = false">Cancelar</button>
             <button class="btn-primary modal-save" :disabled="catLoading || !catForm.nome" @click="salvarCat">
               {{ catLoading ? 'Salvando...' : 'Salvar' }}
-            </button>
-          </div>
-        </div>
-      </Transition>
-    </Teleport>
-
-    <!-- ── MODAL GRUPO ADICIONAL ── -->
-    <Teleport to="body">
-      <Transition name="overlay">
-        <div v-if="showGrupoForm" class="modal-bg" @click.self="showGrupoForm = false" />
-      </Transition>
-      <Transition name="fade">
-        <div v-if="showGrupoForm" class="modal-box">
-          <div class="modal-header">
-            <h3>Novo grupo de adicionais</h3>
-            <button class="modal-close" @click="showGrupoForm = false">✕</button>
-          </div>
-          <div class="modal-body">
-            <div class="form-group">
-              <label class="form-label">Nome do grupo *</label>
-              <input v-model="grupoForm.nome" class="form-input" placeholder="Ex: Tamanho, Extras..." />
-            </div>
-            <div class="form-group">
-              <label class="checkbox-item">
-                <input type="checkbox" v-model="grupoForm.multiplo" />
-                Permite múltiplas escolhas
-              </label>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn-cancel" @click="showGrupoForm = false">Cancelar</button>
-            <button class="btn-primary modal-save" :disabled="grupoLoading || !grupoForm.nome" @click="salvarGrupo">
-              {{ grupoLoading ? 'Salvando...' : 'Salvar' }}
-            </button>
-          </div>
-        </div>
-      </Transition>
-    </Teleport>
-
-    <!-- ── MODAL ADICIONAL ── -->
-    <Teleport to="body">
-      <Transition name="overlay">
-        <div v-if="showAdicionalForm" class="modal-bg" @click.self="showAdicionalForm = false" />
-      </Transition>
-      <Transition name="fade">
-        <div v-if="showAdicionalForm" class="modal-box">
-          <div class="modal-header">
-            <h3>Novo adicional</h3>
-            <button class="modal-close" @click="showAdicionalForm = false">✕</button>
-          </div>
-          <div class="modal-body">
-            <div class="form-group">
-              <label class="form-label">Nome *</label>
-              <input v-model="adicionalForm.nome" class="form-input" placeholder="Ex: Grande, Com chantily..." />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Preço (R$) *</label>
-              <input v-model="adicionalForm.preco" class="form-input" type="number" step="0.01" min="0" placeholder="0,00" />
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn-cancel" @click="showAdicionalForm = false">Cancelar</button>
-            <button class="btn-primary modal-save" :disabled="adicionalLoading || !adicionalForm.nome || !adicionalForm.preco" @click="salvarAdicional">
-              {{ adicionalLoading ? 'Salvando...' : 'Salvar' }}
             </button>
           </div>
         </div>
@@ -562,6 +672,32 @@ textarea.form-input { resize: vertical; min-height: 60px; }
 .checkbox-grid { display: flex; flex-direction: column; gap: 8px; max-height: 160px; overflow-y: auto; padding: 4px 0; }
 .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #1a1f17; cursor: pointer; }
 .checkbox-item input { width: 16px; height: 16px; accent-color: var(--color-primary); }
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+.btn-link:hover { color: var(--color-primary-dark); }
+
+.adicional-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.adicional-input-row .form-input { flex: 1; }
 .text-muted { font-size: 12px; color: #9ba898; }
 .form-hint { font-size: 12px; color: #9ba898; }
+.form-error { color: #dc2626; font-size: 13px; font-weight: 600; padding: 8px 12px; background: #fef2f2; border-radius: 8px; margin-top: 8px; }
+.input-error { border-color: #dc2626 !important; }
+
+.grupos-list { display: flex; flex-direction: column; gap: 8px; }
+.grupo-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f9fafb; border-radius: 8px; }
+.grupo-item .checkbox-item { flex: 1; }
 </style>

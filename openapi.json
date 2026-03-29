@@ -607,6 +607,16 @@
                         "OAuth2PasswordBearer": []
                     }
                 ],
+                "parameters": [
+                    {
+                        "name": "produto_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "title": "Produto Id"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful Response",
@@ -618,6 +628,16 @@
                                         "$ref": "#/components/schemas/GrupoAdicionalRead"
                                     },
                                     "title": "Response Get Grupos Adicionais Api V1 Admin Produto Grupo Adicional  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
                                 }
                             }
                         }
@@ -781,6 +801,16 @@
                         "OAuth2PasswordBearer": []
                     }
                 ],
+                "parameters": [
+                    {
+                        "name": "grupo_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "title": "Grupo Id"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful Response",
@@ -792,6 +822,16 @@
                                         "$ref": "#/components/schemas/AdicionalRead"
                                     },
                                     "title": "Response Get Adicionais Api V1 Admin Produto Adicional  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
                                 }
                             }
                         }
@@ -1624,17 +1664,6 @@
                             }
                         ],
                         "title": "Preco"
-                    },
-                    "grupo_id": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Grupo Id"
                     }
                 },
                 "type": "object",
@@ -2186,6 +2215,20 @@
                     "produto_id": {
                         "type": "integer",
                         "title": "Produto Id"
+                    },
+                    "adicionais": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "$ref": "#/components/schemas/AdicionalCreate"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Adicionais"
                     }
                 },
                 "type": "object",
@@ -2213,6 +2256,14 @@
                     "id": {
                         "type": "integer",
                         "title": "Id"
+                    },
+                    "adicionais": {
+                        "items": {
+                            "$ref": "#/components/schemas/AdicionalRead"
+                        },
+                        "type": "array",
+                        "title": "Adicionais",
+                        "default": []
                     }
                 },
                 "type": "object",

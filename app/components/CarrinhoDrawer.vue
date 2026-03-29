@@ -2,7 +2,7 @@
 import { useCarrinhoStore } from '~/stores/carrinho'
 import { usePedido } from '~/composables/usePedido'
 
-const props = defineProps<{ slug: string; mesaPreenchida?: number | null }>()
+const props = defineProps<{ slug: string; mesaPreenchida?: number | null; mesaToken?: string }>()
 
 const emit = defineEmits<{
   (e: 'pedido-criado'): void
@@ -20,13 +20,16 @@ watch(() => props.mesaPreenchida, (val) => {
   if (val) numeroMesa.value = String(val)
 }, { immediate: true })
 
+const mesaBloqueada = computed(() => !!props.mesaPreenchida)
+const mostrarCampoMesa = computed(() => !props.mesaToken)
+
 const formValido = computed(() =>
   nomeCliente.value.trim().length >= 2 && Number(numeroMesa.value) > 0 && carrinho.itens.length > 0
 )
 
 async function finalizar() {
   if (!formValido.value) return
-  const payload = montarPayload(nomeCliente.value.trim(), Number(numeroMesa.value), obs.value)
+  const payload = montarPayload(nomeCliente.value.trim(), Number(numeroMesa.value), props.mesaToken, obs.value)
   const result = await enviarPedido(props.slug, payload)
   if (result) {
     sucesso.value = true
@@ -43,8 +46,14 @@ function formatarPreco(v: number) {
 }
 
 function numeroBonito(s: string) {
-  // remove non-numeric
   return s.replace(/[^0-9]/g, '')
+}
+
+function onMesaInput(e: Event) {
+  if (mostrarCampoMesa.value) {
+    const target = e.target as HTMLInputElement
+    numeroMesa.value = numeroBonito(target.value)
+  }
 }
 </script>
 
@@ -133,7 +142,7 @@ function numeroBonito(s: string) {
             <!-- Formulário -->
             <div class="carrinho-drawer__form">
               <div class="carrinho-form-row">
-                <div class="form-group">
+                <div class="form-group" :class="{ 'form-group--full': !mostrarCampoMesa }">
                   <label class="form-label">Seu nome *</label>
                   <input
                     v-model="nomeCliente"
@@ -143,16 +152,19 @@ function numeroBonito(s: string) {
                     maxlength="60"
                   />
                 </div>
-                <div class="form-group">
+                <div v-if="mostrarCampoMesa" class="form-group">
                   <label class="form-label">Mesa *</label>
                   <input
                     v-model="numeroMesa"
                     class="form-input"
-                    placeholder="Nº"
+                    :class="{ 'form-input--bloqueado': mesaBloqueada }"
+                    :placeholder="mesaBloqueada ? '' : 'Nº'"
+                    :disabled="mesaBloqueada"
                     inputmode="numeric"
                     maxlength="4"
-                    @input="numeroMesa = numeroBonito(numeroMesa)"
+                    @input="onMesaInput"
                   />
+                  <span v-if="mesaBloqueada" class="mesa-bloqueada-hint">Definido pelo QR</span>
                 </div>
               </div>
               <div class="form-group">
@@ -392,6 +404,20 @@ function numeroBonito(s: string) {
   gap: 10px;
 }
 .carrinho-obs { resize: none; }
+.form-input--bloqueado {
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+  font-weight: 700;
+  border-color: var(--color-primary);
+  cursor: not-allowed;
+}
+.mesa-bloqueada-hint {
+  display: block;
+  font-size: 11px;
+  color: var(--color-primary);
+  margin-top: 4px;
+  font-weight: 500;
+}
 
 /* Erro */
 .carrinho-drawer__error {

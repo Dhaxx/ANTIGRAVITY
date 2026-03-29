@@ -2406,6 +2406,10 @@
                         "type": "integer",
                         "title": "Numero Mesa"
                     },
+                    "mesa_token": {
+                        "type": "string",
+                        "title": "Mesa Token"
+                    },
                     "obs": {
                         "anyOf": [
                             {

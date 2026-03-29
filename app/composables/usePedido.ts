@@ -39,12 +39,14 @@ export const usePedido = () => {
   function montarPayload(
     nomeCliente: string,
     numeroMesa: number,
+    mesaToken?: string,
     obs?: string
   ): PedidoCreate {
     const carrinho = useCarrinhoStore()
     return {
       nome_cliente: nomeCliente,
       numero_mesa: numeroMesa,
+      mesa_token: mesaToken,
       obs: obs || null,
       itens: carrinho.itens.map(item => ({
         produto_id: item.produto.id,

@@ -334,7 +334,8 @@ useHead({
     <!-- Drawer do carrinho -->
     <CarrinhoDrawer 
       :slug="slug" 
-      :mesa-preenchida="numeroMesaPreenchido" 
+      :mesa-preenchida="numeroMesaPreenchido"
+      :mesa-token="mesaToken"
       @pedido-criado="buscarComanda"
     />
   </div>

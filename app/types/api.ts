@@ -83,6 +83,7 @@ export interface PedidoItemOutput {
 export interface PedidoCreate {
   nome_cliente: string
   numero_mesa: number
+  mesa_token?: string
   obs?: string | null
   itens: PedidoItemInput[]
 }

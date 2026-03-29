@@ -1,4 +1,5 @@
 import { useAuthStore } from '~/stores/auth'
+import type { UsuarioRead } from '~/types/api'
 
 export const useAdminFetch = () => {
   const config = useRuntimeConfig()
@@ -67,13 +68,13 @@ export const useAdminCategorias = () => {
     finally { loading.value = false }
   }
 
-  async function criar(dados: { nome: string; icone?: string; estabelecimento_id: number }) {
+  async function criar(dados: { nome: string; icone?: string; estabelecimento_id: number; produzido_por?: number | null }) {
     const result = await apiFetch('/api/v1/admin/categoria-produto/', { method: 'POST', body: dados })
     await buscar()
     return result
   }
 
-  async function atualizar(id: number, dados: { nome?: string; icone?: string; ativo?: boolean }) {
+  async function atualizar(id: number, dados: { nome?: string; icone?: string; ativo?: boolean; produzido_por?: number | null }) {
     const result = await apiFetch(`/api/v1/admin/categoria-produto/?categoria_produto_id=${id}`, { method: 'PUT', body: dados })
     await buscar()
     return result
@@ -317,4 +318,23 @@ export const useAdminAdicionais = () => {
   }
 
   return { adicionais, loading, buscar, criar, atualizar, deletar }
+}
+
+// ─── Usuários ────────────────────────────────────────────────────────────────
+export const useAdminUsuarios = () => {
+  const { apiFetch } = useAdminFetch()
+
+  const usuarios = ref<UsuarioRead[]>([])
+  const loading = ref(false)
+
+  async function buscar() {
+    loading.value = true
+    try { 
+      usuarios.value = await apiFetch<UsuarioRead[]>('/api/v1/admin/autenticacao/usuarios')
+    }
+    catch { usuarios.value = [] }
+    finally { loading.value = false }
+  }
+
+  return { usuarios, loading, buscar }
 }

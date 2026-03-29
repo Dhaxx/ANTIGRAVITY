@@ -92,6 +92,36 @@
                 ]
             }
         },
+        "/api/v1/admin/autenticacao/usuarios": {
+            "get": {
+                "tags": [
+                    "Admin - Autenticacao"
+                ],
+                "summary": "Listar Usuarios",
+                "operationId": "listar_usuarios_api_v1_admin_autenticacao_usuarios_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/UsuarioRead"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Listar Usuarios Api V1 Admin Autenticacao Usuarios Get"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            }
+        },
         "/api/v1/admin/estabelecimento/": {
             "get": {
                 "tags": [
@@ -1554,6 +1584,32 @@
     },
     "components": {
         "schemas": {
+            "AdicionalBase": {
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "title": "Nome"
+                    },
+                    "preco": {
+                        "anyOf": [
+                            {
+                                "type": "number"
+                            },
+                            {
+                                "type": "string",
+                                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+                            }
+                        ],
+                        "title": "Preco"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "nome",
+                    "preco"
+                ],
+                "title": "AdicionalBase"
+            },
             "AdicionalCreate": {
                 "properties": {
                     "nome": {
@@ -1773,6 +1829,17 @@
                     "estabelecimento_id": {
                         "type": "integer",
                         "title": "Estabelecimento Id"
+                    },
+                    "produzido_por": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Produzido Por"
                     }
                 },
                 "type": "object",
@@ -1807,6 +1874,17 @@
                     "estabelecimento_id": {
                         "type": "integer",
                         "title": "Estabelecimento Id"
+                    },
+                    "produzido_por": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Produzido Por"
                     },
                     "id": {
                         "type": "integer",
@@ -1871,6 +1949,17 @@
                             }
                         ],
                         "title": "Ativo"
+                    },
+                    "produzido_por": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Produzido Por"
                     }
                 },
                 "type": "object",
@@ -2220,7 +2309,7 @@
                         "anyOf": [
                             {
                                 "items": {
-                                    "$ref": "#/components/schemas/AdicionalCreate"
+                                    "$ref": "#/components/schemas/AdicionalBase"
                                 },
                                 "type": "array"
                             },
@@ -2406,10 +2495,6 @@
                         "type": "integer",
                         "title": "Numero Mesa"
                     },
-                    "mesa_token": {
-                        "type": "string",
-                        "title": "Mesa Token"
-                    },
                     "obs": {
                         "anyOf": [
                             {
@@ -2427,6 +2512,17 @@
                         },
                         "type": "array",
                         "title": "Itens"
+                    },
+                    "mesa_token": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Mesa Token"
                     }
                 },
                 "type": "object",
@@ -2695,6 +2791,17 @@
                     "categoria_id": {
                         "type": "integer",
                         "title": "Categoria Id"
+                    },
+                    "produzido_por": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Produzido Por"
                     }
                 },
                 "type": "object",
@@ -2741,6 +2848,17 @@
                     "categoria_id": {
                         "type": "integer",
                         "title": "Categoria Id"
+                    },
+                    "produzido_por": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Produzido Por"
                     }
                 },
                 "type": "object",
@@ -2848,6 +2966,17 @@
                         "type": "integer",
                         "title": "Categoria Id"
                     },
+                    "produzido_por": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Produzido Por"
+                    },
                     "id": {
                         "type": "integer",
                         "title": "Id"
@@ -2949,6 +3078,17 @@
                             }
                         ],
                         "title": "Ativo"
+                    },
+                    "produzido_por": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Produzido Por"
                     }
                 },
                 "type": "object",

@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { useAuthStore } from '~/stores/auth'
+import { useAdminUsuarios } from '~/composables/useAdmin'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
 const auth = useAuthStore()
 const config = useRuntimeConfig()
 const router = useRouter()
+
+const { usuarios, loading: loadingUsuarios, buscar: buscarUsuarios } = useAdminUsuarios()
 
 const form = reactive({
   usuario: '',
@@ -16,6 +19,10 @@ const form = reactive({
 const loading = ref(false)
 const error = ref('')
 const sucesso = ref(false)
+
+onMounted(() => {
+  buscarUsuarios()
+})
 
 async function registrar() {
   error.value = ''
@@ -48,6 +55,7 @@ async function registrar() {
     form.usuario = ''
     form.senha = ''
     form.confirmarSenha = ''
+    await buscarUsuarios()
   } catch (e: any) {
     error.value = e?.data?.detail || 'Erro ao criar usuário'
   } finally {
@@ -117,6 +125,19 @@ useHead({ title: 'Novo Usuário — QuickPed Admin' })
           </button>
         </div>
       </form>
+    </div>
+
+    <div v-if="usuarios.length > 0" class="admin-card">
+      <h3 class="usuarios-title">Usuários do estabelecimento ({{ usuarios.length }})</h3>
+      <div class="usuarios-list">
+        <div v-for="u in usuarios" :key="u.id" class="usuario-item">
+          <span class="usuario-nome">{{ u.usuario }}</span>
+          <div class="usuario-badges">
+            <span v-if="u.admin" class="badge badge--admin">Admin</span>
+            <span v-if="!u.ativo" class="badge badge--inativo">Inativo</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -231,5 +252,55 @@ useHead({ title: 'Novo Usuário — QuickPed Admin' })
 .btn-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.usuarios-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1f17;
+  margin-bottom: 16px;
+}
+
+.usuarios-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.usuario-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.usuario-nome {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1f17;
+}
+
+.usuario-badges {
+  display: flex;
+  gap: 6px;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.badge--admin {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.badge--inativo {
+  background: #fee2e2;
+  color: #dc2626;
 }
 </style>

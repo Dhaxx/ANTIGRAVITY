@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAdminCategorias, useAdminProdutos, useAdminAdicionalGrupos, useAdminAdicionais } from '~/composables/useAdmin'
+import { useAdminCategorias, useAdminProdutos, useAdminAdicionalGrupos, useAdminAdicionais, useAdminUsuarios } from '~/composables/useAdmin'
 import { useAuthStore } from '~/stores/auth'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
@@ -9,9 +9,10 @@ const { categorias, loading: loadingCats, buscar: buscarCats, criar: criarCat, a
 const { produtos, loading: loadingProd, buscar: buscarProd, criar: criarProd, atualizar: atualizarProd, deletar: deletarProd, toggleAtivo: toggleProdAtivo } = useAdminProdutos()
 const { grupos, loading: loadingGrupos, buscar: buscarGrupos, criar: criarGrupo, atualizar: atualizarGrupo, deletar: deletarGrupo } = useAdminAdicionalGrupos()
 const { adicionais, loading: loadingAdicionais, buscar: buscarAdicionais, criar: criarAdicional, atualizar: atualizarAdicional, deletar: deletarAdicional } = useAdminAdicionais()
+const { usuarios, loading: loadingUsuarios, buscar: buscarUsuarios } = useAdminUsuarios()
 
 onMounted(async () => {
-  await Promise.all([buscarCats(), buscarProd()])
+  await Promise.all([buscarCats(), buscarProd(), buscarUsuarios()])
 })
 
 const tabAtiva = ref<'categorias' | 'produtos'>('produtos')
@@ -19,25 +20,30 @@ const tabAtiva = ref<'categorias' | 'produtos'>('produtos')
 // ─── Categoria form ───────────────────────────────────────────────────────────
 const showCatForm = ref(false)
 const catEditando = ref<any | null>(null)
-const catForm = reactive({ nome: '', icone: '' })
+const catForm = reactive({ nome: '', icone: '', produzido_por: '' })
 const catLoading = ref(false)
 
 function abrirCatForm(cat?: any) {
   catEditando.value = cat ?? null
   catForm.nome = cat?.nome ?? ''
   catForm.icone = cat?.icone ?? ''
+  catForm.produzido_por = cat?.produzido_por?.toString() ?? ''
   showCatForm.value = true
 }
 
 async function salvarCat() {
   catLoading.value = true
   try {
+    const payload: any = {
+      nome: catForm.nome,
+      icone: catForm.icone || undefined,
+      produzido_por: catForm.produzido_por ? Number(catForm.produzido_por) : null
+    }
     if (catEditando.value) {
-      await atualizarCat(catEditando.value.id, { nome: catForm.nome, icone: catForm.icone || undefined })
+      await atualizarCat(catEditando.value.id, payload)
     } else {
       await criarCat({
-        nome: catForm.nome,
-        icone: catForm.icone || undefined,
+        ...payload,
         estabelecimento_id: auth.estabelecimentoId!
       })
     }
@@ -54,6 +60,7 @@ const prodForm = reactive({
   preco: '', 
   imagem_url: '', 
   categoria_id: '', 
+  produzido_por: '' as string,
   grupo_adicional_ids: [] as number[],
   novosGrupos: [] as { nome: string; multiplo: boolean; adicionais: { nome: string; preco: string }[] }[]
 })
@@ -133,6 +140,7 @@ async function abrirProdForm(prod?: any) {
   prodForm.preco = prod?.preco ?? ''
   prodForm.imagem_url = prod?.imagem_url ?? ''
   prodForm.categoria_id = prod?.categoria_id?.toString() ?? ''
+  prodForm.produzido_por = prod?.produzido_por?.toString() ?? ''
   prodForm.grupo_adicional_ids = prod?.grupo_adicional_ids ?? []
   
   if (prod?.id) {
@@ -228,6 +236,7 @@ async function salvarProd() {
       preco: Number(prodForm.preco),
       imagem_url: prodForm.imagem_url || null,
       categoria_id: Number(prodForm.categoria_id),
+      produzido_por: prodForm.produzido_por ? Number(prodForm.produzido_por) : null,
       grupo_adicional_ids: prodForm.grupo_adicional_ids,
     }
     if (prodEditando.value) {
@@ -257,6 +266,10 @@ function formatarPreco(v: string | number) {
 
 function categoriaNome(id: number) {
   return categorias.value.find((c: any) => c.id === id)?.nome ?? '–'
+}
+
+function usuarioNome(id: number) {
+  return usuarios.value.find((u: any) => u.id === id)?.usuario ?? '–'
 }
 
 useHead({ title: 'Produtos — QuickPed Admin' })
@@ -290,12 +303,13 @@ useHead({ title: 'Produtos — QuickPed Admin' })
 
       <div v-else class="table-wrap">
         <table class="data-table">
-          <thead><tr><th>Nome</th><th>Categoria</th><th>Preço</th><th>Ativo</th><th></th></tr></thead>
+          <thead><tr><th>Nome</th><th>Categoria</th><th>Preço</th><th>Produção</th><th>Ativo</th><th></th></tr></thead>
           <tbody>
             <tr v-for="p in produtos" :key="p.id">
               <td class="td-nome">{{ p.nome }}<span v-if="p.descricao" class="td-desc">{{ p.descricao }}</span></td>
               <td>{{ categoriaNome(p.categoria_id) }}</td>
               <td class="td-preco">{{ formatarPreco(p.preco) }}</td>
+              <td>{{ p.produzido_por ? usuarioNome(p.produzido_por) : '—' }}</td>
               <td>
                 <span class="pill" :class="p.ativo ? 'pill--green' : 'pill--gray'">
                   {{ p.ativo ? 'Ativo' : 'Inativo' }}
@@ -334,12 +348,13 @@ useHead({ title: 'Produtos — QuickPed Admin' })
 
       <div v-else class="table-wrap">
         <table class="data-table">
-          <thead><tr><th>Nome</th><th>Ícone</th><th>Ordem</th><th>Ativo</th><th></th></tr></thead>
+          <thead><tr><th>Nome</th><th>Ícone</th><th>Ordem</th><th>Produção</th><th>Ativo</th><th></th></tr></thead>
           <tbody>
             <tr v-for="c in categorias" :key="c.id">
               <td class="td-nome">{{ c.nome }}</td>
               <td>{{ c.icone ?? '—' }}</td>
               <td>{{ c.ordem }}</td>
+              <td>{{ c.produzido_por ? usuarioNome(c.produzido_por) : '—' }}</td>
               <td>
                 <span class="pill" :class="c.ativo ? 'pill--green' : 'pill--gray'">
                   {{ c.ativo ? 'Ativo' : 'Inativo' }}
@@ -397,6 +412,13 @@ useHead({ title: 'Produtos — QuickPed Admin' })
             <div class="form-group">
               <label class="form-label">URL da imagem</label>
               <input v-model="prodForm.imagem_url" class="form-input" placeholder="https://..." />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Produzido por</label>
+              <select v-model="prodForm.produzido_por" class="form-input">
+                <option value="">Ninguém</option>
+                <option v-for="u in usuarios" :key="u.id" :value="u.id.toString()">{{ u.usuario }}</option>
+              </select>
             </div>
             <div class="form-group">
               <label class="form-label">Grupos de adicionais</label>
@@ -540,6 +562,13 @@ useHead({ title: 'Produtos — QuickPed Admin' })
             <div class="form-group">
               <label class="form-label">Ícone (emoji ou texto)</label>
               <input v-model="catForm.icone" class="form-input" placeholder="Ex: ☕" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Produzido por</label>
+              <select v-model="catForm.produzido_por" class="form-input">
+                <option value="">Ninguém</option>
+                <option v-for="u in usuarios" :key="u.id" :value="u.id.toString()">{{ u.usuario }}</option>
+              </select>
             </div>
           </div>
           <div class="modal-footer">

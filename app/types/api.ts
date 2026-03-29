@@ -24,6 +24,35 @@ export interface CategoriaPublic {
   produtos: ProdutoPublic[]
 }
 
+export interface CategoriaProdutoCreate {
+  nome: string
+  icone?: string | null
+  ordem?: number
+  estabelecimento_id: number
+  produzido_por?: number | null
+}
+
+export interface CategoriaProdutoUpdate {
+  nome?: string
+  icone?: string | null
+  ordem?: number
+  estabelecimento_id?: number | null
+  ativo?: boolean | null
+  produzido_por?: number | null
+}
+
+export interface CategoriaProdutoRead {
+  id: number
+  nome: string
+  icone?: string | null
+  ordem: number
+  estabelecimento_id: number
+  ativo: boolean
+  criado_em: string
+  atualizado_em: string
+  produzido_por?: number | null
+}
+
 // ─── Produtos ─────────────────────────────────────────────────────────────────
 
 export interface ProdutoPublic {
@@ -34,6 +63,40 @@ export interface ProdutoPublic {
   imagem_url: string | null
   disponivel: boolean
   adicionais: AdicionalPublic[]
+}
+
+export interface ProdutoCreateInput {
+  nome: string
+  descricao?: string | null
+  preco: number | string
+  imagem_url?: string | null
+  categoria_id: number
+  produzido_por?: number | null
+}
+
+export interface ProdutoUpdate {
+  nome?: string
+  descricao?: string | null
+  preco?: number | string | null
+  imagem_url?: string | null
+  categoria_id?: number | null
+  estabelecimento_id?: number | null
+  ativo?: boolean | null
+  produzido_por?: number | null
+}
+
+export interface ProdutoRead {
+  id: number
+  nome: string
+  descricao?: string | null
+  preco: string
+  imagem_url?: string | null
+  categoria_id: number
+  estabelecimento_id: number
+  ativo: boolean
+  criado_em: string
+  atualizado_em: string
+  produzido_por?: number | null
 }
 
 // ─── Estabelecimento ──────────────────────────────────────────────────────────
@@ -97,6 +160,16 @@ export interface PedidoRead {
   status: string
   total: string
   criado_em?: string
+}
+
+// ─── Usuário ───────────────────────────────────────────────────────────────────
+
+export interface UsuarioRead {
+  id: number
+  usuario: string
+  estabelecimento_id: number
+  ativo: boolean
+  admin: boolean
 }
 
 // ─── Carrinho (estado local) ───────────────────────────────────────────────────

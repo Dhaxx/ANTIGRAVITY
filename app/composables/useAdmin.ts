@@ -84,7 +84,15 @@ export const useAdminCategorias = () => {
     await buscar()
   }
 
-  return { categorias, loading, buscar, criar, atualizar, deletar }
+  async function toggleAtivo(id: number, ativo: boolean) {
+    await apiFetch(`/api/v1/admin/categoria-produto/?categoria_produto_id=${id}`, {
+      method: 'PUT',
+      body: { ativo }
+    })
+    await buscar()
+  }
+
+  return { categorias, loading, buscar, criar, atualizar, deletar, toggleAtivo }
 }
 
 // ─── Produtos ─────────────────────────────────────────────────────────────────
@@ -118,7 +126,15 @@ export const useAdminProdutos = () => {
     await buscar()
   }
 
-  return { produtos, loading, buscar, criar, atualizar, deletar }
+  async function toggleAtivo(id: number, ativo: boolean) {
+    await apiFetch(`/api/v1/admin/produto/?produto_id=${id}`, {
+      method: 'PUT',
+      body: { ativo }
+    })
+    await buscar()
+  }
+
+  return { produtos, loading, buscar, criar, atualizar, deletar, toggleAtivo }
 }
 
 // ─── Mesas ────────────────────────────────────────────────────────────────────

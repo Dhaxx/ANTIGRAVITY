@@ -1782,13 +1782,18 @@
                     "id": {
                         "type": "integer",
                         "title": "Id"
+                    },
+                    "ativo": {
+                        "type": "boolean",
+                        "title": "Ativo"
                     }
                 },
                 "type": "object",
                 "required": [
                     "nome",
                     "estabelecimento_id",
-                    "id"
+                    "id",
+                    "ativo"
                 ],
                 "title": "CategoriaProdutoRead"
             },

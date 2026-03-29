@@ -5,8 +5,8 @@ import { useAuthStore } from '~/stores/auth'
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
 const auth = useAuthStore()
-const { categorias, loading: loadingCats, buscar: buscarCats, criar: criarCat, atualizar: atualizarCat, deletar: deletarCat } = useAdminCategorias()
-const { produtos, loading: loadingProd, buscar: buscarProd, criar: criarProd, atualizar: atualizarProd, deletar: deletarProd } = useAdminProdutos()
+const { categorias, loading: loadingCats, buscar: buscarCats, criar: criarCat, atualizar: atualizarCat, deletar: deletarCat, toggleAtivo: toggleCatAtivo } = useAdminCategorias()
+const { produtos, loading: loadingProd, buscar: buscarProd, criar: criarProd, atualizar: atualizarProd, deletar: deletarProd, toggleAtivo: toggleProdAtivo } = useAdminProdutos()
 const { grupos, loading: loadingGrupos, buscar: buscarGrupos, criar: criarGrupo, deletar: deletarGrupo } = useAdminAdicionalGrupos()
 const { adicionais, loading: loadingAdicionais, buscar: buscarAdicionais, criar: criarAdicional, deletar: deletarAdicional } = useAdminAdicionais()
 
@@ -80,6 +80,14 @@ async function salvarProd() {
     }
     showProdForm.value = false
   } finally { prodLoading.value = false }
+}
+
+async function toggleProdutoAtivo(produto: any) {
+  await toggleProdAtivo(produto.id, !produto.ativo)
+}
+
+async function toggleCategoriaAtivo(cat: any) {
+  await toggleCatAtivo(cat.id, !cat.ativo)
 }
 
 // ─── Grupo adicional form ─────────────────────────────────────────────────────
@@ -181,6 +189,14 @@ useHead({ title: 'Produtos — QuickPed Admin' })
               </td>
               <td class="td-actions">
                 <button class="btn-icon-sm" title="Editar" @click="abrirProdForm(p)">✏️</button>
+                <button 
+                  class="toggle-btn" 
+                  :class="{ on: p.ativo }"
+                  :title="p.ativo ? 'Desativar' : 'Ativar'" 
+                  @click="toggleProdutoAtivo(p)"
+                >
+                  <span class="toggle-thumb"></span>
+                </button>
                 <button class="btn-icon-sm danger" title="Excluir" @click="deletarProd(p.id)">🗑️</button>
               </td>
             </tr>
@@ -204,14 +220,27 @@ useHead({ title: 'Produtos — QuickPed Admin' })
 
       <div v-else class="table-wrap">
         <table class="data-table">
-          <thead><tr><th>Nome</th><th>Ícone</th><th>Ordem</th><th></th></tr></thead>
+          <thead><tr><th>Nome</th><th>Ícone</th><th>Ordem</th><th>Ativo</th><th></th></tr></thead>
           <tbody>
             <tr v-for="c in categorias" :key="c.id">
               <td class="td-nome">{{ c.nome }}</td>
               <td>{{ c.icone ?? '—' }}</td>
               <td>{{ c.ordem }}</td>
+              <td>
+                <span class="pill" :class="c.ativo ? 'pill--green' : 'pill--gray'">
+                  {{ c.ativo ? 'Ativo' : 'Inativo' }}
+                </span>
+              </td>
               <td class="td-actions">
                 <button class="btn-icon-sm" title="Editar" @click="abrirCatForm(c)">✏️</button>
+                <button 
+                  class="toggle-btn" 
+                  :class="{ on: c.ativo }"
+                  :title="c.ativo ? 'Desativar' : 'Ativar'" 
+                  @click="toggleCategoriaAtivo(c)"
+                >
+                  <span class="toggle-thumb"></span>
+                </button>
                 <button class="btn-icon-sm danger" title="Excluir" @click="deletarCat(c.id)">🗑️</button>
               </td>
             </tr>
@@ -451,8 +480,34 @@ useHead({ title: 'Produtos — QuickPed Admin' })
 .btn-icon-sm { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 14px; cursor: pointer; transition: background .15s; }
 .btn-icon-sm:hover { background: #f3f4f6; }
 .btn-icon-sm.danger:hover { background: #fce4ec; }
+.btn-icon-sm.pill--green { background: #e8f5e9; }
+.btn-icon-sm.pill--gray { background: #f3f4f6; }
 
 .pill { display: inline-flex; padding: 2px 10px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+
+.toggle-btn {
+  width: 40px;
+  height: 22px;
+  border-radius: 11px;
+  background: #e5e7eb;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+}
+.toggle-btn.on { background: #22c55e; }
+.toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  transition: transform 0.2s;
+}
+.toggle-btn.on .toggle-thumb { transform: translateX(18px); }
 .pill--green { background: #e8f5e9; color: #2e7d32; }
 .pill--gray { background: #f3f4f6; color: #9ba898; }
 .pill--blue { background: #dbeafe; color: #1d4ed8; }

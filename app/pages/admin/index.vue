@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAdminPedidos, useAdminMesas, useAdminComandas } from '~/composables/useAdmin'
+import { useSanitize } from '~/composables/useSanitize'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
@@ -18,6 +19,7 @@ const pedidosPendentes = computed(() =>
 const pedidosHoje = computed(() => pedidos.value.length)
 const mesasAtivas = computed(() => mesas.value.filter((m: any) => m.ativa).length)
 const comandasAbertas = computed(() => comandas.value.filter((c: any) => c.status === 'aberta').length)
+const { escapeHtml } = useSanitize()
 
 const pedidosRecentes = computed(() =>
   [...pedidos.value]
@@ -144,7 +146,7 @@ useHead({ title: 'Dashboard — QuickPed Admin' })
           <tbody>
             <tr v-for="p in pedidosRecentes" :key="p.id">
               <td class="td-id">#{{ p.id }}</td>
-              <td>{{ p.nome_cliente }}</td>
+              <td>{{ escapeHtml(p.nome_cliente) }}</td>
               <td>Mesa {{ p.numero_mesa }}</td>
               <td class="td-preco">{{ formatarPreco(p.total) }}</td>
               <td>

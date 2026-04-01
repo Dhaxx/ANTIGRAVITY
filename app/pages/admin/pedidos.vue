@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAdminPedidos } from '~/composables/useAdmin'
+import { useSanitize } from '~/composables/useSanitize'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
@@ -47,6 +48,7 @@ const STATUS_MAP: Record<string, { label: string; class: string; icon: string; n
 }
 
 const filtroStatus = ref('todos')
+const { escapeHtml } = useSanitize()
 const statusOptions = [
   { value: 'todos', label: 'Todos' },
   { value: 'Pendente', label: 'Pendente' },
@@ -167,7 +169,7 @@ useHead({ title: 'Pedidos — QuickPed Admin' })
         <div class="pedido-card__header" @click="pedidoExpandido = pedidoExpandido === p.id ? null : p.id">
           <div class="pedido-card__meta">
             <span class="pedido-card__id">#{{ p.id }}</span>
-            <span class="pedido-card__cliente">{{ p.nome_cliente }}</span>
+            <span class="pedido-card__cliente">{{ escapeHtml(p.nome_cliente) }}</span>
             <span class="pedido-card__mesa">Mesa {{ p.numero_mesa }}</span>
           </div>
           <div class="pedido-card__right">

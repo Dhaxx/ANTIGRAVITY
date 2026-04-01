@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAdminComandas } from '~/composables/useAdmin'
+import { useSanitize } from '~/composables/useSanitize'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
@@ -14,6 +15,7 @@ const comandasAbertas = computed(() =>
 )
 
 const busca = ref('')
+const { escapeHtml } = useSanitize()
 
 const expandedComanda = ref<number | null>(null)
 
@@ -119,7 +121,7 @@ useHead({ title: 'Comandas — QuickPed Admin' })
                 <div class="pedido-item__header">
                   <div>
                     <span class="pedido-item__id">Pedido #{{ pedido.id }}</span>
-                    <span v-if="pedido.nome_cliente" class="pedido-item__cliente">{{ pedido.nome_cliente }}</span>
+                    <span v-if="pedido.nome_cliente" class="pedido-item__cliente">{{ escapeHtml(pedido.nome_cliente) }}</span>
                   </div>
                   <span class="pedido-item__status" :class="'status-' + pedido.status.toLowerCase()">
                     {{ pedido.status }}

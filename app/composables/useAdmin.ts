@@ -51,7 +51,11 @@ export const useAdminPedidos = () => {
     await buscarPedidos()
   }
 
-  return { pedidos, loading, error, buscarPedidos, atualizarStatus, deletarPedido }
+  async function imprimirPedido(pedidoId: number) {
+    return apiFetch(`/api/v1/admin/Impressao/pedido/${pedidoId}`, { method: 'POST' })
+  }
+
+  return { pedidos, loading, error, buscarPedidos, atualizarStatus, deletarPedido, imprimirPedido }
 }
 
 // ─── Categorias ───────────────────────────────────────────────────────────────

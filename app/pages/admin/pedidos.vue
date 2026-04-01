@@ -3,7 +3,7 @@ import { useAdminPedidos } from '~/composables/useAdmin'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
-const { pedidos, loading, error, buscarPedidos, atualizarStatus, deletarPedido } = useAdminPedidos()
+const { pedidos, loading, error, buscarPedidos, atualizarStatus, deletarPedido, imprimirPedido } = useAdminPedidos()
 
 onMounted(() => {
   buscarPedidos()
@@ -86,6 +86,21 @@ async function voltar(p: any) {
 async function cancelar(p: any) {
   await atualizarStatus(p.id, 'CANCELADO')
   await buscarPedidos()
+}
+
+async function imprimir(p: any) {
+  try {
+    console.log('Imprimindo pedido:', p.id)
+    const resultado = await imprimirPedido(p.id)
+    console.log('Pedido impresso:', resultado)
+    if (resultado?.texto) {
+      console.log('Texto para impressão:', resultado.texto)
+      alert('Pedido enviado para impressão!')
+    }
+  } catch (e) {
+    console.error('Erro ao imprimir:', e)
+    alert('Erro ao imprimir pedido')
+  }
 }
 
 function formatarPreco(v: string | number) {
@@ -193,6 +208,12 @@ useHead({ title: 'Pedidos — QuickPed Admin' })
             </ul>
 
             <div class="pedido-card__actions">
+              <button
+                class="btn-acao btn-acao--print"
+                @click="imprimir(p)"
+              >
+                🖨️ Imprimir
+              </button>
               <button
                 v-if="STATUS_MAP[getStatusKey(p.status)]?.prev"
                 class="btn-acao btn-acao--secondary"
@@ -304,6 +325,8 @@ useHead({ title: 'Pedidos — QuickPed Admin' })
 .btn-acao--secondary:hover { background: #e5e7eb; color: #1a1f17; }
 .btn-acao--danger { background: #fce4ec; color: #c62828; }
 .btn-acao--danger:hover { background: #c62828; color: #fff; }
+.btn-acao--print { background: #e3f2fd; color: #1565c0; }
+.btn-acao--print:hover { background: #1565c0; color: #fff; }
 
 .admin-card { background: #fff; border-radius: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
 .admin-loading, .admin-empty { padding: 24px; color: #9ba898; font-size: 14px; text-align: center; }

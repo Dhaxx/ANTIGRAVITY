@@ -13,7 +13,18 @@ const comandasAbertas = computed(() =>
   comandas.value.filter((c: any) => c.status === 'aberta')
 )
 
+const busca = ref('')
+
 const expandedComanda = ref<number | null>(null)
+
+const comandasFiltradas = computed(() => {
+  const term = busca.value.toLowerCase().trim()
+  if (!term) return comandasAbertas.value
+  return comandasAbertas.value.filter((c: any) => {
+    const nomeCliente = c.pedidos?.some((p: any) => p.nome_cliente?.toLowerCase().includes(term))
+    return String(c.numero_mesa).includes(term) || nomeCliente
+  })
+})
 
 function toggleExpand(id: number) {
   expandedComanda.value = expandedComanda.value === id ? null : id
@@ -52,22 +63,34 @@ useHead({ title: 'Comandas — QuickPed Admin' })
       <p class="admin-page-sub">Gerencie as comandas abertas</p>
     </div>
 
+    <div class="search-box">
+      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+      </svg>
+      <input
+        v-model="busca"
+        type="text"
+        placeholder="Buscar por nº da mesa ou nome do cliente..."
+        class="search-input"
+      />
+    </div>
+
     <div v-if="loading" class="admin-loading">
       <div class="skeleton" style="height:80px; margin-bottom:12px; border-radius:12px;" v-for="i in 3" :key="i" />
     </div>
 
-    <div v-else-if="comandasAbertas.length === 0" class="admin-empty-state">
+    <div v-else-if="comandasFiltradas.length === 0" class="admin-empty-state">
       <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
         <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2"/>
         <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/>
         <path d="M12 17V7"/>
       </svg>
-      <p>Nenhuma comanda aberta no momento</p>
+      <p>{{ busca ? 'Nenhuma comanda encontrada para a busca' : 'Nenhuma comanda aberta no momento' }}</p>
     </div>
 
     <div v-else class="comandas-grid">
       <div
-        v-for="comanda in comandasAbertas"
+        v-for="comanda in comandasFiltradas"
         :key="comanda.id"
         class="comanda-card"
         :class="{ expanded: expandedComanda === comanda.id }"
@@ -146,6 +169,35 @@ useHead({ title: 'Comandas — QuickPed Admin' })
 .admin-page-header { margin-bottom: 4px; }
 .admin-page-title { font-size: 22px; font-weight: 800; color: #1a1f17; }
 .admin-page-sub { font-size: 14px; color: #6b7568; margin-top: 2px; }
+
+.search-box {
+  position: relative;
+  margin-bottom: 16px;
+}
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ba898;
+  pointer-events: none;
+}
+.search-input {
+  width: 100%;
+  padding: 12px 14px 12px 44px;
+  border: 1px solid #e8ede5;
+  border-radius: 10px;
+  font-size: 14px;
+  background: #fff;
+  color: #1a1f17;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(34, 91, 33, 0.1);
+}
+.search-input::placeholder { color: #9ba898; }
 
 .admin-loading { display: flex; flex-direction: column; gap: 12px; }
 .skeleton { background: linear-gradient(90deg, #e8ede5 25%, #f4f6f3 50%, #e8ede5 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 12px; }

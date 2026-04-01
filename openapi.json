@@ -1099,6 +1099,66 @@
                 }
             }
         },
+        "/api/v1/admin/pedido/pendentes": {
+            "get": {
+                "tags": [
+                    "Admin - Pedido"
+                ],
+                "summary": "Get Pedidos Pendentes",
+                "operationId": "get_pedidos_pendentes_api_v1_admin_pedido_pendentes_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/PedidoRead"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get Pedidos Pendentes Api V1 Admin Pedido Pendentes Get"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/pedido/para-imprimir": {
+            "get": {
+                "tags": [
+                    "Admin - Pedido"
+                ],
+                "summary": "Get Pedidos Para Imprimir",
+                "operationId": "get_pedidos_para_imprimir_api_v1_admin_pedido_para_imprimir_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/PedidoRead"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get Pedidos Para Imprimir Api V1 Admin Pedido Para Imprimir Get"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            }
+        },
         "/api/v1/admin/comanda/": {
             "get": {
                 "tags": [
@@ -1332,6 +1392,158 @@
                                 "schema": {
                                     "$ref": "#/components/schemas/MesaRead"
                                 }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/Impressao/test": {
+            "get": {
+                "tags": [
+                    "Admin - Impressao"
+                ],
+                "summary": "Test Impressao",
+                "operationId": "test_impressao_api_v1_admin_Impressao_test_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/Impressao/pedido/{pedido_id}": {
+            "post": {
+                "tags": [
+                    "Admin - Impressao"
+                ],
+                "summary": "Solicitar Impressao",
+                "operationId": "solicitar_impressao_api_v1_admin_Impressao_pedido__pedido_id__post",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "pedido_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Pedido Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Admin - Impressao"
+                ],
+                "summary": "Get Texto Impressao",
+                "operationId": "get_texto_impressao_api_v1_admin_Impressao_pedido__pedido_id__get",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "pedido_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Pedido Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/Impressao/marcar-impresso/{pedido_id}": {
+            "post": {
+                "tags": [
+                    "Admin - Impressao"
+                ],
+                "summary": "Marcar Impresso",
+                "operationId": "marcar_impresso_api_v1_admin_Impressao_marcar_impresso__pedido_id__post",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "pedido_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Pedido Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
                             }
                         }
                     },
@@ -2564,6 +2776,17 @@
                         },
                         "type": "array",
                         "title": "Adicionais"
+                    },
+                    "produzido_por": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Produzido Por"
                     }
                 },
                 "type": "object",
@@ -2600,6 +2823,17 @@
                         },
                         "type": "array",
                         "title": "Adicionais"
+                    },
+                    "produzido_por": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Produzido Por"
                     }
                 },
                 "type": "object",
@@ -3162,12 +3396,27 @@
                     "estabelecimento_id": {
                         "type": "integer",
                         "title": "Estabelecimento Id"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "ativo": {
+                        "type": "boolean",
+                        "title": "Ativo"
+                    },
+                    "admin": {
+                        "type": "boolean",
+                        "title": "Admin"
                     }
                 },
                 "type": "object",
                 "required": [
                     "usuario",
-                    "estabelecimento_id"
+                    "estabelecimento_id",
+                    "id",
+                    "ativo",
+                    "admin"
                 ],
                 "title": "UsuarioRead"
             },

@@ -183,9 +183,12 @@ export const useAdminComandas = () => {
   const comandas = ref<any[]>([])
   const loading = ref(false)
 
-  async function buscar() {
+  async function buscar(status?: string) {
     loading.value = true
-    try { comandas.value = await apiFetch('/api/v1/admin/comanda/') }
+    try {
+      const query = status ? `?status=${status}` : ''
+      comandas.value = await apiFetch(`/api/v1/admin/comanda/${query}`)
+    }
     catch { comandas.value = [] }
     finally { loading.value = false }
   }

@@ -10,8 +10,19 @@ onMounted(async () => {
   await buscar()
 })
 
+const tab = ref<'abertas' | 'fechadas'>('abertas')
+
+watch(tab, async () => {
+  const status = tab.value === 'abertas' ? 'aberta' : 'fechada'
+  await buscar(status)
+})
+
 const comandasAbertas = computed(() =>
   comandas.value.filter((c: any) => c.status === 'aberta')
+)
+
+const comandasFechadas = computed(() =>
+  comandas.value.filter((c: any) => c.status === 'fechada')
 )
 
 const busca = ref('')
@@ -19,10 +30,14 @@ const { escapeHtml } = useSanitize()
 
 const expandedComanda = ref<number | null>(null)
 
+const currentComandas = computed(() => {
+  return tab.value === 'abertas' ? comandasAbertas.value : comandasFechadas.value
+})
+
 const comandasFiltradas = computed(() => {
   const term = busca.value.toLowerCase().trim()
-  if (!term) return comandasAbertas.value
-  return comandasAbertas.value.filter((c: any) => {
+  if (!term) return currentComandas.value
+  return currentComandas.value.filter((c: any) => {
     const nomeCliente = c.pedidos?.some((p: any) => p.nome_cliente?.toLowerCase().includes(term))
     return String(c.numero_mesa).includes(term) || nomeCliente
   })
@@ -62,7 +77,16 @@ useHead({ title: 'Comandas — QuickPed Admin' })
   <div class="comandas-page">
     <div class="admin-page-header">
       <h1 class="admin-page-title">Comandas</h1>
-      <p class="admin-page-sub">Gerencie as comandas abertas</p>
+      <p class="admin-page-sub">Gerencie as comandas</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab" :class="{ active: tab === 'abertas' }" @click="tab = 'abertas'">
+        Abertas
+      </button>
+      <button class="tab" :class="{ active: tab === 'fechadas' }" @click="tab = 'fechadas'">
+        Fechadas
+      </button>
     </div>
 
     <div class="search-box">
@@ -101,6 +125,9 @@ useHead({ title: 'Comandas — QuickPed Admin' })
           <div class="comanda-card__info">
             <span class="comanda-card__mesa">Mesa {{ comanda.numero_mesa }}</span>
             <span class="comanda-card__id">#{{ comanda.id }}</span>
+          </div>
+          <div class="comanda-card__status">
+            <span :class="'status-comanda-' + comanda.status">{{ comanda.status === 'aberta' ? 'Aberta' : 'Fechada' }}</span>
           </div>
           <div class="comanda-card__total">
             {{ formatarPreco(comanda.total) }}
@@ -142,7 +169,7 @@ useHead({ title: 'Comandas — QuickPed Admin' })
             <div v-else class="sem-pedidos">
               Nenhum pedido nesta comanda
             </div>
-            <div class="comanda-card__actions">
+            <div v-if="comanda.status === 'aberta'" class="comanda-card__actions">
               <button
                 class="btn-fechar"
                 :disabled="closingComanda === comanda.id"
@@ -171,6 +198,28 @@ useHead({ title: 'Comandas — QuickPed Admin' })
 .admin-page-header { margin-bottom: 4px; }
 .admin-page-title { font-size: 22px; font-weight: 800; color: #1a1f17; }
 .admin-page-sub { font-size: 14px; color: #6b7568; margin-top: 2px; }
+
+.tabs {
+  display: flex; gap: 8px;
+  margin-bottom: 16px;
+}
+.tab {
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 1px solid #e8ede5;
+  background: #fff;
+  color: #6b7568;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tab:hover { background: #fafbf9; }
+.tab.active {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
 
 .search-box {
   position: relative;
@@ -233,6 +282,15 @@ useHead({ title: 'Comandas — QuickPed Admin' })
 .comanda-card__info { display: flex; flex-direction: column; gap: 2px; }
 .comanda-card__mesa { font-size: 16px; font-weight: 700; color: #1a1f17; }
 .comanda-card__id { font-size: 12px; color: #9ba898; }
+
+.comanda-card__status {
+  margin-left: 12px;
+}
+.comanda-card__status span {
+  font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px;
+}
+.status-comanda-aberta { background: #e8f5e9; color: #2e7d32; }
+.status-comanda-fechada { background: #eceff1; color: #546e7a; }
 
 .comanda-card__total {
   margin-left: auto; margin-right: 12px;

@@ -28,6 +28,29 @@
 
   --transition: 0.2s ease;
   --font: 'Inter', sans-serif;
+
+  /* ─── Landing Page Tokens ─── */
+  --lp-sage: #9FAB97;
+  --lp-sage-dark: #7a8f72;
+  --lp-sage-deeper: #5d7055;
+  --lp-sage-light: #c5d0bf;
+  --lp-sage-xlight: #e8ede5;
+  --lp-sage-bg: #f4f7f2;
+  --lp-cream: #faf9f6;
+  --lp-dark: #1a1f17;
+  --lp-dark-2: #2a3226;
+  --lp-wp-green: #25D366;
+  --lp-white: #ffffff;
+  --lp-font: 'Inter', sans-serif;
+  --lp-radius-sm: 10px;
+  --lp-radius-md: 16px;
+  --lp-radius-lg: 24px;
+  --lp-radius-xl: 32px;
+  --lp-radius-full: 9999px;
+  --lp-shadow-sm: 0 2px 8px rgba(90,115,80,0.08);
+  --lp-shadow-md: 0 8px 32px rgba(90,115,80,0.12);
+  --lp-shadow-lg: 0 20px 60px rgba(90,115,80,0.18);
+  --lp-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ─── Reset & Base ───────────────────────────────────────────────────────────── */

@@ -503,6 +503,7 @@ const isMenuOpen = ref(false)
 }
 .lp-logo__name--sm {
   font-size: 15px;
+  color: #ffffff59;
 }
 .lp-nav__links {
   display: flex;

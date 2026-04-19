@@ -1,18 +1,18 @@
-FROM node:22-alpine AS builder
+FROM node:22-alpine
 
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci --ignore-scripts
+RUN npm ci
 
 COPY . .
 
-RUN npm run generate
+RUN npm run build
 
-FROM nginx:alpine
+ENV HOST=0.0.0.0
+ENV NITRO_HOST=0.0.0.0
+ENV NITRO_PORT=3000
 
-COPY --from=builder /app/.output/public /usr/share/nginx/html
+EXPOSE 3000
 
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["node", ".output/server/index.mjs"]

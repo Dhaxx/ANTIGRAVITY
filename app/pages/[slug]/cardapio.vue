@@ -147,6 +147,8 @@ onMounted(() => {
 
 const usandoMock = ref(false)
 
+const router = useRouter()
+
 const { data: cardapio, pending: loading, refresh } = await useAsyncData(
   `cardapio-${slug.value}`,
   async () => {
@@ -157,7 +159,13 @@ const { data: cardapio, pending: loading, refresh } = await useAsyncData(
       )
       usandoMock.value = false
       return data
-    } catch (e) {
+} catch (e: any) {
+      console.log('[cardapio] erro:', e, 'status:', e.response?.status)
+      const status = e.response?.status ?? e.status
+      if (status === 404) {
+        await router.push('/')
+        return
+      }
       console.warn('[cardapio] API indisponível, usando mock.', e)
       usandoMock.value = true
       return MOCK_CARDAPIO

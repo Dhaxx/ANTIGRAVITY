@@ -145,6 +145,8 @@ async function abrirProdForm(prod?: any) {
   
   if (prod?.id) {
     await buscarGrupos(prod.id)
+  } else {
+    grupos.value = []
   }
   
   showProdForm.value = true

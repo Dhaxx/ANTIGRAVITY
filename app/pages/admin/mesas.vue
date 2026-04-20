@@ -12,14 +12,34 @@ onMounted(async () => {
 
 const showForm = ref(false)
 const novoNumero = ref<string>('')
+const novoNome = ref<string>('')
 const formLoading = ref(false)
+const editingNomeId = ref<number | null>(null)
+const editingNomeValue = ref('')
+
+function startEditNome(mesa: any) {
+  editingNomeId.value = mesa.id
+  editingNomeValue.value = mesa.nome || ''
+}
+
+function saveNome(mesaId: number) {
+  atualizar(mesaId, { nome: editingNomeValue.value || null })
+  editingNomeId.value = null
+  editingNomeValue.value = ''
+}
+
+function cancelEditNome() {
+  editingNomeId.value = null
+  editingNomeValue.value = ''
+}
 
 async function adicionarMesa() {
   if (!novoNumero.value || Number(novoNumero.value) <= 0) return
   formLoading.value = true
   try {
-    await criar(Number(novoNumero.value))
+    await criar(Number(novoNumero.value), novoNome.value || null)
     novoNumero.value = ''
+    novoNome.value = ''
     showForm.value = false
   } finally { formLoading.value = false }
 }
@@ -68,12 +88,14 @@ function printQR(mesa: any) {
   const w = window.open('', '_blank')
   if (!w) return
   const nome = estabelecimento.value?.nome || 'Estabelecimento'
+  const mesaNome = mesa.nome ? `<div class="mesa-nome">${mesa.nome}</div>` : ''
   w.document.write(`
     <html><head><title>QR Mesa ${mesa.numero}</title>
-    <style>body{font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0;padding:20px;box-sizing:border-box;text-align:center}img{margin-bottom:16px;border-radius:8px}.mesa-num{font-size:28px;font-weight:800;margin-bottom:4px}.estab{font-size:14px;color:#888}.qr-wrap{border:2px dashed #e0e0e0;border-radius:12px;padding:24px;display:inline-block}</style>
+    <style>body{font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0;padding:20px;box-sizing:border-box;text-align:center}img{margin-bottom:16px;border-radius:8px}.mesa-num{font-size:28px;font-weight:800;margin-bottom:4px}.mesa-nome{font-size:18px;font-weight:600;color:var(--color-primary,#2e7d32);margin-bottom:8px}.estab{font-size:14px;color:#888}.qr-wrap{border:2px dashed #e0e0e0;border-radius:12px;padding:24px;display:inline-block}</style>
     </head><body>
     <div class="qr-wrap">
       <div class="mesa-num">Mesa ${mesa.numero}</div>
+      ${mesaNome}
       <div class="estab">${nome}</div>
       <img src="${qrCodes.value[mesa.id]}" width="200" height="200" />
       <div class="estab">Escaneie para fazer seu pedido</div>
@@ -88,17 +110,20 @@ function printAllQRCodes() {
   if (!w) return
   const nome = estabelecimento.value?.nome || 'Estabelecimento'
   const ativos = mesasAtivas.value.filter(m => qrCodes.value[m.id])
-  let cards = ativos.map(m => `
+  let cards = ativos.map(m => {
+    const mesaNome = m.nome ? `<div class="mesa-nome">${m.nome}</div>` : ''
+    return `
     <div class="mesa-card">
       <div class="mesa-num">Mesa ${m.numero}</div>
+      ${mesaNome}
       <div class="estab">${nome}</div>
       <img src="${qrCodes.value[m.id]}" width="160" height="160" />
       <div class="estab">Escaneie para fazer seu pedido</div>
     </div>
-  `).join('')
+  `}).join('')
   w.document.write(`
     <html><head><title>QR Mesas</title>
-    <style>body{font-family:sans-serif;padding:24px;margin:0;display:flex;flex-wrap:wrap;gap:20px;justify-content:center}img{border-radius:8px}.mesa-card{text-align:center;border:2px dashed #e0e0e0;border-radius:12px;padding:20px;display:inline-flex;flex-direction:column;align-items:center;gap:4px}.mesa-num{font-size:24px;font-weight:800}.estab{font-size:13px;color:#888}@media print{body{display:flex!important;flex-wrap:wrap!important}}@page{size:A4;margin:10mm}</style>
+    <style>body{font-family:sans-serif;padding:24px;margin:0;display:flex;flex-wrap:wrap;gap:20px;justify-content:center}img{border-radius:8px}.mesa-card{text-align:center;border:2px dashed #e0e0e0;border-radius:12px;padding:20px;display:inline-flex;flex-direction:column;align-items:center;gap:4px}.mesa-num{font-size:24px;font-weight:800}.mesa-nome{font-size:16px;font-weight:600;color:#2e7d32;margin-bottom:4px}.estab{font-size:13px;color:#888}@media print{body{display:flex!important;flex-wrap:wrap!important}}@page{size:A4;margin:10mm}</style>
     </head><body>${cards}
     <script>window.onload=function(){window.print();window.close();}<\/script>
     </body></html>
@@ -137,6 +162,16 @@ useHead({ title: 'Mesas — QuickPed Admin' })
             @keyup.enter="adicionarMesa"
           />
         </div>
+        <div class="form-group" style="max-width: 200px">
+          <label class="form-label">Nome (opcional)</label>
+          <input
+            v-model="novoNome"
+            class="form-input"
+            type="text"
+            placeholder="Ex: Varanda"
+            @keyup.enter="adicionarMesa"
+          />
+        </div>
         <div class="nova-mesa-actions">
           <button class="btn-primary nova-mesa-btn" :disabled="formLoading || !novoNumero" @click="adicionarMesa">
             {{ formLoading ? 'Criando...' : 'Criar mesa' }}
@@ -169,7 +204,22 @@ useHead({ title: 'Mesas — QuickPed Admin' })
               <rect x="3" y="3" width="18" height="18" rx="2"/>
               <line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
             </svg>
-            Mesa {{ mesa.numero }}
+            <template v-if="editingNomeId === mesa.id">
+              <input
+                v-model="editingNomeValue"
+                class="form-input"
+                style="width: 100px; padding: 4px 8px; font-size: 14px;"
+                placeholder="Nome"
+                @keyup.enter="saveNome(mesa.id)"
+                @keyup.escape="cancelEditNome"
+                @blur="saveNome(mesa.id)"
+              />
+            </template>
+            <template v-else>
+              <span @click="startEditNome(mesa)" style="cursor: pointer;" title="Clique para editar o nome">
+                Mesa {{ mesa.numero }}<span v-if="mesa.nome" style="font-weight: 400; color: #6b7568;"> — {{ mesa.nome }}</span>
+              </span>
+            </template>
           </div>
           <span class="status-pill" :class="mesa.ativa ? 'pill--green' : 'pill--gray'">
             {{ mesa.ativa ? 'Ativa' : 'Inativa' }}

@@ -156,13 +156,13 @@ export const useAdminMesas = () => {
     finally { loading.value = false }
   }
 
-  async function criar(numero: number) {
-    const result = await apiFetch('/api/v1/admin/mesa/', { method: 'POST', body: { numero } })
+  async function criar(numero: number, nome: string | null = null) {
+    const result = await apiFetch('/api/v1/admin/mesa/', { method: 'POST', body: { numero, nome } })
     await buscar()
     return result
   }
 
-  async function atualizar(id: number, dados: { numero?: number; ativa?: boolean }) {
+  async function atualizar(id: number, dados: { numero?: number; nome?: string | null; ativa?: boolean }) {
     const result = await apiFetch(`/api/v1/admin/mesa/?mesa_id=${id}`, { method: 'PUT', body: dados })
     await buscar()
     return result

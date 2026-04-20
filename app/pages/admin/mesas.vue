@@ -117,13 +117,13 @@ function printAllQRCodes() {
       <div class="mesa-num">Mesa ${m.numero}</div>
       ${mesaNome}
       <div class="estab">${nome}</div>
-      <img src="${qrCodes.value[m.id]}" width="160" height="160" />
+      <img src="${qrCodes.value[m.id]}" width="140" height="140" />
       <div class="estab">Escaneie para fazer seu pedido</div>
     </div>
   `}).join('')
   w.document.write(`
     <html><head><title>QR Mesas</title>
-    <style>body{font-family:sans-serif;padding:24px;margin:0;display:flex;flex-wrap:wrap;gap:20px;justify-content:center}img{border-radius:8px}.mesa-card{text-align:center;border:2px dashed #e0e0e0;border-radius:12px;padding:20px;display:inline-flex;flex-direction:column;align-items:center;gap:4px}.mesa-num{font-size:24px;font-weight:800}.mesa-nome{font-size:16px;font-weight:600;color:#2e7d32;margin-bottom:4px}.estab{font-size:13px;color:#888}@media print{body{display:flex!important;flex-wrap:wrap!important}}@page{size:A4;margin:10mm}</style>
+    <style>body{font-family:sans-serif;padding:20px;margin:0;display:flex;flex-wrap:wrap;gap:16px;justify-content:center}img{border-radius:8px}.mesa-card{text-align:center;border:2px dashed #e0e0e0;border-radius:12px;padding:16px;display:inline-flex;flex-direction:column;align-items:center;gap:4px}.mesa-num{font-size:22px;font-weight:800}.mesa-nome{font-size:14px;font-weight:600;color:#2e7d32;margin-bottom:4px}.estab{font-size:12px;color:#888}@media print{body{display:flex!important;flex-wrap:wrap!important}}@page{size:A4;margin:8mm}</style>
     </head><body>${cards}
     <script>window.onload=function(){window.print();window.close();}<\/script>
     </body></html>

@@ -54,12 +54,23 @@ function formatarPreco(v: string | number) {
 const closingComanda = ref<number | null>(null)
 
 async function handleFecharComanda(comandaId: number) {
-  if (!confirm('Tem certeza que deseja fechar esta comanda?\nO pagamento foi recebido fora do sistema?')) {
-    return
+  const comanda = comandas.value.find((c: any) => c.id === comandaId)
+  const pedidosEmAberto = comanda?.pedidos?.filter((p: any) => p.status === 'Pendente' || p.status === 'Em Preparação' || p.status === 'Pronto')
+  
+  let forcar = false
+  if (pedidosEmAberto?.length) {
+    if (!confirm(`Esta comanda tem ${pedidosEmAberto.length} pedido(s) em aberto.\nDeseja fechar mesmo assim? Os pedidos em aberto serão marcados como entregados.`)) {
+      return
+    }
+    forcar = true
+  } else {
+    if (!confirm('Tem certeza que deseja fechar esta comanda?\nO pagamento foi recebido fora do sistema?')) {
+      return
+    }
   }
   closingComanda.value = comandaId
   try {
-    await fecharComanda(comandaId)
+    await fecharComanda(comandaId, forcar)
     await buscar()
     expandedComanda.value = null
   } catch (e: any) {

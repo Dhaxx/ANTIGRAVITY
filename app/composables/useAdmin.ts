@@ -193,10 +193,10 @@ export const useAdminComandas = () => {
     finally { loading.value = false }
   }
 
-  async function fecharComanda(comandaId: number) {
+  async function fecharComanda(comandaId: number, forcar: boolean = false) {
     return apiFetch(`/api/v1/admin/comanda/?comanda_id=${comandaId}`, {
       method: 'PUT',
-      body: { status: 'fechada' }
+      body: { status: 'fechada', forcar }
     })
   }
 

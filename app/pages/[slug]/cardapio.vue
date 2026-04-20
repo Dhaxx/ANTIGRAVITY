@@ -15,8 +15,14 @@ interface ComandaRead {
       nome_produto: string
       preco_unitario: string
       quantidade: number
+      adicionais?: Array<{ nome: string; preco: string | number }>
     }>
   }>
+}
+
+function formatarPreco(v: string | number) {
+  const num = typeof v === 'string' ? parseFloat(v) : v
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(num)
 }
 
 // Mock fallback caso a API falhe
@@ -309,9 +315,18 @@ useHead({
                   </div>
                   <ul class="comanda-pedido__itens">
                     <li v-for="item in pedido.itens" :key="item.id">
-                      <span class="item-qtd">{{ item.quantidade }}x</span>
-                      <span class="item-nome">{{ item.nome_produto }}</span>
-                      <span class="item-preco">R$ {{ item.preco_unitario }}</span>
+                      <div class="item-info">
+                        <span class="item-qtd">{{ item.quantidade }}x</span>
+                        <span class="item-nome">{{ item.nome_produto }}</span>
+                        <span class="item-unitario">({{ formatarPreco(item.preco_unitario) }} cada)</span>
+                        <span v-if="item.adicionais?.length" class="item-adicionais">
+                          + {{ item.adicionais.map((a: any) => a.nome).join(', ') }}
+                          <span class="item-total-ad">({{ formatarPreco(item.adicionais.reduce((acc: number, a: any) => acc + Number(a.preco), 0)) }})</span>
+                        </span>
+                      </div>
+                      <span class="item-preco">
+                        {{ formatarPreco(Number(item.preco_unitario) * item.quantidade + (item.adicionais?.reduce((acc: number, a: any) => acc + Number(a.preco) * item.quantidade, 0) || 0)) }}
+                      </span>
                     </li>
                   </ul>
                   <div class="comanda-pedido__total">
@@ -553,18 +568,40 @@ useHead({
   gap: 8px;
   font-size: 13px;
   color: var(--color-text-secondary);
-  padding: 4px 0;
+  padding: 6px 0;
 }
 .item-qtd {
   font-weight: 600;
   color: var(--color-text);
   min-width: 24px;
 }
+.item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 .item-nome {
   flex: 1;
 }
+.item-unitario {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+.item-adicionais {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.item-total-ad {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
 .item-preco {
   font-weight: 500;
+  white-space: nowrap;
 }
 .comanda-pedido__total {
   font-size: 14px;

@@ -156,9 +156,20 @@ useHead({ title: 'Comandas — QuickPed Admin' })
                 </div>
                 <div class="pedido-item__itens">
                   <div v-for="(item, idx) in pedido.itens" :key="idx" class="item-row">
-                    <span class="item-qtd">{{ item.quantidade }}x</span>
-                    <span class="item-nome">{{ item.nome_produto }}</span>
-                    <span class="item-preco">{{ formatarPreco(item.preco_unitario * item.quantidade) }}</span>
+                    <div class="item-info">
+                      <span class="item-qtd">{{ item.quantidade }}x</span>
+                      <span class="item-nome">{{ item.nome_produto }}</span>
+                      <span class="item-preco-unit">({{ formatarPreco(item.preco_unitario) }} cada)</span>
+                      <span v-if="item.adicionais?.length" class="item-adicionais">
+                        + {{ item.adicionais.map((a: any) => a.nome).join(', ') }}
+                        <span class="item-total-adicionais">
+                          (+{{ formatarPreco(item.adicionais.reduce((acc: number, a: any) => acc + Number(a.preco), 0)) }})
+                        </span>
+                      </span>
+                    </div>
+                    <span class="item-preco">
+                      {{ formatarPreco(Number(item.preco_unitario) * item.quantidade + (item.adicionais?.reduce((acc: number, a: any) => acc + Number(a.preco) * item.quantidade, 0) || 0)) }}
+                    </span>
                   </div>
                 </div>
                 <div class="pedido-item__total">
@@ -334,10 +345,14 @@ useHead({ title: 'Comandas — QuickPed Admin' })
 .status-cancelado { background: #fce4ec; color: #c62828; }
 
 .pedido-item__itens { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
-.item-row { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.item-row { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; }
 .item-qtd { color: #9ba898; font-weight: 600; min-width: 24px; }
 .item-nome { flex: 1; color: #1a1f17; }
-.item-preco { font-weight: 600; color: #1a1f17; }
+.item-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.item-preco-unit { font-size: 11px; color: #9ba898; }
+.item-adicionais { font-size: 11px; color: #6b7568; display: flex; flex-direction: column; gap: 1px; }
+.item-total-adicionais { font-size: 11px; color: #6b7568; }
+.item-preco { font-weight: 600; color: #1a1f17; white-space: nowrap; }
 
 .pedido-item__total {
   font-size: 14px; font-weight: 700; color: var(--color-primary);

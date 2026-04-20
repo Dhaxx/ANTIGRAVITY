@@ -48,6 +48,7 @@ const STATUS_MAP: Record<string, { label: string; class: string; icon: string; n
 }
 
 const filtroStatus = ref('todos')
+const busca = ref('')
 const { escapeHtml } = useSanitize()
 const statusOptions = [
   { value: 'todos', label: 'Todos' },
@@ -62,9 +63,18 @@ const pedidosFiltrados = computed(() => {
   const lista = [...pedidos.value].sort((a: any, b: any) =>
     new Date(b.criado_em ?? 0).getTime() - new Date(a.criado_em ?? 0).getTime()
   )
-  if (filtroStatus.value === 'todos') return lista
-  console.log('Filtro:', filtroStatus.value, '| Pedidos status:', lista.map((p: any) => p.status))
-  return lista.filter((p: any) => normalizarStatus(p.status) === filtroStatus.value)
+  let resultado = lista
+  if (filtroStatus.value !== 'todos') {
+    resultado = resultado.filter((p: any) => normalizarStatus(p.status) === filtroStatus.value)
+  }
+  const term = busca.value.toLowerCase().trim()
+  if (term) {
+    resultado = resultado.filter((p: any) => {
+      const nomeCliente = p.nome_cliente?.toLowerCase().includes(term)
+      return String(p.numero_mesa).includes(term) || nomeCliente
+    })
+  }
+  return resultado
 })
 
 const pedidoExpandido = ref<number | null>(null)
@@ -145,6 +155,19 @@ useHead({ title: 'Pedidos — QuickPed Admin' })
       </button>
     </div>
 
+    <!-- Barra de pesquisa -->
+    <div class="search-box">
+      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+      </svg>
+      <input
+        v-model="busca"
+        type="text"
+        placeholder="Buscar por nº da mesa ou nome do cliente..."
+        class="search-input"
+      />
+    </div>
+
     <!-- Loading -->
     <div v-if="loading" class="admin-card">
       <div class="admin-loading">
@@ -158,7 +181,7 @@ useHead({ title: 'Pedidos — QuickPed Admin' })
     <!-- Lista -->
     <div v-else class="pedidos-list">
       <div v-if="pedidosFiltrados.length === 0" class="admin-card admin-empty">
-        Nenhum pedido encontrado.
+        {{ busca ? 'Nenhum pedido encontrado para a busca' : 'Nenhum pedido encontrado.' }}
       </div>
 
       <div
@@ -273,6 +296,23 @@ useHead({ title: 'Pedidos — QuickPed Admin' })
 }
 .status-filtro-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
 .status-filtro-btn.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+
+.search-box { position: relative; margin-top: 12px; }
+.search-icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: #9ba898; pointer-events: none;
+}
+.search-input {
+  width: 100%; padding: 12px 14px 12px 44px;
+  border: 1px solid #e8ede5; border-radius: 10px;
+  font-size: 14px; background: #fff; color: #1a1f17;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.search-input:focus {
+  outline: none; border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(34, 91, 33, 0.1);
+}
+.search-input::placeholder { color: #9ba898; }
 
 /* Cards */
 .pedidos-list { display: flex; flex-direction: column; gap: 10px; }

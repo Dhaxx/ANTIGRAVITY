@@ -23,9 +23,13 @@ watch(() => props.mesaPreenchida, (val) => {
 const mesaBloqueada = computed(() => !!props.mesaPreenchida)
 const mostrarCampoMesa = computed(() => !props.mesaToken)
 
-const formValido = computed(() =>
-  nomeCliente.value.trim().length >= 2 && Number(numeroMesa.value) > 0 && carrinho.itens.length > 0
-)
+const formValido = computed(() => {
+  const nomeValido = nomeCliente.value.trim().length >= 2
+  const mesaValida = Number(numeroMesa.value) > 0
+  const temItens = carrinho.itens.length > 0
+  const naoEstaCarregando = !loading.value
+  return nomeValido && mesaValida && temItens && naoEstaCarregando
+})
 
 async function finalizar() {
   if (!formValido.value) return

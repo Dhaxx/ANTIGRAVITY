@@ -2,12 +2,29 @@ import { defineStore } from 'pinia'
 import type {
   CarrinhoItem,
   ProdutoPublic,
-  AdicionalSelecionado
+  AdicionalSelecionado,
+  GrupoAdicional
 } from '~/types/api'
 
 export const useCarrinhoStore = defineStore('carrinho', () => {
   const itens = ref<CarrinhoItem[]>([])
   const aberto = ref(false)
+
+  function validarAdicionais(): { valido: boolean; erros: string[] } {
+    const erros: string[] = []
+    for (const item of itens.value) {
+      const produto = item.produto as ProdutoPublic
+      const grupos = produto.grupos_adicional ?? []
+      for (const grupo of grupos) {
+        const min = grupo.min_selecoes ?? 0
+        const count = item.adicionaisSelecionados.filter(a => a.grupo_id === grupo.id).length
+        if (count < min) {
+          erros.push(`Selecione ${min} opção em "${grupo.nome}"`)
+        }
+      }
+    }
+    return { valido: erros.length === 0, erros }
+  }
 
   const totalItens = computed(() =>
     itens.value.reduce((acc, item) => acc + item.quantidade, 0)
@@ -71,6 +88,7 @@ export const useCarrinhoStore = defineStore('carrinho', () => {
     removerItem,
     limpar,
     abrirCarrinho,
-    fecharCarrinho
+    fecharCarrinho,
+    validarAdicionais
   }
 })

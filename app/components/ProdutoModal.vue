@@ -66,6 +66,17 @@ const validarMinimo = (): boolean => {
   return true
 }
 
+const getMensagemMinimo = (): string => {
+  for (const grupo of grupos.value) {
+    const min = grupo.min_selecoes ?? 0
+    const count = adicionaisSelecionados.value.filter(a => a.grupo_id === grupo.id).length
+    if (count < min && min > 0) {
+      return `Selecione ${min} opção em "${grupo.nome}"`
+    }
+  }
+  return ''
+}
+
 function toggleAdicional(adicional: AdicionalPublic, grupo: GrupoAdicional) {
   const idx = adicionaisSelecionados.value.findIndex(a => a.id === adicional.id)
   if (idx !== -1) {
@@ -203,7 +214,7 @@ function formatarPreco(v: number) {
               <button class="quantidade-ctrl__btn" @click="quantidade++">+</button>
             </div>
             <p v-if="grupos.length > 0 && !validarMinimo()" class="produto-modal__erro-min">
-              Selecione o mínimo obrigatório
+              {{ getMensagemMinimo() }}
             </p>
             <button class="btn-primary produto-modal__cta" :disabled="!validarMinimo()" @click="adicionar">
               Adicionar — {{ formatarPreco(precoTotal) }}

@@ -23,12 +23,15 @@ watch(() => props.mesaPreenchida, (val) => {
 const mesaBloqueada = computed(() => !!props.mesaPreenchida)
 const mostrarCampoMesa = computed(() => !props.mesaToken)
 
+const validacaoAdicionais = computed(() => carrinho.validarAdicionais())
+
 const formValido = computed(() => {
   const nomeValido = nomeCliente.value.trim().length >= 2
   const mesaValida = Number(numeroMesa.value) > 0
   const temItens = carrinho.itens.length > 0
+  const adicionaisValidos = validacaoAdicionais.value.valido
   const naoEstaCarregando = !loading.value
-  return nomeValido && mesaValida && temItens && naoEstaCarregando
+  return nomeValido && mesaValida && temItens && adicionaisValidos && naoEstaCarregando
 })
 
 async function finalizar() {
@@ -185,6 +188,11 @@ function onMesaInput(e: Event) {
             <!-- Erro -->
             <Transition name="fade">
               <div v-if="error" class="carrinho-drawer__error">{{ error }}</div>
+            </Transition>
+            <Transition name="fade">
+              <div v-if="!validacaoAdicionais.valido" class="carrinho-drawer__error">
+                {{ validacaoAdicionais.erros[0] }}
+              </div>
             </Transition>
           </div>
         </div>

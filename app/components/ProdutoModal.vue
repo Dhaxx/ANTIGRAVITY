@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ProdutoPublic, AdicionalSelecionado } from '~/types/api'
+import type { ProdutoPublic, AdicionalSelecionado, AdicionalPublic, GrupoAdicional } from '~/types/api'
 import { useCarrinhoStore } from '~/stores/carrinho'
 
 const props = defineProps<{
@@ -27,17 +27,68 @@ const precoTotal = computed(() => {
   return (props.produto.preco + precoAdicionais) * quantidade.value
 })
 
-function toggleAdicional(adicional: { id: number; nome: string; preco: number }) {
-  const idx = adicionaisSelecionados.value.findIndex(a => a.id === adicional.id)
-  if (idx === -1) {
-    adicionaisSelecionados.value.push({ id: adicional.id, nome: adicional.nome, preco: adicional.preco })
-  } else {
-    adicionaisSelecionados.value.splice(idx, 1)
+const grupos = computed(() => {
+  if (props.produto?.grupos_adicional?.length) {
+    return props.produto.grupos_adicional
   }
+  const adicionais = props.produto?.adicionais ?? []
+  if (!adicionais.length) return []
+  
+  const gruposMap = new Map<number, GrupoAdicional>()
+  for (const ad of adicionais) {
+    const gid = ad.grupo_id ?? 0
+    if (!gruposMap.has(gid)) {
+      gruposMap.set(gid, {
+        nome: ad.grupo_nome ?? 'Adicionais',
+        max_selecoes: ad.max_selecoes ?? 99,
+        min_selecoes: ad.min_selecoes ?? 0,
+        produto_id: ad.grupo_id ?? 0,
+        id: gid,
+        adicionais: []
+      })
+    }
+    gruposMap.get(gid)!.adicionais.push(ad)
+  }
+  return Array.from(gruposMap.values())
+})
+
+const podeSelecionar = (adicional: AdicionalPublic, grupo: GrupoAdicional) => {
+  const count = adicionaisSelecionados.value.filter(a => a.grupo_id === grupo.id).length
+  return count < grupo.max_selecoes
+}
+
+const validarMinimo = (): boolean => {
+  for (const grupo of grupos.value) {
+    const min = grupo.min_selecoes ?? 0
+    const count = adicionaisSelecionados.value.filter(a => a.grupo_id === grupo.id).length
+    if (count < min) return false
+  }
+  return true
+}
+
+function toggleAdicional(adicional: AdicionalPublic, grupo: GrupoAdicional) {
+  const idx = adicionaisSelecionados.value.findIndex(a => a.id === adicional.id)
+  if (idx !== -1) {
+    adicionaisSelecionados.value.splice(idx, 1)
+    return
+  }
+  if (!podeSelecionar(adicional, grupo)) return
+  adicionaisSelecionados.value.push({ id: adicional.id, nome: adicional.nome, preco: adicional.preco, grupo_id: grupo.id })
 }
 
 function isAdicionalSelecionado(id: number) {
   return adicionaisSelecionados.value.some(a => a.id === id)
+}
+
+function toggleAdicionalOld(adicional: AdicionalPublic) {
+  const idx = adicionaisSelecionados.value.findIndex(a => a.id === adicional.id)
+  if (idx !== -1) {
+    adicionaisSelecionados.value.splice(idx, 1)
+    return
+  }
+  const max = adicional.max_selecoes ?? 99
+  if (adicionaisSelecionados.value.length >= max) return
+  adicionaisSelecionados.value.push({ id: adicional.id, nome: adicional.nome, preco: adicional.preco, grupo_id: adicional.grupo_id })
 }
 
 function adicionar() {
@@ -86,16 +137,52 @@ function formatarPreco(v: number) {
           <p v-if="produto.descricao" class="produto-modal__desc">{{ produto.descricao }}</p>
           <p class="produto-modal__preco">{{ formatarPreco(produto.preco) }}</p>
 
-          <!-- Adicionais -->
-          <div v-if="produto.adicionais && produto.adicionais.length > 0" class="produto-modal__adicionais">
-            <p class="produto-modal__adicionais-label">ADICIONAIS</p>
+          <!-- Adicionais (com grupos) -->
+          <div v-if="grupos.length > 0" class="produto-modal__adicionais">
+            <div v-for="grupo in grupos" :key="grupo.id" class="produto-modal__grupo">
+              <p class="produto-modal__adicionais-label">
+                {{ grupo.nome }}
+                <span v-if="grupo.max_selecoes < 99" class="produto-modal__limite">
+                  (máx: {{ grupo.max_selecoes }})
+                </span>
+              </p>
+              <div class="produto-modal__adicionais-list">
+                <button
+                  v-for="ad in grupo.adicionais"
+                  :key="ad.id"
+                  class="adicional-btn"
+                  :class="{ selected: isAdicionalSelecionado(ad.id) }"
+                  :disabled="!isAdicionalSelecionado(ad.id) && !podeSelecionar(ad, grupo)"
+                  @click="toggleAdicional(ad, grupo)"
+                >
+                  <span class="adicional-btn__nome">{{ ad.nome }}</span>
+                  <span class="adicional-btn__preco">+ {{ formatarPreco(ad.preco) }}</span>
+                  <span class="adicional-btn__check">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Adicionais (estrutura antiga, com grupo_id/max_selecoes no adicional) -->
+          <div v-else-if="produto.adicionais && produto.adicionais.length > 0" class="produto-modal__adicionais">
+            <p class="produto-modal__adicionais-label">
+              ADICIONAIS
+              <span v-if="produto.adicionais[0]?.max_selecoes && produto.adicionais[0].max_selecoes < 99" class="produto-modal__limite">
+                (máx: {{ produto.adicionais[0].max_selecoes }})
+                <span v-if="produto.adicionais[0]?.min_selecoes > 0">, mín: {{ produto.adicionais[0].min_selecoes }}</span>
+              </span>
+            </p>
             <div class="produto-modal__adicionais-list">
               <button
                 v-for="ad in produto.adicionais"
                 :key="ad.id"
                 class="adicional-btn"
                 :class="{ selected: isAdicionalSelecionado(ad.id) }"
-                @click="toggleAdicional(ad)"
+                :disabled="!isAdicionalSelecionado(ad.id) && ad.max_selecoes && adicionaisSelecionados.value.length >= ad.max_selecoes"
+                @click="toggleAdicionalOld(ad)"
               >
                 <span class="adicional-btn__nome">{{ ad.nome }}</span>
                 <span class="adicional-btn__preco">+ {{ formatarPreco(ad.preco) }}</span>
@@ -115,7 +202,10 @@ function formatarPreco(v: number) {
               <span class="quantidade-ctrl__val">{{ quantidade }}</span>
               <button class="quantidade-ctrl__btn" @click="quantidade++">+</button>
             </div>
-            <button class="btn-primary produto-modal__cta" @click="adicionar">
+            <p v-if="grupos.length > 0 && !validarMinimo()" class="produto-modal__erro-min">
+              Selecione o mínimo obrigatório
+            </p>
+            <button class="btn-primary produto-modal__cta" :disabled="!validarMinimo()" @click="adicionar">
               Adicionar — {{ formatarPreco(precoTotal) }}
             </button>
           </div>
@@ -223,6 +313,7 @@ function formatarPreco(v: number) {
   color: var(--color-text-secondary);
   margin-bottom: 10px;
 }
+.produto-modal__limite { font-weight: 400; color: var(--color-text-muted); font-size: 10px; }
 .produto-modal__adicionais-list {
   display: flex;
   flex-wrap: wrap;
@@ -242,6 +333,8 @@ function formatarPreco(v: number) {
   cursor: pointer;
   transition: all var(--transition);
 }
+.adicional-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.adicional-btn:disabled:hover { border-color: var(--color-border); }
 .adicional-btn:hover { border-color: var(--color-primary); }
 .adicional-btn.selected {
   border-color: var(--color-primary);
@@ -307,4 +400,6 @@ function formatarPreco(v: number) {
 }
 
 .produto-modal__cta { flex: 1; padding: 14px 16px; }
+.produto-modal__cta:disabled { opacity: 0.5; cursor: not-allowed; }
+.produto-modal__erro-min { font-size: 12px; color: var(--color-danger); text-align: center; margin-top: 4px; }
 </style>

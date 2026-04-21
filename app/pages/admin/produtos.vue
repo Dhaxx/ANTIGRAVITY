@@ -66,13 +66,14 @@ const prodForm = reactive({
 })
 const prodLoading = ref(false)
 const showNovoGrupoForm = ref(false)
-const novoGrupoForm = reactive({ nome: '', max_selecoes: 1 })
+const novoGrupoForm = reactive({ nome: '', max_selecoes: 1, min_selecoes: 0 })
 const novoGrupoAdicionais = ref<{ nome: string; preco: string; editando?: number }[]>([])
 const erroNovoGrupo = ref('')
 
 function abrirNovoGrupoForm() {
   novoGrupoForm.nome = ''
   novoGrupoForm.max_selecoes = 1
+  novoGrupoForm.min_selecoes = 0
   novoGrupoAdicionais.value = []
   erroNovoGrupo.value = ''
   showNovoGrupoForm.value = true
@@ -120,6 +121,7 @@ async function salvarNovoGrupo() {
   const grupo = await criarGrupo({ 
     nome: novoGrupoForm.nome, 
     max_selecoes: novoGrupoForm.max_selecoes,
+    min_selecoes: novoGrupoForm.min_selecoes,
     produto_id: produtoId,
     adicionais: adicionaisPayload
   })
@@ -154,7 +156,7 @@ async function abrirProdForm(prod?: any) {
 
 const showEditarGrupoForm = ref(false)
 const grupoEditando = ref<any | null>(null)
-const grupoEditForm = reactive({ nome: '', max_selecoes: 1 })
+const grupoEditForm = reactive({ nome: '', max_selecoes: 1, min_selecoes: 0 })
 const grupoEditAdicionais = ref<any[]>([])
 const erroEditarGrupo = ref('')
 
@@ -162,6 +164,7 @@ async function abrirEditarGrupo(grupo: any) {
   grupoEditando.value = grupo
   grupoEditForm.nome = grupo.nome
   grupoEditForm.max_selecoes = grupo.max_selecoes || 1
+  grupoEditForm.min_selecoes = grupo.min_selecoes ?? 0
   grupoEditAdicionais.value = grupo.adicionais?.map((a: any) => ({ ...a, editando: -1 })) || []
   erroEditarGrupo.value = ''
   showEditarGrupoForm.value = true
@@ -189,7 +192,8 @@ async function salvarEditarGrupo() {
   
   await atualizarGrupo(produtoId!, grupoEditando.value.id, {
     nome: grupoEditForm.nome,
-    max_selecoes: grupoEditForm.max_selecoes
+    max_selecoes: grupoEditForm.max_selecoes,
+    min_selecoes: grupoEditForm.min_selecoes
   })
   
   for (const adicional of grupoEditAdicionais.value) {
@@ -482,6 +486,17 @@ useHead({ title: 'Produtos — QuickPed Admin' })
               <p class="form-hint">Quantos adicionais o cliente pode escolher. Use 1 para escolha única.</p>
             </div>
             <div class="form-group">
+              <label class="form-label">Mínimo de escolhas</label>
+              <input 
+                v-model.number="novoGrupoForm.min_selecoes" 
+                class="form-input" 
+                type="number" 
+                min="0" 
+                placeholder="Ex: 0, 1, 2..." 
+              />
+              <p class="form-hint">Quantos adicionais são obrigatórios. Use 0 para opcional.</p>
+            </div>
+            <div class="form-group">
               <label class="form-label">Adicionais</label>
               <div v-for="(adic, index) in novoGrupoAdicionais" :key="index" class="adicional-input-row">
                 <input v-model="adic.nome" class="form-input" placeholder="Nome" :class="{ 'input-error': !adic.nome?.trim() }" />
@@ -524,6 +539,16 @@ useHead({ title: 'Produtos — QuickPed Admin' })
                 type="number" 
                 min="1" 
                 placeholder="Ex: 1, 2, 3..." 
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Mínimo de escolhas</label>
+              <input 
+                v-model.number="grupoEditForm.min_selecoes" 
+                class="form-input" 
+                type="number" 
+                min="0" 
+                placeholder="Ex: 0, 1, 2..." 
               />
             </div>
             <div class="form-group">

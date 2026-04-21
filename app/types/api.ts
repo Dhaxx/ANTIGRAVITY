@@ -6,6 +6,20 @@ export interface AdicionalPublic {
   id: number
   nome: string
   preco: number
+  grupo_id?: number
+  grupo_nome?: string
+  max_selecoes?: number
+  min_selecoes?: number
+}
+
+export interface GrupoAdicional {
+  nome: string
+  max_selecoes: number
+  min_selecoes: number
+  produto_id: number
+  id: number
+  grupo_nome?: string
+  adicionais: AdicionalPublic[]
 }
 
 export interface AdicionalRead {
@@ -62,7 +76,8 @@ export interface ProdutoPublic {
   preco: number
   imagem_url: string | null
   disponivel: boolean
-  adicionais: AdicionalPublic[]
+  adicionais?: AdicionalPublic[]
+  grupos_adicional?: GrupoAdicional[]
 }
 
 export interface ProdutoCreateInput {
@@ -178,6 +193,7 @@ export interface AdicionalSelecionado {
   id: number
   nome: string
   preco: number
+  grupo_id?: number
 }
 
 export interface CarrinhoItem {

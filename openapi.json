@@ -228,7 +228,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
             }
         },
         "/api/v1/admin/categoria-produto/": {
@@ -986,13 +991,7 @@
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/PedidoRead"
-                                    },
-                                    "title": "Response Get Pedidos Api V1 Admin Pedido  Get"
-                                }
+                                "schema": {}
                             }
                         }
                     }
@@ -1057,8 +1056,8 @@
                 "tags": [
                     "Admin - Pedido"
                 ],
-                "summary": "Update Pedido",
-                "operationId": "update_Pedido_api_v1_admin_pedido__delete",
+                "summary": "Delete Pedido",
+                "operationId": "delete_Pedido_api_v1_admin_pedido__delete",
                 "security": [
                     {
                         "OAuth2PasswordBearer": []
@@ -1171,8 +1170,28 @@
                         "OAuth2PasswordBearer": []
                     }
                 ],
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filtrar por status: 'aberta' ou 'fechada'",
+                            "title": "Status"
+                        },
+                        "description": "Filtrar por status: 'aberta' ou 'fechada'"
+                    }
+                ],
                 "responses": {
-                    "201": {
+                    "200": {
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
@@ -1182,6 +1201,16 @@
                                         "$ref": "#/components/schemas/ComandaRead"
                                     },
                                     "title": "Response Get Comanda Api V1 Admin Comanda  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
                                 }
                             }
                         }
@@ -1206,10 +1235,29 @@
                         "required": true,
                         "schema": {
                             "type": "integer",
+                            "description": "ID da comanda",
                             "title": "Comanda Id"
-                        }
+                        },
+                        "description": "ID da comanda"
                     }
                 ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "anyOf": [
+                                    {
+                                        "$ref": "#/components/schemas/ComandaUpdate"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "title": "Body"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "201": {
                         "description": "Successful Response",
@@ -1866,6 +1914,50 @@
                     "preco": {
                         "type": "number",
                         "title": "Preco"
+                    },
+                    "grupo_id": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Grupo Id"
+                    },
+                    "grupo_nome": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Grupo Nome"
+                    },
+                    "max_selecoes": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Max Selecoes"
+                    },
+                    "min_selecoes": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Min Selecoes"
                     }
                 },
                 "type": "object",
@@ -2244,6 +2336,23 @@
                 ],
                 "title": "ComandaRead"
             },
+            "ComandaUpdate": {
+                "properties": {
+                    "status": {
+                        "$ref": "#/components/schemas/StatusComanda"
+                    },
+                    "forcar": {
+                        "type": "boolean",
+                        "title": "Forcar",
+                        "default": false
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "status"
+                ],
+                "title": "ComandaUpdate"
+            },
             "DiaFuncionamento": {
                 "properties": {
                     "dia": {
@@ -2314,6 +2423,30 @@
                             }
                         ],
                         "title": "Dias Funcionamento"
+                    },
+                    "auto_atendimento": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Auto Atendimento",
+                        "default": false
+                    },
+                    "delivery": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Delivery",
+                        "default": false
                     }
                 },
                 "type": "object",
@@ -2350,6 +2483,14 @@
                             }
                         ],
                         "title": "Logo Url"
+                    },
+                    "auto_atendimento": {
+                        "type": "boolean",
+                        "title": "Auto Atendimento"
+                    },
+                    "delivery": {
+                        "type": "boolean",
+                        "title": "Delivery"
                     }
                 },
                 "type": "object",
@@ -2357,7 +2498,9 @@
                     "nome",
                     "aberto",
                     "slug",
-                    "logo_url"
+                    "logo_url",
+                    "auto_atendimento",
+                    "delivery"
                 ],
                 "title": "EstabelecimentoPublic"
             },
@@ -2413,6 +2556,14 @@
                     "slug": {
                         "type": "string",
                         "title": "Slug"
+                    },
+                    "auto_atendimento": {
+                        "type": "boolean",
+                        "title": "Auto Atendimento"
+                    },
+                    "delivery": {
+                        "type": "boolean",
+                        "title": "Delivery"
                     }
                 },
                 "type": "object",
@@ -2425,7 +2576,9 @@
                     "id",
                     "dias_funcionamento",
                     "esta_aberto",
-                    "slug"
+                    "slug",
+                    "auto_atendimento",
+                    "delivery"
                 ],
                 "title": "EstabelecimentoRead"
             },
@@ -2497,6 +2650,28 @@
                             }
                         ],
                         "title": "Esta Aberto"
+                    },
+                    "auto_atendimento": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Auto Atendimento"
+                    },
+                    "delivery": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Delivery"
                     }
                 },
                 "type": "object",
@@ -2512,6 +2687,11 @@
                         "type": "integer",
                         "title": "Max Selecoes",
                         "default": 1
+                    },
+                    "min_selecoes": {
+                        "type": "integer",
+                        "title": "Min Selecoes",
+                        "default": 0
                     },
                     "produto_id": {
                         "type": "integer",
@@ -2549,6 +2729,11 @@
                         "type": "integer",
                         "title": "Max Selecoes",
                         "default": 1
+                    },
+                    "min_selecoes": {
+                        "type": "integer",
+                        "title": "Min Selecoes",
+                        "default": 0
                     },
                     "produto_id": {
                         "type": "integer",
@@ -2598,6 +2783,17 @@
                             }
                         ],
                         "title": "Max Selecoes"
+                    },
+                    "min_selecoes": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Min Selecoes"
                     }
                 },
                 "type": "object",
@@ -2621,6 +2817,17 @@
                     "numero": {
                         "type": "integer",
                         "title": "Numero"
+                    },
+                    "nome": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Nome"
                     }
                 },
                 "type": "object",
@@ -2634,6 +2841,17 @@
                     "numero": {
                         "type": "integer",
                         "title": "Numero"
+                    },
+                    "nome": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Nome"
                     },
                     "id": {
                         "type": "integer",
@@ -2682,6 +2900,17 @@
                         ],
                         "title": "Numero"
                     },
+                    "nome": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Nome"
+                    },
                     "ativa": {
                         "anyOf": [
                             {
@@ -2718,13 +2947,6 @@
                         ],
                         "title": "Obs"
                     },
-                    "itens": {
-                        "items": {
-                            "$ref": "#/components/schemas/PedidoItem-Input"
-                        },
-                        "type": "array",
-                        "title": "Itens"
-                    },
                     "mesa_token": {
                         "anyOf": [
                             {
@@ -2735,6 +2957,11 @@
                             }
                         ],
                         "title": "Mesa Token"
+                    },
+                    "itens": {
+                        "items": {},
+                        "type": "array",
+                        "title": "Itens"
                     }
                 },
                 "type": "object",
@@ -2744,176 +2971,12 @@
                 ],
                 "title": "PedidoCreate"
             },
-            "PedidoItem-Input": {
-                "properties": {
-                    "produto_id": {
-                        "type": "integer",
-                        "title": "Produto Id"
-                    },
-                    "nome_produto": {
-                        "type": "string",
-                        "title": "Nome Produto"
-                    },
-                    "preco_unitario": {
-                        "anyOf": [
-                            {
-                                "type": "number"
-                            },
-                            {
-                                "type": "string",
-                                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
-                            }
-                        ],
-                        "title": "Preco Unitario"
-                    },
-                    "quantidade": {
-                        "type": "integer",
-                        "title": "Quantidade"
-                    },
-                    "adicionais": {
-                        "items": {
-                            "$ref": "#/components/schemas/PedidoItemAdicional-Input"
-                        },
-                        "type": "array",
-                        "title": "Adicionais"
-                    },
-                    "produzido_por": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Produzido Por"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "produto_id",
-                    "nome_produto",
-                    "preco_unitario",
-                    "quantidade"
-                ],
-                "title": "PedidoItem"
-            },
-            "PedidoItem-Output": {
-                "properties": {
-                    "produto_id": {
-                        "type": "integer",
-                        "title": "Produto Id"
-                    },
-                    "nome_produto": {
-                        "type": "string",
-                        "title": "Nome Produto"
-                    },
-                    "preco_unitario": {
-                        "type": "string",
-                        "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
-                        "title": "Preco Unitario"
-                    },
-                    "quantidade": {
-                        "type": "integer",
-                        "title": "Quantidade"
-                    },
-                    "adicionais": {
-                        "items": {
-                            "$ref": "#/components/schemas/PedidoItemAdicional-Output"
-                        },
-                        "type": "array",
-                        "title": "Adicionais"
-                    },
-                    "produzido_por": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Produzido Por"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "produto_id",
-                    "nome_produto",
-                    "preco_unitario",
-                    "quantidade"
-                ],
-                "title": "PedidoItem"
-            },
-            "PedidoItemAdicional-Input": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "title": "Id"
-                    },
-                    "nome": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Nome"
-                    },
-                    "preco": {
-                        "anyOf": [
-                            {
-                                "type": "number"
-                            },
-                            {
-                                "type": "string",
-                                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
-                            }
-                        ],
-                        "title": "Preco"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "id",
-                    "preco"
-                ],
-                "title": "PedidoItemAdicional"
-            },
-            "PedidoItemAdicional-Output": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "title": "Id"
-                    },
-                    "nome": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Nome"
-                    },
-                    "preco": {
-                        "type": "string",
-                        "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
-                        "title": "Preco"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "id",
-                    "preco"
-                ],
-                "title": "PedidoItemAdicional"
-            },
             "PedidoRead": {
                 "properties": {
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
                     "nome_cliente": {
                         "type": "string",
                         "title": "Nome Cliente"
@@ -2933,17 +2996,6 @@
                         ],
                         "title": "Obs"
                     },
-                    "itens": {
-                        "items": {
-                            "$ref": "#/components/schemas/PedidoItem-Output"
-                        },
-                        "type": "array",
-                        "title": "Itens"
-                    },
-                    "id": {
-                        "type": "integer",
-                        "title": "Id"
-                    },
                     "status": {
                         "type": "string",
                         "title": "Status"
@@ -2957,13 +3009,18 @@
                         "type": "string",
                         "format": "date-time",
                         "title": "Criado Em"
+                    },
+                    "itens": {
+                        "items": {},
+                        "type": "array",
+                        "title": "Itens"
                     }
                 },
                 "type": "object",
                 "required": [
+                    "id",
                     "nome_cliente",
                     "numero_mesa",
-                    "id",
                     "status",
                     "total"
                 ],
@@ -3408,6 +3465,10 @@
                     "admin": {
                         "type": "boolean",
                         "title": "Admin"
+                    },
+                    "master": {
+                        "type": "boolean",
+                        "title": "Master"
                     }
                 },
                 "type": "object",
@@ -3416,7 +3477,8 @@
                     "estabelecimento_id",
                     "id",
                     "ativo",
-                    "admin"
+                    "admin",
+                    "master"
                 ],
                 "title": "UsuarioRead"
             },

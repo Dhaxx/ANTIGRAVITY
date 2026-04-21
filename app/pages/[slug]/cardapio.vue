@@ -27,7 +27,7 @@ function formatarPreco(v: string | number) {
 
 // Mock fallback caso a API falhe
 const MOCK_CARDAPIO: CardapioPublicResponse = {
-  estabelecimento: { nome: 'Aroma de Oliveira', aberto: true },
+  estabelecimento: { nome: 'Aroma de Oliveira', aberto: true, auto_atendimento: true },
   categorias: [
     {
       id: 1,
@@ -115,6 +115,7 @@ const config = useRuntimeConfig()
 const slug = computed(() => route.params.slug as string)
 
 const mesaToken = computed(() => route.query.mesa as string | undefined)
+const modoCardapioDigital = computed(() => cardapio.value?.estabelecimento.auto_atendimento === false && !!mesaToken.value)
 const numeroMesaPreenchido = ref<number | null>(null)
 const comandaAtual = ref<ComandaRead | null>(null)
 const comandaModalAberto = ref(false)
@@ -216,6 +217,7 @@ useHead({
     <AppHeader 
       :nome-estabelecimento="cardapio?.estabelecimento?.nome" 
       :comanda-aberta="!!comandaAtual"
+      :modo-cardapio-digital="modoCardapioDigital"
       @ver-comanda="comandaModalAberto = true"
     />
 
@@ -239,7 +241,7 @@ useHead({
             </svg>
           </div>
           <h1 class="cardapio-hero__nome">{{ cardapio.estabelecimento.nome }}</h1>
-          <p class="cardapio-hero__sub">Faça seu pedido pelo menu abaixo</p>
+          <p class="cardapio-hero__sub">{{ modoCardapioDigital ? 'Cardápio digital — peça no balcão' : 'Faça seu pedido pelo menu abaixo' }}</p>
           <div class="cardapio-hero__status" :class="cardapio.estabelecimento.aberto ? 'aberto' : 'fechado'">
             <span class="dot" />
             {{ cardapio.estabelecimento.aberto ? 'Aberto agora' : 'Fechado no momento' }}
@@ -275,6 +277,7 @@ useHead({
             v-for="produto in categoria.produtos.filter(p => p.disponivel)"
             :key="produto.id"
             :produto="produto"
+            :modo-cardapio-digital="modoCardapioDigital"
             @abrir="abrirProduto"
           />
         </div>
@@ -288,6 +291,7 @@ useHead({
     <ProdutoModal
       :produto="produtoSelecionado"
       :aberto="modalAberto"
+      :modo-cardapio-digital="modoCardapioDigital"
       @fechar="fecharModal"
     />
 
@@ -359,6 +363,7 @@ useHead({
       :slug="slug" 
       :mesa-preenchida="numeroMesaPreenchido"
       :mesa-token="mesaToken"
+      :modo-cardapio-digital="modoCardapioDigital"
       @pedido-criado="buscarComanda"
     />
 

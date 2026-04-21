@@ -3,6 +3,7 @@ import type { ProdutoPublic } from '~/types/api'
 
 defineProps<{
   produto: ProdutoPublic
+  modoCardapioDigital?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -36,7 +37,7 @@ function formatarPreco(v: number) {
       <p v-if="produto.descricao" class="produto-card__desc">{{ produto.descricao }}</p>
       <div class="produto-card__footer">
         <span class="produto-card__preco">{{ formatarPreco(produto.preco) }}</span>
-        <button class="btn-icon produto-card__add" @click.stop="emit('abrir', produto)" :aria-label="`Adicionar ${produto.nome}`">
+        <button v-if="!modoCardapioDigital" class="btn-icon produto-card__add" @click.stop="emit('abrir', produto)" :aria-label="`Adicionar ${produto.nome}`">
           +
         </button>
       </div>

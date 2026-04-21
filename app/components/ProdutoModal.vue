@@ -5,6 +5,7 @@ import { useCarrinhoStore } from '~/stores/carrinho'
 const props = defineProps<{
   produto: ProdutoPublic | null
   aberto: boolean
+  modoCardapioDigital?: boolean
 }>()
 
 const emit = defineEmits<{ (e: 'fechar'): void }>()
@@ -207,7 +208,7 @@ function formatarPreco(v: number) {
           </div>
 
           <!-- Footer: quantidade + adicionar -->
-          <div class="produto-modal__footer">
+          <div v-if="!props.modoCardapioDigital" class="produto-modal__footer">
             <div class="quantidade-ctrl">
               <button class="quantidade-ctrl__btn" @click="quantidade = Math.max(1, quantidade - 1)">−</button>
               <span class="quantidade-ctrl__val">{{ quantidade }}</span>

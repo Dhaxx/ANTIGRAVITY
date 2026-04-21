@@ -119,6 +119,8 @@ export interface ProdutoRead {
 export interface EstabelecimentoPublic {
   nome: string
   aberto: boolean
+  auto_atendimento?: boolean
+  delivery?: boolean
 }
 
 // ─── Cardápio ─────────────────────────────────────────────────────────────────

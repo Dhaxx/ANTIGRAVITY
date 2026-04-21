@@ -2,7 +2,7 @@
 import { useCarrinhoStore } from '~/stores/carrinho'
 import { usePedido } from '~/composables/usePedido'
 
-const props = defineProps<{ slug: string; mesaPreenchida?: number | null; mesaToken?: string }>()
+const props = defineProps<{ slug: string; mesaPreenchida?: number | null; mesaToken?: string; modoCardapioDigital?: boolean }>()
 
 const emit = defineEmits<{
   (e: 'pedido-criado'): void
@@ -67,11 +67,11 @@ function onMesaInput(e: Event) {
 <template>
   <Teleport to="body">
     <Transition name="overlay">
-      <div v-if="carrinho.aberto" class="drawer-overlay" @click="carrinho.fecharCarrinho()" />
+      <div v-if="carrinho.aberto && !props.modoCardapioDigital" class="drawer-overlay" @click="carrinho.fecharCarrinho()" />
     </Transition>
 
     <Transition name="slide-up">
-      <div v-if="carrinho.aberto" class="carrinho-drawer">
+      <div v-if="carrinho.aberto && !props.modoCardapioDigital" class="carrinho-drawer">
         <!-- Header -->
         <div class="carrinho-drawer__header">
           <div class="carrinho-drawer__titulo">

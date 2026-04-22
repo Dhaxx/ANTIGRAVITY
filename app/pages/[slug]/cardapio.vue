@@ -241,7 +241,7 @@ useHead({
             </svg>
           </div>
           <h1 class="cardapio-hero__nome">{{ cardapio.estabelecimento.nome }}</h1>
-          <p class="cardapio-hero__sub">{{ modoCardapioDigital ? 'Cardápio digital — peça no balcão' : 'Faça seu pedido pelo menu abaixo' }}</p>
+          <p class="cardapio-hero__sub">{{ modoCardapioDigital ? 'Cardápio digital' : 'Faça seu pedido pelo menu abaixo' }}</p>
           <div class="cardapio-hero__status" :class="cardapio.estabelecimento.aberto ? 'aberto' : 'fechado'">
             <span class="dot" />
             {{ cardapio.estabelecimento.aberto ? 'Aberto agora' : 'Fechado no momento' }}

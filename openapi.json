@@ -2144,6 +2144,10 @@
                             }
                         ],
                         "title": "Produzido Por"
+                    },
+                    "imprime": {
+                        "type": "boolean",
+                        "title": "Imprime"
                     }
                 },
                 "type": "object",
@@ -2189,6 +2193,10 @@
                             }
                         ],
                         "title": "Produzido Por"
+                    },
+                    "imprime": {
+                        "type": "boolean",
+                        "title": "Imprime"
                     },
                     "id": {
                         "type": "integer",
@@ -3108,6 +3116,10 @@
                             }
                         ],
                         "title": "Produzido Por"
+                    },
+                    "imprime": {
+                        "type": "boolean",
+                        "title": "Imprime"
                     }
                 },
                 "type": "object",
@@ -3165,6 +3177,10 @@
                             }
                         ],
                         "title": "Produzido Por"
+                    },
+                    "imprime": {
+                        "type": "boolean",
+                        "title": "Imprime"
                     }
                 },
                 "type": "object",
@@ -3283,6 +3299,10 @@
                         ],
                         "title": "Produzido Por"
                     },
+                    "imprime": {
+                        "type": "boolean",
+                        "title": "Imprime"
+                    },
                     "id": {
                         "type": "integer",
                         "title": "Id"
@@ -3384,6 +3404,17 @@
                             }
                         ],
                         "title": "Ativo"
+                    },
+                    "imprime": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Imprime"
                     },
                     "produzido_por": {
                         "anyOf": [

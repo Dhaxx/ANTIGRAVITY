@@ -5,8 +5,8 @@ import { useAuthStore } from '~/stores/auth'
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
 const auth = useAuthStore()
-const { categorias, loading: loadingCats, buscar: buscarCats, criar: criarCat, atualizar: atualizarCat, deletar: deletarCat, toggleAtivo: toggleCatAtivo } = useAdminCategorias()
-const { produtos, loading: loadingProd, buscar: buscarProd, criar: criarProd, atualizar: atualizarProd, deletar: deletarProd, toggleAtivo: toggleProdAtivo } = useAdminProdutos()
+const { categorias, loading: loadingCats, buscar: buscarCats, criar: criarCat, atualizar: atualizarCat, deletar: deletarCat, toggleAtivo: toggleCatAtivo, toggleImprime: toggleCatImprime } = useAdminCategorias()
+const { produtos, loading: loadingProd, buscar: buscarProd, criar: criarProd, atualizar: atualizarProd, deletar: deletarProd, toggleAtivo: toggleProdAtivo, toggleImprime: toggleProdImprime } = useAdminProdutos()
 const { grupos, loading: loadingGrupos, buscar: buscarGrupos, criar: criarGrupo, atualizar: atualizarGrupo, deletar: deletarGrupo } = useAdminAdicionalGrupos()
 const { adicionais, loading: loadingAdicionais, buscar: buscarAdicionais, criar: criarAdicional, atualizar: atualizarAdicional, deletar: deletarAdicional } = useAdminAdicionais()
 const { usuarios, loading: loadingUsuarios, buscar: buscarUsuarios } = useAdminUsuarios()
@@ -20,14 +20,15 @@ const tabAtiva = ref<'categorias' | 'produtos'>('produtos')
 // ─── Categoria form ───────────────────────────────────────────────────────────
 const showCatForm = ref(false)
 const catEditando = ref<any | null>(null)
-const catForm = reactive({ nome: '', icone: '', produzido_por: '' })
+const catForm = reactive({ nome: '', icone: '', produzir_por: '', imprime: true })
 const catLoading = ref(false)
 
 function abrirCatForm(cat?: any) {
   catEditando.value = cat ?? null
   catForm.nome = cat?.nome ?? ''
   catForm.icone = cat?.icone ?? ''
-  catForm.produzido_por = cat?.produzido_por?.toString() ?? ''
+  catForm.produzir_por = cat?.produzir_por?.toString() ?? ''
+  catForm.imprime = cat?.imprime !== false
   showCatForm.value = true
 }
 
@@ -37,7 +38,8 @@ async function salvarCat() {
     const payload: any = {
       nome: catForm.nome,
       icone: catForm.icone || undefined,
-      produzido_por: catForm.produzido_por ? Number(catForm.produzido_por) : null
+      produzir_por: catForm.produzir_por ? Number(catForm.produzir_por) : null,
+      imprime: catForm.imprime
     }
     if (catEditando.value) {
       await atualizarCat(catEditando.value.id, payload)
@@ -47,7 +49,7 @@ async function salvarCat() {
         estabelecimento_id: auth.estabelecimentoId!
       })
     }
-    showCatForm.value = false
+showCatForm.value = false
   } finally { catLoading.value = false }
 }
 
@@ -60,9 +62,10 @@ const prodForm = reactive({
   preco: '', 
   imagem_url: '', 
   categoria_id: '', 
-  produzido_por: '' as string,
+  produzir_por: '' as string,
   grupo_adicional_ids: [] as number[],
-  novosGrupos: [] as { nome: string; multiplo: boolean; adicionais: { nome: string; preco: string }[] }[]
+  novosGrupos: [] as { nome: string; multiplo: boolean; adicionais: { nome: string; preco: string }[] }[],
+  imprime: true
 })
 const prodLoading = ref(false)
 const showNovoGrupoForm = ref(false)
@@ -142,13 +145,14 @@ async function abrirProdForm(prod?: any) {
   prodForm.preco = prod?.preco ?? ''
   prodForm.imagem_url = prod?.imagem_url ?? ''
   prodForm.categoria_id = prod?.categoria_id?.toString() ?? ''
-  prodForm.produzido_por = prod?.produzido_por?.toString() ?? ''
+  prodForm.produzir_por = prod?.produzir_por?.toString() ?? ''
   prodForm.grupo_adicional_ids = prod?.grupo_adicional_ids ?? []
+  prodForm.imprime = prod?.imprime !== false
   
   if (prod?.id) {
     await buscarGrupos(prod.id)
   } else {
-    grupos.value = []
+grupos.value = []
   }
   
   showProdForm.value = true
@@ -242,15 +246,16 @@ async function salvarProd() {
       preco: Number(prodForm.preco),
       imagem_url: prodForm.imagem_url || null,
       categoria_id: Number(prodForm.categoria_id),
-      produzido_por: prodForm.produzido_por ? Number(prodForm.produzido_por) : null,
+      produzido_por: prodForm.produzir_por ? Number(prodForm.produzir_por) : null,
       grupo_adicional_ids: prodForm.grupo_adicional_ids,
+      imprime: prodForm.imprime
     }
     if (prodEditando.value) {
       await atualizarProd(prodEditando.value.id, body)
     } else {
       await criarProd(body)
     }
-    showProdForm.value = false
+showProdForm.value = false
   } finally { prodLoading.value = false }
 }
 
@@ -258,8 +263,16 @@ async function toggleProdutoAtivo(produto: any) {
   await toggleProdAtivo(produto.id, !produto.ativo)
 }
 
+async function toggleProdutoImprime(produto: any) {
+  await toggleProdImprime(produto.id, !produto.imprime)
+}
+
 async function toggleCategoriaAtivo(cat: any) {
   await toggleCatAtivo(cat.id, !cat.ativo)
+}
+
+async function toggleCategoriaImprime(cat: any) {
+  await toggleCatImprime(cat.id, !cat.imprime)
 }
 
 function adicionaisDoGrupo(grupoId: number) {
@@ -309,13 +322,23 @@ useHead({ title: 'Produtos — QuickPed Admin' })
 
       <div v-else class="table-wrap">
         <table class="data-table">
-          <thead><tr><th>Nome</th><th>Categoria</th><th>Preço</th><th>Produção</th><th>Ativo</th><th></th></tr></thead>
+          <thead><tr><th>Nome</th><th>Categoria</th><th>Preço</th><th>Produção</th><th>Imprime</th><th>Ativo</th><th></th></tr></thead>
           <tbody>
             <tr v-for="p in produtos" :key="p.id">
               <td class="td-nome">{{ p.nome }}<span v-if="p.descricao" class="td-desc">{{ p.descricao }}</span></td>
               <td>{{ categoriaNome(p.categoria_id) }}</td>
               <td class="td-preco">{{ formatarPreco(p.preco) }}</td>
               <td>{{ p.produzido_por ? usuarioNome(p.produzido_por) : '—' }}</td>
+              <td>
+                <button 
+                  class="toggle-btn" 
+                  :class="{ on: p.imprime }"
+                  :title="p.imprime ? 'Não imprimir' : 'Imprimir'" 
+                  @click="toggleProdutoImprime(p)"
+                >
+                  <span class="toggle-thumb"></span>
+                </button>
+              </td>
               <td>
                 <span class="pill" :class="p.ativo ? 'pill--green' : 'pill--gray'">
                   {{ p.ativo ? 'Ativo' : 'Inativo' }}
@@ -354,13 +377,23 @@ useHead({ title: 'Produtos — QuickPed Admin' })
 
       <div v-else class="table-wrap">
         <table class="data-table">
-          <thead><tr><th>Nome</th><th>Ícone</th><th>Ordem</th><th>Produção</th><th>Ativo</th><th></th></tr></thead>
+          <thead><tr><th>Nome</th><th>Ícone</th><th>Ordem</th><th>Produção</th><th>Imprime</th><th>Ativo</th><th></th></tr></thead>
           <tbody>
             <tr v-for="c in categorias" :key="c.id">
               <td class="td-nome">{{ c.nome }}</td>
               <td>{{ c.icone ?? '—' }}</td>
               <td>{{ c.ordem }}</td>
               <td>{{ c.produzido_por ? usuarioNome(c.produzido_por) : '—' }}</td>
+              <td>
+                <button 
+                  class="toggle-btn" 
+                  :class="{ on: c.imprime }"
+                  :title="c.imprime ? 'Não imprimir' : 'Imprimir'" 
+                  @click="toggleCategoriaImprime(c)"
+                >
+                  <span class="toggle-thumb"></span>
+                </button>
+              </td>
               <td>
                 <span class="pill" :class="c.ativo ? 'pill--green' : 'pill--gray'">
                   {{ c.ativo ? 'Ativo' : 'Inativo' }}
@@ -419,12 +452,22 @@ useHead({ title: 'Produtos — QuickPed Admin' })
               <label class="form-label">URL da imagem</label>
               <input v-model="prodForm.imagem_url" class="form-input" placeholder="https://..." />
             </div>
-            <div class="form-group">
+<div class="form-group">
               <label class="form-label">Produzido por</label>
-              <select v-model="prodForm.produzido_por" class="form-input">
+              <select v-model="prodForm.produzir_por" class="form-input">
                 <option value="">Ninguém</option>
                 <option v-for="u in usuarios" :key="u.id" :value="u.id.toString()">{{ u.usuario }}</option>
               </select>
+            </div>
+            <div class="form-group form-group--inline">
+              <label class="form-label">Imprimir pedido</label>
+              <button 
+                class="toggle-btn" 
+                :class="{ on: prodForm.imprime }"
+                @click="prodForm.imprime = !prodForm.imprime"
+              >
+                <span class="toggle-thumb"></span>
+              </button>
             </div>
             <div class="form-group">
               <label class="form-label">Grupos de adicionais</label>
@@ -590,12 +633,22 @@ useHead({ title: 'Produtos — QuickPed Admin' })
               <label class="form-label">Ícone (emoji ou texto)</label>
               <input v-model="catForm.icone" class="form-input" placeholder="Ex: ☕" />
             </div>
-            <div class="form-group">
+<div class="form-group">
               <label class="form-label">Produzido por</label>
-              <select v-model="catForm.produzido_por" class="form-input">
+              <select v-model="catForm.produzir_por" class="form-input">
                 <option value="">Ninguém</option>
                 <option v-for="u in usuarios" :key="u.id" :value="u.id.toString()">{{ u.usuario }}</option>
               </select>
+            </div>
+            <div class="form-group form-group--inline">
+              <label class="form-label">Imprimir pedido</label>
+              <button 
+                class="toggle-btn" 
+                :class="{ on: catForm.imprime }"
+                @click="catForm.imprime = !catForm.imprime"
+              >
+                <span class="toggle-thumb"></span>
+              </button>
             </div>
           </div>
           <div class="modal-footer">
@@ -711,6 +764,8 @@ useHead({ title: 'Produtos — QuickPed Admin' })
 .modal-save { width: auto; padding: 10px 22px; }
 
 .form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group--inline { flex-direction: row; align-items: center; justify-content: space-between; }
+.form-group--inline .form-label { margin: 0; }
 .form-label { font-size: 13px; font-weight: 600; color: #374151; }
 .form-input {
   padding: 10px 14px;

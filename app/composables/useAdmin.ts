@@ -79,7 +79,7 @@ export const useAdminCategorias = () => {
     finally { loading.value = false }
   }
 
-  async function criar(dados: { nome: string; icone?: string; estabelecimento_id: number; produzido_por?: number | null }) {
+  async function criar(dados: { nome: string; icone?: string; estabelecimento_id: number; produzido_por?: number | null; imprime?: boolean }) {
     const result = await apiFetch('/api/v1/admin/categoria-produto/', { method: 'POST', body: dados })
     await buscar()
     return result
@@ -104,7 +104,15 @@ export const useAdminCategorias = () => {
     await buscar()
   }
 
-  return { categorias, loading, buscar, criar, atualizar, deletar, toggleAtivo }
+  async function toggleImprime(id: number, imprime: boolean) {
+    await apiFetch(`/api/v1/admin/categoria-produto/?categoria_produto_id=${id}`, {
+      method: 'PUT',
+      body: { imprime }
+    })
+    await buscar()
+  }
+
+  return { categorias, loading, buscar, criar, atualizar, deletar, toggleAtivo, toggleImprime }
 }
 
 // ─── Produtos ─────────────────────────────────────────────────────────────────
@@ -138,7 +146,7 @@ export const useAdminProdutos = () => {
     await buscar()
   }
 
-  async function toggleAtivo(id: number, ativo: boolean) {
+async function toggleAtivo(id: number, ativo: boolean) {
     await apiFetch(`/api/v1/admin/produto/?produto_id=${id}`, {
       method: 'PUT',
       body: { ativo }
@@ -146,7 +154,15 @@ export const useAdminProdutos = () => {
     await buscar()
   }
 
-  return { produtos, loading, buscar, criar, atualizar, deletar, toggleAtivo }
+  async function toggleImprime(id: number, imprime: boolean) {
+    await apiFetch(`/api/v1/admin/produto/?produto_id=${id}`, {
+      method: 'PUT',
+      body: { imprime }
+    })
+    await buscar()
+  }
+
+return { produtos, loading, buscar, criar, atualizar, deletar, toggleAtivo, toggleImprime }
 }
 
 // ─── Mesas ────────────────────────────────────────────────────────────────────

@@ -46,16 +46,23 @@ export const useAdminPedidos = () => {
     })
   }
 
-  async function deletarPedido(pedidoId: number) {
-    await apiFetch(`/api/v1/admin/pedido/?Pedido_id=${pedidoId}`, { method: 'DELETE' })
+async function deletarPedido(pedidoId: number) {
+    await apiFetch(`/api/v1/admin/pedido/?pedido_id=${pedidoId}`, { method: 'DELETE' })
     await buscarPedidos()
+  }
+
+  async function ocultarPedido(pedidoId: number) {
+    return apiFetch(`/api/v1/admin/pedido/?Pedido_id=${pedidoId}`, {
+      method: 'PUT',
+      body: { oculto: true }
+    })
   }
 
   async function imprimirPedido(pedidoId: number) {
     return apiFetch(`/api/v1/admin/Impressao/pedido/${pedidoId}`, { method: 'POST' })
   }
 
-  return { pedidos, loading, error, buscarPedidos, atualizarStatus, deletarPedido, imprimirPedido }
+  return { pedidos, loading, error, buscarPedidos, atualizarStatus, deletarPedido, ocultarPedido, imprimirPedido }
 }
 
 // ─── Categorias ───────────────────────────────────────────────────────────────

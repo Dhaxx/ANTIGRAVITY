@@ -3029,14 +3029,29 @@
             "PedidoUpdate": {
                 "properties": {
                     "status": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Status"
+                    },
+                    "oculto": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Oculto"
                     }
                 },
                 "type": "object",
-                "required": [
-                    "status"
-                ],
                 "title": "PedidoUpdate"
             },
             "ProdutoCreate-Input": {

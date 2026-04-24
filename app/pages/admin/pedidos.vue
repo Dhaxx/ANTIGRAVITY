@@ -4,7 +4,7 @@ import { useSanitize } from '~/composables/useSanitize'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
-const { pedidos, loading, error, buscarPedidos, atualizarStatus, deletarPedido, imprimirPedido } = useAdminPedidos()
+const { pedidos, loading, error, buscarPedidos, atualizarStatus, deletarPedido, ocultarPedido, imprimirPedido } = useAdminPedidos()
 
 onMounted(() => {
   buscarPedidos()
@@ -113,6 +113,12 @@ async function imprimir(p: any) {
     console.error('Erro ao imprimir:', e)
     alert('Erro ao imprimir pedido')
   }
+}
+
+async function ocultar(p: any) {
+  if (!confirm('Tem certeza que deseja ocultar este pedido?')) return
+  await ocultarPedido(p.id)
+  await buscarPedidos()
 }
 
 function formatarPreco(v: string | number) {
@@ -260,6 +266,12 @@ useHead({ title: 'Pedidos — QuickPed Admin' })
               >
                 Cancelar
               </button>
+              <button
+                class="btn-acao btn-acao--delete"
+                @click="ocultar(p)"
+              >
+                🗑️ Excluir
+              </button>
             </div>
           </div>
         </Transition>
@@ -369,6 +381,8 @@ useHead({ title: 'Pedidos — QuickPed Admin' })
 .btn-acao--danger:hover { background: #c62828; color: #fff; }
 .btn-acao--print { background: #e3f2fd; color: #1565c0; }
 .btn-acao--print:hover { background: #1565c0; color: #fff; }
+.btn-acao--delete { background: #fee2e2; color: #dc2626; }
+.btn-acao--delete:hover { background: #dc2626; color: #fff; }
 
 .admin-card { background: #fff; border-radius: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
 .admin-loading, .admin-empty { padding: 24px; color: #9ba898; font-size: 14px; text-align: center; }

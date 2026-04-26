@@ -51,10 +51,12 @@ async function deletarPedido(pedidoId: number) {
     await buscarPedidos()
   }
 
-  async function ocultarPedido(pedidoId: number) {
+  async function ocultarPedido(pedidoId: number, statusAtual: string) {
+    const status = statusAtual?.toUpperCase()
+    const novoStatus = (status !== 'ENTREGUE' && status !== 'CANCELADO') ? 'CANCELADO' : status
     return apiFetch(`/api/v1/admin/pedido/?Pedido_id=${pedidoId}`, {
       method: 'PUT',
-      body: { oculto: true }
+      body: { oculto: true, status: novoStatus }
     })
   }
 

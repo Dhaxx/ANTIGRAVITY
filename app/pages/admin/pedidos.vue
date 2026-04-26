@@ -117,7 +117,7 @@ async function imprimir(p: any) {
 
 async function ocultar(p: any) {
   if (!confirm('Tem certeza que deseja ocultar este pedido?')) return
-  await ocultarPedido(p.id)
+  await ocultarPedido(p.id, p.status)
   await buscarPedidos()
 }
 

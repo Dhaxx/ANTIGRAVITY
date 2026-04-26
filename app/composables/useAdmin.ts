@@ -223,7 +223,11 @@ export const useAdminComandas = () => {
     })
   }
 
-  return { comandas, loading, buscar, fecharComanda }
+  async function imprimirComanda(comandaId: number) {
+    return apiFetch(`/api/v1/admin/comanda/imprimir/${comandaId}`, { method: 'POST' })
+  }
+
+  return { comandas, loading, buscar, fecharComanda, imprimirComanda }
 }
 
 // ─── Estabelecimento ──────────────────────────────────────────────────────────

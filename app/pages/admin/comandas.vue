@@ -4,7 +4,7 @@ import { useSanitize } from '~/composables/useSanitize'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
-const { comandas, loading, buscar, fecharComanda } = useAdminComandas()
+const { comandas, loading, buscar, fecharComanda, imprimirComanda } = useAdminComandas()
 
 onMounted(async () => {
   await buscar()
@@ -52,6 +52,7 @@ function formatarPreco(v: string | number) {
 }
 
 const closingComanda = ref<number | null>(null)
+const printingComanda = ref<number | null>(null)
 
 async function handleFecharComanda(comandaId: number) {
   const comanda = comandas.value.find((c: any) => c.id === comandaId)
@@ -78,6 +79,18 @@ async function handleFecharComanda(comandaId: number) {
     alert(msg)
   } finally {
     closingComanda.value = null
+  }
+}
+
+async function handleImprimirComanda(comandaId: number) {
+  printingComanda.value = comandaId
+  try {
+    await imprimirComanda(comandaId)
+  } catch (e: any) {
+    const msg = e?.data?.detail || e?.message || 'Erro ao enviar para impressão'
+    alert(msg)
+  } finally {
+    printingComanda.value = null
   }
 }
 
@@ -192,6 +205,20 @@ useHead({ title: 'Comandas — QuickPed Admin' })
               Nenhum pedido nesta comanda
             </div>
             <div v-if="comanda.status === 'aberta'" class="comanda-card__actions">
+              <button
+                class="btn-imprimir"
+                :disabled="printingComanda === comanda.id"
+                @click="handleImprimirComanda(comanda.id)"
+              >
+                <svg v-if="printingComanda === comanda.id" class="spinner" width="16" height="16" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="30 70"/>
+                </svg>
+                <svg v-else width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                  <rect x="6" y="14" width="12" height="8"/>
+                </svg>
+                {{ printingComanda === comanda.id ? 'Enviando...' : 'Imprimir' }}
+              </button>
               <button
                 class="btn-fechar"
                 :disabled="closingComanda === comanda.id"
@@ -374,8 +401,19 @@ useHead({ title: 'Comandas — QuickPed Admin' })
 .sem-pedidos { color: #9ba898; font-size: 14px; text-align: center; padding: 20px; }
 
 .comanda-card__actions {
-  margin-top: 16px; display: flex; justify-content: flex-end;
+  margin-top: 16px; display: flex; justify-content: flex-end; gap: 8px;
 }
+
+.btn-imprimir {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 18px; border-radius: 10px;
+  background: #2563eb; color: #fff;
+  font-size: 14px; font-weight: 600;
+  cursor: pointer; border: none;
+  transition: all 0.15s;
+}
+.btn-imprimir:hover:not(:disabled) { background: #1d4ed8; }
+.btn-imprimir:disabled { opacity: 0.7; cursor: not-allowed; }
 
 .btn-fechar {
   display: flex; align-items: center; gap: 8px;

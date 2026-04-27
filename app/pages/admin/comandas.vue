@@ -53,6 +53,7 @@ function formatarPreco(v: string | number) {
 
 const closingComanda = ref<number | null>(null)
 const printingComanda = ref<number | null>(null)
+const formaPagamentoSelecionada = ref<Record<number, string>>({})
 
 async function handleFecharComanda(comandaId: number) {
   const comanda = comandas.value.find((c: any) => c.id === comandaId)
@@ -71,9 +72,10 @@ async function handleFecharComanda(comandaId: number) {
   }
   closingComanda.value = comandaId
   try {
-    await fecharComanda(comandaId, forcar)
+    await fecharComanda(comandaId, forcar, formaPagamentoSelecionada.value[comandaId] || null)
     await buscar()
     expandedComanda.value = null
+    delete formaPagamentoSelecionada.value[comandaId]
   } catch (e: any) {
     const msg = e?.data?.detail || e?.message || 'Erro ao fechar comanda'
     alert(msg)
@@ -205,6 +207,16 @@ useHead({ title: 'Comandas — QuickPed Admin' })
               Nenhum pedido nesta comanda
             </div>
             <div v-if="comanda.status === 'aberta'" class="comanda-card__actions">
+              <select
+                v-model="formaPagamentoSelecionada[comanda.id]"
+                class="forma-pagamento-select"
+              >
+                <option :value="undefined">Pagamento</option>
+                <option value="PIX">PIX</option>
+                <option value="DINHEIRO">Dinheiro</option>
+                <option value="CREDITO">Crédito</option>
+                <option value="DEBITO">Débito</option>
+              </select>
               <button
                 class="btn-imprimir"
                 :disabled="printingComanda === comanda.id"
@@ -401,7 +413,24 @@ useHead({ title: 'Comandas — QuickPed Admin' })
 .sem-pedidos { color: #9ba898; font-size: 14px; text-align: center; padding: 20px; }
 
 .comanda-card__actions {
-  margin-top: 16px; display: flex; justify-content: flex-end; gap: 8px;
+  margin-top: 16px; display: flex; justify-content: flex-end; gap: 8px; align-items: center;
+}
+
+.forma-pagamento-select {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #e8ede5;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1f17;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.forma-pagamento-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(34, 91, 33, 0.1);
 }
 
 .btn-imprimir {

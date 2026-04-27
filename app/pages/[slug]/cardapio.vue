@@ -371,13 +371,15 @@ useHead({
     <footer class="lp-footer">
       <div class="lp-container lp-footer__inner">
         <div class="lp-logo">
-          <div class="lp-logo__icon lp-logo__icon--sm">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-              <path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
-              <line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>
-            </svg>
-          </div>
-          <span class="lp-logo__name lp-logo__name--sm">QuickPed</span>
+          <a href="https://quickped.com.br" style="text-decoration: none; color: inherit;">
+            <div class="lp-logo__icon lp-logo__icon--sm">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+                <line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>
+              </svg>
+            </div>
+            <span class="lp-logo__name lp-logo__name--sm">QuickPed</span>
+          </a>
         </div>
         <p class="lp-footer__copy">© {{ new Date().getFullYear() }} QuickPed · Sistema de gestão alimentícia</p>
         <a href="https://wa.me/5517996756534" target="_blank" class="lp-footer__whatsapp">
@@ -701,6 +703,13 @@ useHead({
   align-items: center;
   gap: 8px;
 }
+.lp-logo a {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+}
 .lp-logo__icon {
   width: 28px;
   height: 28px;
@@ -716,6 +725,7 @@ useHead({
   width: 24px;
   height: 24px;
   border-radius: 6px;
+  margin-right: 5px;
 }
 .lp-logo__name {
   font-size: 16px;

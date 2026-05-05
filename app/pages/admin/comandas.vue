@@ -4,7 +4,24 @@ import { useSanitize } from '~/composables/useSanitize'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
-const { comandas, loading, buscar, fecharComanda, imprimirComanda } = useAdminComandas()
+const { comandas, loading, buscar, fecharComanda, imprimirComanda, removerItemPedido } = useAdminComandas()
+
+const removingItem = ref<{ pedidoId: number; itemId: number } | null>(null)
+
+async function handleRemoverItem(pedidoId: number, itemId: number) {
+  console.log('Removendo item:', { pedidoId, itemId })
+  if (!confirm('Tem certeza que deseja remover este item do pedido?')) return
+  removingItem.value = { pedidoId, itemId }
+  try {
+    await removerItemPedido(pedidoId, itemId)
+  } catch (e: any) {
+    const msg = e?.data?.detail || e?.message || 'Erro ao remover item'
+    alert(msg)
+    console.error('Erro ao remover item:', e)
+  } finally {
+    removingItem.value = null
+  }
+}
 
 onMounted(async () => {
   await buscar()
@@ -191,9 +208,25 @@ useHead({ title: 'Comandas — QuickPed Admin' })
                         </span>
                       </span>
                     </div>
-                    <span class="item-preco">
-                      {{ formatarPreco(Number(item.preco_unitario) * item.quantidade + (item.adicionais?.reduce((acc: number, a: any) => acc + Number(a.preco) * item.quantidade, 0) || 0)) }}
-                    </span>
+                    <div class="item-actions">
+                      <span class="item-preco">
+                        {{ formatarPreco(Number(item.preco_unitario) * item.quantidade + (item.adicionais?.reduce((acc: number, a: any) => acc + Number(a.preco) * item.quantidade, 0) || 0)) }}
+                      </span>
+                      <button
+                        v-if="comanda.status === 'aberta'"
+                        class="btn-delete-item"
+                        :disabled="removingItem?.pedidoId === pedido.id && removingItem?.itemId === item.item_id"
+                        title="Remover item"
+                        @click="handleRemoverItem(pedido.id, item.item_id)"
+                      >
+                        <svg v-if="removingItem?.pedidoId === pedido.id && removingItem?.itemId === item.item_id" class="spinner" width="14" height="14" viewBox="0 0 24 24">
+                          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="30 70"/>
+                        </svg>
+                        <svg v-else width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <div class="pedido-item__total">
@@ -390,7 +423,18 @@ useHead({ title: 'Comandas — QuickPed Admin' })
 .item-preco-unit { font-size: 11px; color: #9ba898; }
 .item-adicionais { font-size: 11px; color: #6b7568; display: flex; flex-direction: column; gap: 1px; }
 .item-total-adicionais { font-size: 11px; color: #6b7568; }
+.item-actions { display: flex; align-items: center; gap: 8px; }
 .item-preco { font-weight: 600; color: #1a1f17; white-space: nowrap; }
+
+.btn-delete-item {
+  display: flex; align-items: center; justify-content: center;
+  padding: 6px; border-radius: 6px;
+  background: transparent; border: none;
+  color: #9ba898; cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-delete-item:hover:not(:disabled) { background: #fce4ec; color: #c62828; }
+.btn-delete-item:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .pedido-item__total {
   font-size: 14px; font-weight: 700; color: var(--color-primary);

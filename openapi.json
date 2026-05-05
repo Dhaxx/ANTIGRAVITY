@@ -1128,6 +1128,62 @@
                 ]
             }
         },
+        "/api/v1/admin/pedido/{pedido_id}/{item_id}": {
+            "delete": {
+                "tags": [
+                    "Admin - Pedido"
+                ],
+                "summary": "Delete Item Do Pedido",
+                "operationId": "delete_item_do_pedido_api_v1_admin_pedido__pedido_id___item_id__delete",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "pedido_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Pedido Id"
+                        }
+                    },
+                    {
+                        "name": "item_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Item Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PedidoRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/admin/pedido/para-imprimir": {
             "get": {
                 "tags": [
@@ -1266,6 +1322,126 @@
                                 "schema": {
                                     "$ref": "#/components/schemas/ComandaRead"
                                 }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/comanda/para-imprimir": {
+            "get": {
+                "tags": [
+                    "Admin - Comanda"
+                ],
+                "summary": "Get Comandas Para Imprimir",
+                "operationId": "get_comandas_para_imprimir_api_v1_admin_comanda_para_imprimir_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/ComandaRead"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get Comandas Para Imprimir Api V1 Admin Comanda Para Imprimir Get"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/comanda/imprimir/{comanda_id}": {
+            "post": {
+                "tags": [
+                    "Admin - Comanda"
+                ],
+                "summary": "Solicitar Impressao Comanda",
+                "operationId": "solicitar_impressao_comanda_api_v1_admin_comanda_imprimir__comanda_id__post",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "comanda_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Comanda Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/comanda/impresso/{comanda_id}": {
+            "post": {
+                "tags": [
+                    "Admin - Comanda"
+                ],
+                "summary": "Marcar Comanda Impressa",
+                "operationId": "marcar_comanda_impressa_api_v1_admin_comanda_impresso__comanda_id__post",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "comanda_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Comanda Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
                             }
                         }
                     },
@@ -1583,6 +1759,51 @@
                         "schema": {
                             "type": "integer",
                             "title": "Pedido Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/Impressao/comanda/{comanda_id}": {
+            "get": {
+                "tags": [
+                    "Admin - Impressao"
+                ],
+                "summary": "Get Comanda Impressao",
+                "operationId": "get_comanda_impressao_api_v1_admin_Impressao_comanda__comanda_id__get",
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "comanda_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Comanda Id"
                         }
                     }
                 ],
@@ -2272,6 +2493,17 @@
                             }
                         ],
                         "title": "Produzido Por"
+                    },
+                    "imprime": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Imprime"
                     }
                 },
                 "type": "object",

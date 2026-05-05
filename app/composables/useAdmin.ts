@@ -229,7 +229,12 @@ export const useAdminComandas = () => {
     return apiFetch(`/api/v1/admin/comanda/imprimir/${comandaId}`, { method: 'POST' })
   }
 
-  return { comandas, loading, buscar, fecharComanda, imprimirComanda }
+  async function removerItemPedido(pedidoId: number, itemId: number) {
+    await apiFetch(`/api/v1/admin/pedido/${pedidoId}/${itemId}`, { method: 'DELETE' })
+    await buscar()
+  }
+
+  return { comandas, loading, buscar, fecharComanda, imprimirComanda, removerItemPedido }
 }
 
 // ─── Estabelecimento ──────────────────────────────────────────────────────────

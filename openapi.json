@@ -2061,6 +2061,262 @@
                     }
                 }
             }
+        },
+        "/api/v1/cliente/autenticacao/login": {
+            "post": {
+                "tags": [
+                    "Public - Autenticação Cliente"
+                ],
+                "summary": "Login",
+                "operationId": "login_api_v1_cliente_autenticacao_login_post",
+                "parameters": [
+                    {
+                        "name": "telefone",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Telefone"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClienteTokenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/cliente/autenticacao/registrar": {
+            "post": {
+                "tags": [
+                    "Public - Autenticação Cliente"
+                ],
+                "summary": "Registrar",
+                "operationId": "registrar_api_v1_cliente_autenticacao_registrar_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClienteCreate"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClienteRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/cliente/": {
+            "get": {
+                "tags": [
+                    "Public - Cliente"
+                ],
+                "summary": "Ler Cliente",
+                "operationId": "ler_cliente_api_v1_cliente__get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClienteRead"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Public - Cliente"
+                ],
+                "summary": "Atualizar Cliente",
+                "operationId": "atualizar_cliente_api_v1_cliente__put",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClienteUpdate"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClienteRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/cliente/endereco": {
+            "post": {
+                "tags": [
+                    "Public - Cliente"
+                ],
+                "summary": "Adicionar Endereco Cliente",
+                "operationId": "adicionar_endereco_cliente_api_v1_cliente_endereco_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EnderecoCreate"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EnderecoRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/cliente/endereco/{endereco_id}": {
+            "put": {
+                "tags": [
+                    "Public - Cliente"
+                ],
+                "summary": "Atualizar Endereco Cliente",
+                "operationId": "atualizar_endereco_cliente_api_v1_cliente_endereco__endereco_id__put",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "endereco_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Endereco Id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EnderecoUpdate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EnderecoRead"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -2540,6 +2796,120 @@
                 ],
                 "title": "CategoriaPublic"
             },
+            "ClienteCreate": {
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "minLength": 2,
+                        "title": "Nome"
+                    },
+                    "telefone": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "minLength": 8,
+                        "title": "Telefone"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "nome",
+                    "telefone"
+                ],
+                "title": "ClienteCreate"
+            },
+            "ClienteRead": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "nome": {
+                        "type": "string",
+                        "title": "Nome"
+                    },
+                    "telefone": {
+                        "type": "string",
+                        "title": "Telefone"
+                    },
+                    "enderecos": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "$ref": "#/components/schemas/EnderecoRead"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Enderecos"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "nome",
+                    "telefone"
+                ],
+                "title": "ClienteRead"
+            },
+            "ClienteTokenResponse": {
+                "properties": {
+                    "cliente_id": {
+                        "type": "integer",
+                        "title": "Cliente Id"
+                    },
+                    "access_token": {
+                        "type": "string",
+                        "title": "Access Token"
+                    },
+                    "token_type": {
+                        "type": "string",
+                        "title": "Token Type",
+                        "default": "bearer"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "cliente_id",
+                    "access_token"
+                ],
+                "title": "ClienteTokenResponse"
+            },
+            "ClienteUpdate": {
+                "properties": {
+                    "nome": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "maxLength": 50,
+                                "minLength": 2
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Nome"
+                    },
+                    "telefone": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "maxLength": 20,
+                                "minLength": 8
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Telefone"
+                    }
+                },
+                "type": "object",
+                "title": "ClienteUpdate"
+            },
             "ComandaRead": {
                 "properties": {
                     "numero_mesa": {
@@ -2615,6 +2985,187 @@
                     "fechamento"
                 ],
                 "title": "DiaFuncionamento"
+            },
+            "EnderecoCreate": {
+                "properties": {
+                    "cep": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Cep"
+                    },
+                    "logradouro": {
+                        "type": "string",
+                        "title": "Logradouro"
+                    },
+                    "numero": {
+                        "type": "string",
+                        "title": "Numero"
+                    },
+                    "cidade": {
+                        "type": "string",
+                        "title": "Cidade"
+                    },
+                    "bairro": {
+                        "type": "string",
+                        "title": "Bairro"
+                    },
+                    "complemento": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Complemento"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "logradouro",
+                    "cidade",
+                    "bairro"
+                ],
+                "title": "EnderecoCreate"
+            },
+            "EnderecoRead": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "cliente_id": {
+                        "type": "integer",
+                        "title": "Cliente Id"
+                    },
+                    "logradouro": {
+                        "type": "string",
+                        "title": "Logradouro"
+                    },
+                    "numero": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Numero"
+                    },
+                    "cidade": {
+                        "type": "string",
+                        "title": "Cidade"
+                    },
+                    "bairro": {
+                        "type": "string",
+                        "title": "Bairro"
+                    },
+                    "complemento": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Complemento"
+                    },
+                    "atual": {
+                        "type": "boolean",
+                        "title": "Atual"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "cliente_id",
+                    "logradouro",
+                    "cidade",
+                    "bairro",
+                    "atual"
+                ],
+                "title": "EnderecoRead"
+            },
+            "EnderecoUpdate": {
+                "properties": {
+                    "logradouro": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Logradouro"
+                    },
+                    "numero": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Numero"
+                    },
+                    "cidade": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Cidade"
+                    },
+                    "bairro": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Bairro"
+                    },
+                    "complemento": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Complemento"
+                    },
+                    "atual": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Atual"
+                    }
+                },
+                "type": "object",
+                "title": "EnderecoUpdate"
             },
             "EstabelecimentoCreate": {
                 "properties": {
@@ -3198,10 +3749,26 @@
                         ],
                         "title": "Mesa Token"
                     },
+                    "tipo": {
+                        "type": "string",
+                        "title": "Tipo",
+                        "default": "Local"
+                    },
                     "itens": {
                         "items": {},
                         "type": "array",
                         "title": "Itens"
+                    },
+                    "endereco_id": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Endereco Id"
                     }
                 },
                 "type": "object",
@@ -3240,6 +3807,10 @@
                         "type": "string",
                         "title": "Status"
                     },
+                    "tipo": {
+                        "type": "string",
+                        "title": "Tipo"
+                    },
                     "total": {
                         "type": "string",
                         "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
@@ -3254,6 +3825,17 @@
                         "items": {},
                         "type": "array",
                         "title": "Itens"
+                    },
+                    "endereco": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Endereco"
                     }
                 },
                 "type": "object",
@@ -3262,6 +3844,7 @@
                     "nome_cliente",
                     "numero_mesa",
                     "status",
+                    "tipo",
                     "total"
                 ],
                 "title": "PedidoRead"
@@ -3810,6 +4393,10 @@
                         "tokenUrl": "/api/v1/admin/autenticacao/login"
                     }
                 }
+            },
+            "HTTPBearer": {
+                "type": "http",
+                "scheme": "bearer"
             }
         }
     }

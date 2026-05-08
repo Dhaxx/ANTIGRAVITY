@@ -1,4 +1,4 @@
-import type { PedidoCreate, PedidoRead } from '~/types/api'
+import type { PedidoCreate, PedidoRead, PedidoTipo } from '~/types/api'
 import { useCarrinhoStore } from '~/stores/carrinho'
 
 export const usePedido = () => {
@@ -40,7 +40,9 @@ export const usePedido = () => {
     nomeCliente: string,
     numeroMesa: number,
     mesaToken?: string,
-    obs?: string
+    obs?: string,
+    tipo?: PedidoTipo,
+    enderecoId?: number | null
   ): PedidoCreate {
     const carrinho = useCarrinhoStore()
     return {
@@ -48,6 +50,8 @@ export const usePedido = () => {
       numero_mesa: numeroMesa,
       mesa_token: mesaToken,
       obs: obs || null,
+      tipo: tipo || 'Local',
+      endereco_id: enderecoId || null,
       itens: carrinho.itens.map(item => ({
         produto_id: item.produto.id,
         nome_produto: item.produto.nome,

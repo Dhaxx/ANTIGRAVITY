@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { useAdminPedidos } from '~/composables/useAdmin'
+import { useAdminPedidos, useAdminEstabelecimento } from '~/composables/useAdmin'
 import { useSanitize } from '~/composables/useSanitize'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
 const { pedidos, loading, error, buscarPedidos, atualizarStatus, deletarPedido, ocultarPedido, imprimirPedido } = useAdminPedidos()
+const { estabelecimento, buscar: buscarEstabelecimento } = useAdminEstabelecimento()
+
+onMounted(() => {
+  buscarEstabelecimento()
+})
 
 onMounted(() => {
   buscarPedidos()
@@ -50,6 +55,19 @@ const STATUS_MAP: Record<string, { label: string; class: string; icon: string; n
 const filtroStatus = ref('todos')
 const busca = ref('')
 const { escapeHtml } = useSanitize()
+
+const tiposDisponiveis = computed(() => {
+  const tipos: string[] = ['Local']
+  const est = estabelecimento.value
+  if (est?.delivery) {
+    tipos.push('Delivery')
+    tipos.push('Retirada')
+  }
+  return tipos
+})
+
+const filtroTipo = ref<string[]>([...tiposDisponiveis.value])
+
 const statusOptions = [
   { value: 'todos', label: 'Todos' },
   { value: 'Pendente', label: 'Pendente' },
@@ -66,6 +84,9 @@ const pedidosFiltrados = computed(() => {
   let resultado = lista
   if (filtroStatus.value !== 'todos') {
     resultado = resultado.filter((p: any) => normalizarStatus(p.status) === filtroStatus.value)
+  }
+  if (filtroTipo.value.length > 0 && filtroTipo.value.length < 3) {
+    resultado = resultado.filter((p: any) => filtroTipo.value.includes(p.tipo || 'Local'))
   }
   const term = busca.value.toLowerCase().trim()
   if (term) {
@@ -161,6 +182,22 @@ useHead({ title: 'Pedidos — QuickPed Admin' })
       </button>
     </div>
 
+    <!-- Filtros tipo -->
+    <div v-if="tiposDisponiveis.length > 1" class="tipo-filtros">
+      <label v-if="tiposDisponiveis.includes('Local')" class="tipo-checkbox" :class="{ active: filtroTipo.includes('Local') }">
+        <input type="checkbox" v-model="filtroTipo" value="Local" />
+        <span>Local</span>
+      </label>
+      <label v-if="tiposDisponiveis.includes('Delivery')" class="tipo-checkbox" :class="{ active: filtroTipo.includes('Delivery') }">
+        <input type="checkbox" v-model="filtroTipo" value="Delivery" />
+        <span>Delivery</span>
+      </label>
+      <label v-if="tiposDisponiveis.includes('Retirada')" class="tipo-checkbox" :class="{ active: filtroTipo.includes('Retirada') }">
+        <input type="checkbox" v-model="filtroTipo" value="Retirada" />
+        <span>Retirada</span>
+      </label>
+    </div>
+
     <!-- Barra de pesquisa -->
     <div class="search-box">
       <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -199,7 +236,7 @@ useHead({ title: 'Pedidos — QuickPed Admin' })
           <div class="pedido-card__meta">
             <span class="pedido-card__id">#{{ p.id }}</span>
             <span class="pedido-card__cliente">{{ escapeHtml(p.nome_cliente) }}</span>
-            <span class="pedido-card__mesa">Mesa {{ p.numero_mesa }}</span>
+            <span class="pedido-card__mesa">{{ p.tipo === 'Local' ? `Mesa ${p.numero_mesa}` : p.tipo }}</span>
           </div>
           <div class="pedido-card__right">
             <span class="status-badge" :class="STATUS_MAP[getStatusKey(p.status)]?.class ?? ''">
@@ -308,6 +345,20 @@ useHead({ title: 'Pedidos — QuickPed Admin' })
 }
 .status-filtro-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
 .status-filtro-btn.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+
+.tipo-filtros {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-top: 10px;
+}
+.tipo-checkbox {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 6px;
+  font-size: 12px; font-weight: 500;
+  background: #f5f5f5; border: 1.5px solid transparent;
+  cursor: pointer; transition: all 0.15s;
+}
+.tipo-checkbox input { display: none; }
+.tipo-checkbox.active { background: var(--color-primary-bg); border-color: var(--color-primary); color: var(--color-primary); }
 
 .search-box { position: relative; margin-top: 12px; }
 .search-icon {

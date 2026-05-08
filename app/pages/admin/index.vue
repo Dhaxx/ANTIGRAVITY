@@ -39,6 +39,16 @@ function getStatus(s: string) {
   return STATUS_LABEL[s] ?? { label: s, class: '' }
 }
 
+const TIPO_LABEL: Record<string, { label: string; class: string }> = {
+  Local:    { label: 'Local',    class: 'tipo-local' },
+  Delivery: { label: 'Delivery', class: 'tipo-delivery' },
+  Retirada: { label: 'Retirada', class: 'tipo-retirada' },
+}
+
+function getTipo(t: string | undefined) {
+  return TIPO_LABEL[t ?? 'Local'] ?? { label: t ?? 'Local', class: '' }
+}
+
 async function avancarStatus(pedido: any) {
   const fluxo = ['PENDENTE', 'PREPARACAO', 'PRONTO', 'ENTREGUE']
   const idx = fluxo.indexOf(pedido.status)
@@ -139,6 +149,7 @@ useHead({ title: 'Dashboard — QuickPed Admin' })
               <th>Cliente</th>
               <th>Mesa</th>
               <th>Total</th>
+              <th>Tipo</th>
               <th>Status</th>
               <th>Ação</th>
             </tr>
@@ -148,13 +159,18 @@ useHead({ title: 'Dashboard — QuickPed Admin' })
               <td class="td-id">#{{ p.id }}</td>
               <td>{{ escapeHtml(p.nome_cliente) }}</td>
               <td>Mesa {{ p.numero_mesa }}</td>
-              <td class="td-preco">{{ formatarPreco(p.total) }}</td>
-              <td>
-                <span class="status-badge" :class="getStatus(p.status).class">
-                  {{ getStatus(p.status).label }}
-                </span>
-              </td>
-              <td>
+<td class="td-preco">{{ formatarPreco(p.total) }}</td>
+                <td>
+                  <span class="tipo-badge" :class="getTipo(p.tipo).class">
+                    {{ getTipo(p.tipo).label }}
+                  </span>
+                </td>
+                <td>
+                  <span class="status-badge" :class="getStatus(p.status).class">
+                    {{ getStatus(p.status).label }}
+                  </span>
+                </td>
+                <td>
                 <button
                   v-if="p.status !== 'ENTREGUE' && p.status !== 'CANCELADO'"
                   class="btn-avançar"
@@ -253,6 +269,15 @@ useHead({ title: 'Dashboard — QuickPed Admin' })
 .status-ready     { background: #e8f5e9; color: #2e7d32; }
 .status-delivered { background: #e3f2fd; color: #1565c0; }
 .status-cancelled { background: #fce4ec; color: #c62828; }
+
+.tipo-badge {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px; border-radius: 99px;
+  font-size: 12px; font-weight: 600;
+}
+.tipo-local    { background: #e8f5e9; color: #2e7d32; }
+.tipo-delivery { background: #e3f2fd; color: #1565c0; }
+.tipo-retirada { background: #f3e5f5; color: #7b1fa2; }
 
 .btn-avançar {
   padding: 5px 12px; border-radius: 8px;

@@ -160,11 +160,15 @@ export interface PedidoItemOutput {
   adicionais: PedidoItemAdicionalOutput[]
 }
 
+export type PedidoTipo = 'Local' | 'Delivery' | 'Retirada'
+
 export interface PedidoCreate {
   nome_cliente: string
   numero_mesa: number
   mesa_token?: string
   obs?: string | null
+  tipo?: PedidoTipo
+  endereco_id?: number | null
   itens: PedidoItemInput[]
 }
 
@@ -187,6 +191,41 @@ export interface UsuarioRead {
   estabelecimento_id: number
   ativo: boolean
   admin: boolean
+}
+
+// ─── Cliente ───────────────────────────────────────────────────────────────────
+
+export interface EnderecoRead {
+  id: number
+  cliente_id: number
+  logradouro: string
+  numero?: string | null
+  cidade: string
+  bairro: string
+  complemento?: string | null
+  cep?: string | null
+  atual: boolean
+}
+
+export interface ClienteRead {
+  id: number
+  nome: string
+  telefone: string
+  enderecos?: EnderecoRead[] | null
+}
+
+export interface EnderecoCreate {
+  logradouro: string
+  numero?: string | null
+  cidade: string
+  bairro: string
+  complemento?: string | null
+}
+
+export interface ClienteTokenResponse {
+  cliente_id: number
+  access_token: string
+  token_type?: string
 }
 
 // ─── Carrinho (estado local) ───────────────────────────────────────────────────

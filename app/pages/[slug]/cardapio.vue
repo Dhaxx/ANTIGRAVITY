@@ -364,6 +364,7 @@ useHead({
       :mesa-preenchida="numeroMesaPreenchido"
       :mesa-token="mesaToken"
       :modo-cardapio-digital="modoCardapioDigital"
+      :estabelecimento="cardapio?.estabelecimento"
       @pedido-criado="buscarComanda"
     />
 

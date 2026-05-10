@@ -28,7 +28,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/TokenResponse"
+                                    "$ref": "#/components/schemas/UsuarioLoginRead"
                                 }
                             }
                         }
@@ -2317,6 +2317,46 @@
                     }
                 }
             }
+        },
+        "/api/v1/cliente/endereco/buscar-cep/{cep}": {
+            "get": {
+                "tags": [
+                    "Public - Cliente"
+                ],
+                "summary": "Buscar Endereco Por Cep",
+                "operationId": "buscar_endereco_por_cep_api_v1_cliente_endereco_buscar_cep__cep__get",
+                "parameters": [
+                    {
+                        "name": "cep",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Cep"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -3724,7 +3764,14 @@
                         "title": "Nome Cliente"
                     },
                     "numero_mesa": {
-                        "type": "integer",
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Numero Mesa"
                     },
                     "obs": {
@@ -3773,8 +3820,7 @@
                 },
                 "type": "object",
                 "required": [
-                    "nome_cliente",
-                    "numero_mesa"
+                    "nome_cliente"
                 ],
                 "title": "PedidoCreate"
             },
@@ -3789,7 +3835,14 @@
                         "title": "Nome Cliente"
                     },
                     "numero_mesa": {
-                        "type": "integer",
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Numero Mesa"
                     },
                     "obs": {
@@ -3842,7 +3895,6 @@
                 "required": [
                     "id",
                     "nome_cliente",
-                    "numero_mesa",
                     "status",
                     "tipo",
                     "total"
@@ -3876,6 +3928,51 @@
                 },
                 "type": "object",
                 "title": "PedidoUpdate"
+            },
+            "PermissoesEnum": {
+                "type": "string",
+                "enum": [
+                    "editar",
+                    "visualizar",
+                    "bloqueado"
+                ],
+                "title": "PermissoesEnum"
+            },
+            "PermissoesRead": {
+                "properties": {
+                    "dashboard": {
+                        "$ref": "#/components/schemas/PermissoesEnum"
+                    },
+                    "pedidos": {
+                        "$ref": "#/components/schemas/PermissoesEnum"
+                    },
+                    "comandas": {
+                        "$ref": "#/components/schemas/PermissoesEnum"
+                    },
+                    "produtos": {
+                        "$ref": "#/components/schemas/PermissoesEnum"
+                    },
+                    "mesas": {
+                        "$ref": "#/components/schemas/PermissoesEnum"
+                    },
+                    "estabelecimento": {
+                        "$ref": "#/components/schemas/PermissoesEnum"
+                    },
+                    "usuarios": {
+                        "$ref": "#/components/schemas/PermissoesEnum"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "dashboard",
+                    "pedidos",
+                    "comandas",
+                    "produtos",
+                    "mesas",
+                    "estabelecimento",
+                    "usuarios"
+                ],
+                "title": "PermissoesRead"
             },
             "ProdutoCreate-Input": {
                 "properties": {
@@ -4254,34 +4351,6 @@
                 ],
                 "title": "StatusComanda"
             },
-            "TokenResponse": {
-                "properties": {
-                    "usuario_id": {
-                        "type": "integer",
-                        "title": "Usuario Id"
-                    },
-                    "estabelecimento_id": {
-                        "type": "integer",
-                        "title": "Estabelecimento Id"
-                    },
-                    "access_token": {
-                        "type": "string",
-                        "title": "Access Token"
-                    },
-                    "token_type": {
-                        "type": "string",
-                        "title": "Token Type",
-                        "default": "bearer"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "usuario_id",
-                    "estabelecimento_id",
-                    "access_token"
-                ],
-                "title": "TokenResponse"
-            },
             "UsuarioCreate": {
                 "properties": {
                     "usuario": {
@@ -4305,6 +4374,38 @@
                 ],
                 "title": "UsuarioCreate"
             },
+            "UsuarioLoginRead": {
+                "properties": {
+                    "access_token": {
+                        "type": "string",
+                        "title": "Access Token"
+                    },
+                    "token_type": {
+                        "type": "string",
+                        "title": "Token Type",
+                        "default": "bearer"
+                    },
+                    "usuario_id": {
+                        "type": "integer",
+                        "title": "Usuario Id"
+                    },
+                    "estabelecimento_id": {
+                        "type": "integer",
+                        "title": "Estabelecimento Id"
+                    },
+                    "permissoes": {
+                        "$ref": "#/components/schemas/PermissoesRead"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "access_token",
+                    "usuario_id",
+                    "estabelecimento_id",
+                    "permissoes"
+                ],
+                "title": "UsuarioLoginRead"
+            },
             "UsuarioRead": {
                 "properties": {
                     "usuario": {
@@ -4326,10 +4427,6 @@
                     "admin": {
                         "type": "boolean",
                         "title": "Admin"
-                    },
-                    "master": {
-                        "type": "boolean",
-                        "title": "Master"
                     }
                 },
                 "type": "object",
@@ -4338,8 +4435,7 @@
                     "estabelecimento_id",
                     "id",
                     "ativo",
-                    "admin",
-                    "master"
+                    "admin"
                 ],
                 "title": "UsuarioRead"
             },

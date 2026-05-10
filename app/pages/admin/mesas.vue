@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useAdminMesas, useAdminEstabelecimento } from '~/composables/useAdmin'
+import { useAuthStore } from '~/stores/auth'
 import QRCode from 'qrcode'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
+const auth = useAuthStore()
 const { mesas, loading, buscar, criar, atualizar, deletar } = useAdminMesas()
 const { estabelecimento, buscar: buscarEstabelecimento } = useAdminEstabelecimento()
 onMounted(async () => {
@@ -144,7 +146,7 @@ useHead({ title: 'Mesas — QuickPed Admin' })
         <button v-if="mesasAtivas.length > 0" class="btn-print-all" @click="printAllQRCodes">
           🖨️ Imprimir todos ({{ mesasAtivas.length }})
         </button>
-        <button class="btn-add" @click="showForm = !showForm">+ Nova mesa</button>
+        <button v-if="auth.can('mesas', 'editar')" class="btn-add" @click="showForm = !showForm">+ Nova mesa</button>
       </div>
     </div>
 
@@ -234,21 +236,23 @@ useHead({ title: 'Mesas — QuickPed Admin' })
         </div>
 
         <div class="mesa-card__actions">
-          <button
-            class="mesa-action-btn"
-            :title="mesa.ativa ? 'Desativar mesa' : 'Ativar mesa'"
-            @click="atualizar(mesa.id, { ativa: !mesa.ativa })"
-          >
-            {{ mesa.ativa ? '🚫 Desativar' : '✅ Ativar' }}
-          </button>
+          <template v-if="auth.can('mesas', 'editar')">
+            <button
+              class="mesa-action-btn"
+              :title="mesa.ativa ? 'Desativar mesa' : 'Ativar mesa'"
+              @click="atualizar(mesa.id, { ativa: !mesa.ativa })"
+            >
+              {{ mesa.ativa ? '🚫 Desativar' : '✅ Ativar' }}
+            </button>
+            <button class="mesa-action-btn danger" title="Excluir" @click="deletar(mesa.id)">
+              🗑️
+            </button>
+          </template>
           <button class="mesa-action-btn" title="Copiar link" @click="copiarLink(mesa.token)">
             🔗 Copiar
           </button>
           <button class="mesa-action-btn" title="Imprimir QR" @click="printQR(mesa)">
             🖨️ Imprimir
-          </button>
-          <button class="mesa-action-btn danger" title="Excluir" @click="deletar(mesa.id)">
-            🗑️
           </button>
         </div>
       </div>

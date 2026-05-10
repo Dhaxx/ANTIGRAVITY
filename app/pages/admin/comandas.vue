@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useAdminComandas } from '~/composables/useAdmin'
 import { useSanitize } from '~/composables/useSanitize'
+import { useAuthStore } from '~/stores/auth'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
+const auth = useAuthStore()
 const { comandas, loading, buscar, fecharComanda, imprimirComanda, removerItemPedido } = useAdminComandas()
 
 const removingItem = ref<{ pedidoId: number; itemId: number } | null>(null)
@@ -215,7 +217,7 @@ useHead({ title: 'Comandas — QuickPed Admin' })
                         {{ formatarPreco(Number(item.preco_unitario) * item.quantidade + (item.adicionais?.reduce((acc: number, a: any) => acc + Number(a.preco) * item.quantidade, 0) || 0)) }}
                       </span>
                       <button
-                        v-if="comanda.status === 'aberta'"
+                        v-if="comanda.status === 'aberta' && auth.can('comandas', 'editar')"
                         class="btn-delete-item"
                         :disabled="removingItem?.pedidoId === pedido.id && removingItem?.itemId === item.item_id"
                         title="Remover item"

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useAdminPedidos, useAdminEstabelecimento } from '~/composables/useAdmin'
 import { useSanitize } from '~/composables/useSanitize'
+import { useAuthStore } from '~/stores/auth'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
+const auth = useAuthStore()
 const { pedidos, loading, error, buscarPedidos, atualizarStatus, deletarPedido, ocultarPedido, imprimirPedido } = useAdminPedidos()
 const { estabelecimento, buscar: buscarEstabelecimento } = useAdminEstabelecimento()
 
@@ -275,7 +277,7 @@ useHead({ title: 'Pedidos — QuickPed Admin' })
               </li>
             </ul>
 
-            <div class="pedido-card__actions">
+            <div v-if="auth.can('pedidos', 'editar')" class="pedido-card__actions">
               <button
                 class="btn-acao btn-acao--print"
                 @click="imprimir(p)"

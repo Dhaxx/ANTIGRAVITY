@@ -118,11 +118,14 @@ useHead({ title: 'Novo Usuário — QuickPed Admin' })
           </div>
         </Transition>
 
-        <div class="form-actions">
+        <div v-if="auth.can('usuarios', 'editar')" class="form-actions">
           <NuxtLink to="/admin" class="btn-cancel">Voltar</NuxtLink>
           <button type="submit" class="btn-primary" :disabled="loading">
             {{ loading ? 'Criando...' : 'Criar Usuário' }}
           </button>
+        </div>
+        <div v-else class="form-readonly-msg">
+          Você não tem permissão para criar usuários.
         </div>
       </form>
     </div>
@@ -302,5 +305,14 @@ useHead({ title: 'Novo Usuário — QuickPed Admin' })
 .badge--inativo {
   background: #fee2e2;
   color: #dc2626;
+}
+
+.form-readonly-msg {
+  padding: 10px 14px;
+  background: #f7f8f5;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #6b7568;
+  text-align: center;
 }
 </style>

@@ -17,15 +17,18 @@ onMounted(async () => {
   }
 })
 
-const navLinks = [
-  { label: 'Dashboard', icon: 'grid', to: '/admin' },
-  { label: 'Pedidos', icon: 'list', to: '/admin/pedidos' },
-  { label: 'Comandas', icon: 'receipt', to: '/admin/comandas' },
-  { label: 'Produtos', icon: 'package', to: '/admin/produtos' },
-  { label: 'Mesas', icon: 'layout', to: '/admin/mesas' },
-  { label: 'Estabelecimento', icon: 'store', to: '/admin/estabelecimento' },
-  { label: 'Usuários', icon: 'users', to: '/admin/registrar' },
-]
+const navLinks = computed(() => {
+  const all = [
+    { label: 'Dashboard', icon: 'grid', to: '/admin', modulo: 'dashboard' },
+    { label: 'Pedidos', icon: 'list', to: '/admin/pedidos', modulo: 'pedidos' },
+    { label: 'Comandas', icon: 'receipt', to: '/admin/comandas', modulo: 'comandas' },
+    { label: 'Produtos', icon: 'package', to: '/admin/produtos', modulo: 'produtos' },
+    { label: 'Mesas', icon: 'layout', to: '/admin/mesas', modulo: 'mesas' },
+    { label: 'Estabelecimento', icon: 'store', to: '/admin/estabelecimento', modulo: 'estabelecimento' },
+    { label: 'Usuários', icon: 'users', to: '/admin/registrar', modulo: 'usuarios' },
+  ]
+  return all.filter(link => auth.can(link.modulo as any, 'visualizar'))
+})
 
 const mobileMenuOpen = ref(false)
 

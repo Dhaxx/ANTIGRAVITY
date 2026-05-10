@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { useAdminEstabelecimento } from '~/composables/useAdmin'
+import { useAuthStore } from '~/stores/auth'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
+const auth = useAuthStore()
 const { estabelecimento, loading, saving, error, buscar, atualizar } = useAdminEstabelecimento()
 
 const form = reactive({
@@ -88,43 +90,46 @@ useHead({ title: 'Estabelecimento — QuickPed Admin' })
             {{ estabelecimento?.esta_aberto ? 'Aberto' : 'Fechado' }}
           </span>
         </div>
-        <button class="toggle-btn" :class="estabelecimento?.esta_aberto ? 'on' : 'off'" :disabled="toggling" @click="toggleAberto">
+        <button v-if="auth.can('estabelecimento', 'editar')" class="toggle-btn" :class="estabelecimento?.esta_aberto ? 'on' : 'off'" :disabled="toggling" @click="toggleAberto">
           <span class="toggle-thumb" />
         </button>
+        <span v-else class="status-badge" :class="estabelecimento?.esta_aberto ? 'open' : 'closed'">
+          {{ estabelecimento?.esta_aberto ? 'Aberto' : 'Fechado' }}
+        </span>
       </div>
 
-      <div class="form-body">
+        <div class="form-body" :class="{ readonly: !auth.can('estabelecimento', 'editar') }">
         <div class="form-group">
           <label class="form-label">Nome</label>
-          <input v-model="form.nome" class="form-input" placeholder="Ex: Lanchonete do Zé" />
+          <input v-model="form.nome" class="form-input" placeholder="Ex: Lanchonete do Zé" :disabled="!auth.can('estabelecimento', 'editar')" />
         </div>
 
         <div class="form-group">
           <label class="form-label">Endereço</label>
-          <input v-model="form.endereco" class="form-input" placeholder="Ex: Rua tal, 123 - Centro" />
+          <input v-model="form.endereco" class="form-input" placeholder="Ex: Rua tal, 123 - Centro" :disabled="!auth.can('estabelecimento', 'editar')" />
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Telefone</label>
-            <input v-model="form.telefone" class="form-input" placeholder="(11) 99999-9999" />
+            <input v-model="form.telefone" class="form-input" placeholder="(11) 99999-9999" :disabled="!auth.can('estabelecimento', 'editar')" />
           </div>
           <div class="form-group">
             <label class="form-label">E-mail</label>
-            <input v-model="form.email" class="form-input" type="email" placeholder="contato@exemplo.com" />
+            <input v-model="form.email" class="form-input" type="email" placeholder="contato@exemplo.com" :disabled="!auth.can('estabelecimento', 'editar')" />
           </div>
         </div>
 
         <div class="form-group">
           <label class="form-label">URL do Logo</label>
-          <input v-model="form.logo_url" class="form-input" placeholder="https://..." />
+          <input v-model="form.logo_url" class="form-input" placeholder="https://..." :disabled="!auth.can('estabelecimento', 'editar')" />
         </div>
 
         <Transition name="fade">
           <p v-if="salvo" class="save-success">Alterações salvas com sucesso!</p>
         </Transition>
 
-        <div class="form-actions">
+        <div v-if="auth.can('estabelecimento', 'editar')" class="form-actions">
           <button class="btn-primary" :disabled="saving" @click="salvar">
             {{ saving ? 'Salvando...' : 'Salvar alterações' }}
           </button>
@@ -192,6 +197,7 @@ useHead({ title: 'Estabelecimento — QuickPed Admin' })
 }
 
 .form-actions { margin-top: 4px; }
+.form-body.readonly .form-input:disabled { background: #f7f8f5; color: #6b7568; cursor: not-allowed; }
 .btn-primary {
   padding: 11px 22px; border-radius: 10px;
   background: var(--color-primary); color: #fff;

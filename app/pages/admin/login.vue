@@ -30,7 +30,7 @@ async function login() {
     formData.append('username', username.value)
     formData.append('password', password.value)
 
-    const data = await $fetch<{ access_token: string; usuario_id: number; estabelecimento_id: number }>(
+    const data = await $fetch<{ access_token: string; usuario_id: number; estabelecimento_id: number; permissoes: any }>(
       `${config.public.apiBase}/api/v1/admin/autenticacao/login`,
       {
         method: 'POST',

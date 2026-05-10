@@ -311,7 +311,7 @@ useHead({ title: 'Produtos — QuickPed Admin' })
     <div v-if="tabAtiva === 'produtos'" class="admin-card">
       <div class="admin-card__header">
         <h2 class="admin-card__title">Produtos ({{ produtos.length }})</h2>
-        <button class="btn-add" @click="abrirProdForm()">+ Novo produto</button>
+        <button v-if="auth.can('produtos', 'editar')" class="btn-add" @click="abrirProdForm()">+ Novo produto</button>
       </div>
 
       <div v-if="loadingProd" class="admin-loading">
@@ -330,14 +330,16 @@ useHead({ title: 'Produtos — QuickPed Admin' })
               <td class="td-preco">{{ formatarPreco(p.preco) }}</td>
               <td>{{ p.produzido_por ? usuarioNome(p.produzido_por) : '—' }}</td>
               <td>
-                <button 
-                  class="toggle-btn" 
-                  :class="{ on: p.imprime }"
-                  :title="p.imprime ? 'Não imprimir' : 'Imprimir'" 
-                  @click="toggleProdutoImprime(p)"
-                >
-                  <span class="toggle-thumb"></span>
-                </button>
+                <template v-if="auth.can('produtos', 'editar')">
+                  <button 
+                    class="toggle-btn" 
+                    :class="{ on: p.imprime }"
+                    :title="p.imprime ? 'Não imprimir' : 'Imprimir'" 
+                    @click="toggleProdutoImprime(p)"
+                  >
+                    <span class="toggle-thumb"></span>
+                  </button>
+                </template>
               </td>
               <td>
                 <span class="pill" :class="p.ativo ? 'pill--green' : 'pill--gray'">
@@ -345,16 +347,18 @@ useHead({ title: 'Produtos — QuickPed Admin' })
                 </span>
               </td>
               <td class="td-actions">
-                <button class="btn-icon-sm" title="Editar" @click="abrirProdForm(p)">✏️</button>
-                <button 
-                  class="toggle-btn" 
-                  :class="{ on: p.ativo }"
-                  :title="p.ativo ? 'Desativar' : 'Ativar'" 
-                  @click="toggleProdutoAtivo(p)"
-                >
-                  <span class="toggle-thumb"></span>
-                </button>
-                <button class="btn-icon-sm danger" title="Excluir" @click="deletarProd(p.id)">🗑️</button>
+                <template v-if="auth.can('produtos', 'editar')">
+                  <button class="btn-icon-sm" title="Editar" @click="abrirProdForm(p)">✏️</button>
+                  <button 
+                    class="toggle-btn" 
+                    :class="{ on: p.ativo }"
+                    :title="p.ativo ? 'Desativar' : 'Ativar'" 
+                    @click="toggleProdutoAtivo(p)"
+                  >
+                    <span class="toggle-thumb"></span>
+                  </button>
+                  <button class="btn-icon-sm danger" title="Excluir" @click="deletarProd(p.id)">🗑️</button>
+                </template>
               </td>
             </tr>
           </tbody>
@@ -366,7 +370,7 @@ useHead({ title: 'Produtos — QuickPed Admin' })
     <div v-if="tabAtiva === 'categorias'" class="admin-card">
       <div class="admin-card__header">
         <h2 class="admin-card__title">Categorias ({{ categorias.length }})</h2>
-        <button class="btn-add" @click="abrirCatForm()">+ Nova categoria</button>
+        <button v-if="auth.can('produtos', 'editar')" class="btn-add" @click="abrirCatForm()">+ Nova categoria</button>
       </div>
 
       <div v-if="loadingCats" class="admin-loading">
@@ -385,14 +389,16 @@ useHead({ title: 'Produtos — QuickPed Admin' })
               <td>{{ c.ordem }}</td>
               <td>{{ c.produzido_por ? usuarioNome(c.produzido_por) : '—' }}</td>
               <td>
-                <button 
-                  class="toggle-btn" 
-                  :class="{ on: c.imprime }"
-                  :title="c.imprime ? 'Não imprimir' : 'Imprimir'" 
-                  @click="toggleCategoriaImprime(c)"
-                >
-                  <span class="toggle-thumb"></span>
-                </button>
+                <template v-if="auth.can('produtos', 'editar')">
+                  <button 
+                    class="toggle-btn" 
+                    :class="{ on: c.imprime }"
+                    :title="c.imprime ? 'Não imprimir' : 'Imprimir'" 
+                    @click="toggleCategoriaImprime(c)"
+                  >
+                    <span class="toggle-thumb"></span>
+                  </button>
+                </template>
               </td>
               <td>
                 <span class="pill" :class="c.ativo ? 'pill--green' : 'pill--gray'">
@@ -400,16 +406,18 @@ useHead({ title: 'Produtos — QuickPed Admin' })
                 </span>
               </td>
               <td class="td-actions">
-                <button class="btn-icon-sm" title="Editar" @click="abrirCatForm(c)">✏️</button>
-                <button 
-                  class="toggle-btn" 
-                  :class="{ on: c.ativo }"
-                  :title="c.ativo ? 'Desativar' : 'Ativar'" 
-                  @click="toggleCategoriaAtivo(c)"
-                >
-                  <span class="toggle-thumb"></span>
-                </button>
-                <button class="btn-icon-sm danger" title="Excluir" @click="deletarCat(c.id)">🗑️</button>
+                <template v-if="auth.can('produtos', 'editar')">
+                  <button class="btn-icon-sm" title="Editar" @click="abrirCatForm(c)">✏️</button>
+                  <button 
+                    class="toggle-btn" 
+                    :class="{ on: c.ativo }"
+                    :title="c.ativo ? 'Desativar' : 'Ativar'" 
+                    @click="toggleCategoriaAtivo(c)"
+                  >
+                    <span class="toggle-thumb"></span>
+                  </button>
+                  <button class="btn-icon-sm danger" title="Excluir" @click="deletarCat(c.id)">🗑️</button>
+                </template>
               </td>
             </tr>
           </tbody>
@@ -469,7 +477,7 @@ useHead({ title: 'Produtos — QuickPed Admin' })
                 <span class="toggle-thumb"></span>
               </button>
             </div>
-            <div class="form-group">
+            <div v-if="auth.can('produtos', 'editar')" class="form-group">
               <label class="form-label">Grupos de adicionais</label>
               <div class="checkbox-grid grupos-list">
                 <div v-for="g in grupos" :key="g.id" class="grupo-item">
@@ -492,10 +500,15 @@ useHead({ title: 'Produtos — QuickPed Admin' })
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn-cancel" @click="showProdForm = false">Cancelar</button>
-            <button class="btn-primary modal-save" :disabled="prodLoading || !prodForm.nome || !prodForm.preco || !prodForm.categoria_id" @click="salvarProd">
-              {{ prodLoading ? 'Salvando...' : 'Salvar' }}
-            </button>
+            <template v-if="auth.can('produtos', 'editar')">
+              <button class="btn-cancel" @click="showProdForm = false">Cancelar</button>
+              <button class="btn-primary modal-save" :disabled="prodLoading || !prodForm.nome || !prodForm.preco || !prodForm.categoria_id" @click="salvarProd">
+                {{ prodLoading ? 'Salvando...' : 'Salvar' }}
+              </button>
+            </template>
+            <template v-else>
+              <button class="btn-cancel" @click="showProdForm = false">Fechar</button>
+            </template>
           </div>
         </div>
       </Transition>
@@ -551,8 +564,13 @@ useHead({ title: 'Produtos — QuickPed Admin' })
             <div v-if="erroNovoGrupo" class="form-error">{{ erroNovoGrupo }}</div>
           </div>
           <div class="modal-footer">
-            <button class="btn-cancel" @click="showNovoGrupoForm = false">Cancelar</button>
-            <button class="btn-primary modal-save" :disabled="!novoGrupoForm.nome" @click="salvarNovoGrupo">Criar grupo</button>
+            <template v-if="auth.can('produtos', 'editar')">
+              <button class="btn-cancel" @click="showNovoGrupoForm = false">Cancelar</button>
+              <button class="btn-primary modal-save" :disabled="!novoGrupoForm.nome" @click="salvarNovoGrupo">Criar grupo</button>
+            </template>
+            <template v-else>
+              <button class="btn-cancel" @click="showNovoGrupoForm = false">Fechar</button>
+            </template>
           </div>
         </div>
       </Transition>
@@ -606,8 +624,13 @@ useHead({ title: 'Produtos — QuickPed Admin' })
             <div v-if="erroEditarGrupo" class="form-error">{{ erroEditarGrupo }}</div>
           </div>
           <div class="modal-footer">
-            <button class="btn-cancel" @click="showEditarGrupoForm = false">Cancelar</button>
-            <button class="btn-primary modal-save" @click="salvarEditarGrupo">Salvar</button>
+            <template v-if="auth.can('produtos', 'editar')">
+              <button class="btn-cancel" @click="showEditarGrupoForm = false">Cancelar</button>
+              <button class="btn-primary modal-save" @click="salvarEditarGrupo">Salvar</button>
+            </template>
+            <template v-else>
+              <button class="btn-cancel" @click="showEditarGrupoForm = false">Fechar</button>
+            </template>
           </div>
         </div>
       </Transition>
@@ -652,10 +675,15 @@ useHead({ title: 'Produtos — QuickPed Admin' })
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn-cancel" @click="showCatForm = false">Cancelar</button>
-            <button class="btn-primary modal-save" :disabled="catLoading || !catForm.nome" @click="salvarCat">
-              {{ catLoading ? 'Salvando...' : 'Salvar' }}
-            </button>
+            <template v-if="auth.can('produtos', 'editar')">
+              <button class="btn-cancel" @click="showCatForm = false">Cancelar</button>
+              <button class="btn-primary modal-save" :disabled="catLoading || !catForm.nome" @click="salvarCat">
+                {{ catLoading ? 'Salvando...' : 'Salvar' }}
+              </button>
+            </template>
+            <template v-else>
+              <button class="btn-cancel" @click="showCatForm = false">Fechar</button>
+            </template>
           </div>
         </div>
       </Transition>

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useAdminPedidos, useAdminMesas, useAdminComandas } from '~/composables/useAdmin'
 import { useSanitize } from '~/composables/useSanitize'
+import { useAuthStore } from '~/stores/auth'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
+const auth = useAuthStore()
 const { pedidos, loading: loadingPedidos, buscarPedidos, atualizarStatus } = useAdminPedidos()
 const { mesas, loading: loadingMesas, buscar: buscarMesas } = useAdminMesas()
 const { comandas, loading: loadingComandas, buscar: buscarComandas } = useAdminComandas()
@@ -171,14 +173,14 @@ useHead({ title: 'Dashboard — QuickPed Admin' })
                   </span>
                 </td>
                 <td>
-                <button
-                  v-if="p.status !== 'ENTREGUE' && p.status !== 'CANCELADO'"
-                  class="btn-avançar"
-                  @click="avancarStatus(p)"
-                >
-                  Avançar →
-                </button>
-              </td>
+                  <button
+                    v-if="auth.can('pedidos', 'editar') && p.status !== 'ENTREGUE' && p.status !== 'CANCELADO'"
+                    class="btn-avançar"
+                    @click="avancarStatus(p)"
+                  >
+                    Avançar →
+                  </button>
+                </td>
             </tr>
           </tbody>
         </table>

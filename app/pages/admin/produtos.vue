@@ -138,6 +138,33 @@ async function salvarNovoGrupo() {
   showNovoGrupoForm.value = false
 }
 
+const imagemFile = ref<File | null>(null)
+const imagemPreview = ref<string | null>(null)
+
+function onFileChange(event: Event) {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    const file = target.files[0]
+    imagemFile.value = file
+    imagemPreview.value = URL.createObjectURL(file)
+    prodForm.imagem_url = ''
+  }
+}
+
+function removerImagemSelecionada() {
+  imagemFile.value = null
+  imagemPreview.value = null
+  prodForm.imagem_url = ''
+}
+
+watch(() => prodForm.imagem_url, (url) => {
+  if (url && !imagemFile.value) {
+    imagemPreview.value = url
+  } else if (!url && !imagemFile.value) {
+    imagemPreview.value = null
+  }
+})
+
 async function abrirProdForm(prod?: any) {
   prodEditando.value = prod ?? null
   prodForm.nome = prod?.nome ?? ''
@@ -149,10 +176,13 @@ async function abrirProdForm(prod?: any) {
   prodForm.grupo_adicional_ids = prod?.grupo_adicional_ids ?? []
   prodForm.imprime = prod?.imprime !== false
   
+  imagemFile.value = null
+  imagemPreview.value = prod?.imagem_url ?? null
+  
   if (prod?.id) {
     await buscarGrupos(prod.id)
   } else {
-grupos.value = []
+    grupos.value = []
   }
   
   showProdForm.value = true
@@ -251,9 +281,9 @@ async function salvarProd() {
       imprime: prodForm.imprime
     }
     if (prodEditando.value) {
-      await atualizarProd(prodEditando.value.id, body)
+      await atualizarProd(prodEditando.value.id, body, imagemFile.value)
     } else {
-      await criarProd(body)
+      await criarProd(body, imagemFile.value)
     }
 showProdForm.value = false
   } finally { prodLoading.value = false }
@@ -457,8 +487,27 @@ useHead({ title: 'Produtos — QuickPed Admin' })
               <textarea v-model="prodForm.descricao" class="form-input" rows="2" placeholder="Descrição breve..." />
             </div>
             <div class="form-group">
-              <label class="form-label">URL da imagem</label>
-              <input v-model="prodForm.imagem_url" class="form-input" placeholder="https://..." />
+              <label class="form-label">Imagem do produto</label>
+              
+              <!-- Preview se houver -->
+              <div v-if="imagemPreview" class="image-upload-preview">
+                <img :src="imagemPreview" alt="Preview da imagem" />
+                <button type="button" class="btn-remove-image" @click="removerImagemSelecionada">Remover Imagem</button>
+              </div>
+              
+              <!-- Input de arquivo e input de URL alternativos -->
+              <div v-else class="image-upload-controls">
+                <div class="upload-dropzone">
+                  <input type="file" accept="image/*" @change="onFileChange" id="prod-image-file" class="hidden-file-input" />
+                  <label for="prod-image-file" class="btn-upload-file">
+                    <span>📁 Escolher Arquivo de Imagem</span>
+                  </label>
+                </div>
+                <div class="url-input-alt">
+                  <span class="text-or">ou insira a URL da imagem:</span>
+                  <input v-model="prodForm.imagem_url" class="form-input" placeholder="https://..." />
+                </div>
+              </div>
             </div>
 <div class="form-group">
               <label class="form-label">Produzido por</label>
@@ -839,4 +888,80 @@ textarea.form-input { resize: vertical; min-height: 60px; }
 .grupos-list { display: flex; flex-direction: column; gap: 8px; }
 .grupo-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f9fafb; border-radius: 8px; }
 .grupo-item .checkbox-item { flex: 1; }
+
+/* Premium Image Upload styles */
+.image-upload-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: #f7f8f5;
+  border: 1.5px dashed #d1d8cd;
+  border-radius: 12px;
+}
+.image-upload-preview img {
+  max-width: 100%;
+  max-height: 120px;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.btn-remove-image {
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-remove-image:hover {
+  opacity: 0.9;
+}
+.image-upload-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.upload-dropzone {
+  display: flex;
+  justify-content: center;
+}
+.hidden-file-input {
+  display: none;
+}
+.btn-upload-file {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 16px;
+  background: #f7f8f5;
+  border: 1.5px dashed #d1d8cd;
+  border-radius: 12px;
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-upload-file:hover {
+  background: #f0f3ed;
+  border-color: var(--color-primary);
+}
+.url-input-alt {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.text-or {
+  font-size: 11px;
+  color: #6b7568;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
 </style>

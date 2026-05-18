@@ -131,14 +131,30 @@ export const useAdminProdutos = () => {
     finally { loading.value = false }
   }
 
-  async function criar(dados: object) {
-    const result = await apiFetch('/api/v1/admin/produto/', { method: 'POST', body: dados })
+  async function criar(dados: any, imagemFile: File | null = null) {
+    let result
+    if (imagemFile) {
+      const formData = new FormData()
+      formData.append('data', JSON.stringify(dados))
+      formData.append('imagem_file', imagemFile)
+      result = await apiFetch('/api/v1/admin/produto/', { method: 'POST', body: formData })
+    } else {
+      result = await apiFetch('/api/v1/admin/produto/', { method: 'POST', body: dados })
+    }
     await buscar()
     return result
   }
 
-  async function atualizar(id: number, dados: object) {
-    const result = await apiFetch(`/api/v1/admin/produto/?produto_id=${id}`, { method: 'PUT', body: dados })
+  async function atualizar(id: number, dados: any, imagemFile: File | null = null) {
+    let result
+    if (imagemFile) {
+      const formData = new FormData()
+      formData.append('data', JSON.stringify(dados))
+      formData.append('imagem_file', imagemFile)
+      result = await apiFetch(`/api/v1/admin/produto/?produto_id=${id}`, { method: 'PUT', body: formData })
+    } else {
+      result = await apiFetch(`/api/v1/admin/produto/?produto_id=${id}`, { method: 'PUT', body: dados })
+    }
     await buscar()
     return result
   }

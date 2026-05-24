@@ -40,6 +40,9 @@ const emit = defineEmits<{
   background: var(--color-surface);
   padding: 12px 0;
   border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 61px;
+  z-index: 90;
 }
 
 .categoria-filtro__scroll {

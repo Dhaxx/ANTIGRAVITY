@@ -255,7 +255,7 @@ function formatarPreco(v: number) {
 .produto-modal__img-wrap {
   position: relative;
   width: 100%;
-  aspect-ratio: 16/9;
+  aspect-ratio: 9/9;
   flex-shrink: 0;
   background: var(--color-surface-alt);
   overflow: hidden;
